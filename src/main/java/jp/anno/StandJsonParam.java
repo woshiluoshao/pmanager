@@ -6,5 +6,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface StandJsonParam {
-    String description() default "";
+    String module() default "";
+    String methods() default "";
 }

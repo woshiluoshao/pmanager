@@ -6,11 +6,8 @@ import lombok.Data;
 @Data
 public class ParameterModel {
 
-    private String code;
-    private String msg;
-    //private JSONObject data;
-
-    private String RESULTCODE;
-    private String RESULRMSG;
-    private String DATA;
+    private String method;
+    private String timestamps;
+    private String transId;
+    private JSONObject data;
 }

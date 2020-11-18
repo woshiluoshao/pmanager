@@ -20,7 +20,7 @@ public class LoginController {
 
     @RequestMapping(value = "/login", produces = "application/json;charset=UTF-8", method = RequestMethod.POST)
     @ResponseBody
-    @NoStandParam(description = "登录")
+    @NoStandParam(module = "内部访问日志", methods = "用户登录日志")
     public ResultVo loginMethod(LoginDto loginDto) {
 
         if(loginDto == null || StringUtils.isEmpty(loginDto.getUserId()) || StringUtils.isEmpty(loginDto.getPassword())) {
@@ -33,7 +33,7 @@ public class LoginController {
 
     @RequestMapping(value = "/test", produces = "application/json;charset=UTF-8", method = RequestMethod.POST)
     @ResponseBody
-    @StandJsonParam(description = "测试")
+    @StandJsonParam(module = "外部接口请求日志", methods = "测试日志")
     public ResultVo postMethod(HttpServletRequest request, HttpServletResponse response) {
 
 

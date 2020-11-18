@@ -14,6 +14,7 @@ public enum MessageEnum implements BaseEnumInterface{
     E006("E006","功能标识:{0}不存在,请确认!"),
     E007("E007","操作失败:{0}"),
     E008("E008","未知异常"),
+    E009("E009","访问失败,请通过接口访问!"),
     ;
 
     private String code;

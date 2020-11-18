@@ -18,7 +18,7 @@ public class GlobalExceptionHandling {
     @ExceptionHandler(Exception.class)
     @ResponseBody
     public ResultVo exception(Exception e) {
-        return ResultVoUtil.error(MessageEnum.E008);
+        return ResultVoUtil.error(MessageEnum.E009);
     }
 
 }

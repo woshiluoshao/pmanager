@@ -2,10 +2,7 @@ package jp.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.util.TypeUtils;
-import jp.vo.JsonModel;
-import jp.vo.ParameterModel;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -112,37 +109,4 @@ public class JsonUtils {
         return jsonStr;
     }
 
-    /**
-     * 返回JSON
-     * @param parameterModel
-     * @return
-     */
-    public static String resultJson(ParameterModel parameterModel) {
-
-        JsonModel jsonModel = new JsonModel();
-        jsonModel.setRESULTCODE(parameterModel.getRESULTCODE());
-        jsonModel.setRESULTMSG(parameterModel.getRESULRMSG());
-        jsonModel.setDATA(parameterModel.getDATA());
-        TypeUtils.compatibleWithJavaBean =true;
-        String jsonInfo = JSONObject.toJSONString(jsonModel, SerializerFeature.WriteNullBooleanAsFalse);
-
-        return jsonInfo;
-    }
-
-    /**
-     * 返回JSON
-     * @param response
-     * @param parameterModel
-     */
-    public static void resultJson(HttpServletResponse response, ParameterModel parameterModel) {
-
-        JsonModel jsonModel = new JsonModel();
-        jsonModel.setRESULTCODE(parameterModel.getRESULTCODE());
-        jsonModel.setRESULTMSG(parameterModel.getRESULRMSG());
-        jsonModel.setDATA(parameterModel.getDATA());
-        TypeUtils.compatibleWithJavaBean =true;
-        String jsonInfo = JSONObject.toJSONString(jsonModel, SerializerFeature.WriteNullBooleanAsFalse);
-        writeData(response, jsonInfo);
-        //return jsonInfo;
-    }
 }

@@ -99,4 +99,16 @@ public class CommonUtils {
 
         return ipAddress;
     }
+
+    public static String objectToStr(Object param) {
+
+        String result = "";
+        try {
+            if(param == null || param.toString().trim() == "") return result;
+            result = param.toString();
+        } catch (Exception e) {
+        }
+
+        return result;
+    }
 }

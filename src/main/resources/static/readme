@@ -1,1 +1,21 @@
 1.前端使用的thymeleaf, 主要用layutil外框架
+
+
+
+数据库脚本：
+
+DROP table user_operation_log;
+CREATE TABLE `user_operation_log` (
+  `id` int(11) NOT NULL auto_increment COMMENT '操作日志id' PRIMARY KEY,
+	`userId` varchar(100) default NULL COMMENT '操作ID',
+  `username` varchar(100) default NULL COMMENT '操作人',
+  `module` varchar(100) default NULL COMMENT '执行模块',
+  `methods` varchar(100) default NULL COMMENT '执行方法',
+  `acceptData` LONGTEXT default NULL COMMENT '请求内容',
+	`returnData` LONGTEXT default NULL COMMENT '操作内容',
+  `actionUrl` varchar(100) default NULL COMMENT '请求路径',
+  `serverIp` varchar(50) default NULL COMMENT '服务IP地址',
+	`visitIp` varchar(50) default NULL COMMENT '访问IP地址',
+  `createTime` datetime default NULL COMMENT '操作时间',
+  `comment` tinyint(2) default NULL COMMENT '执行描述（1:执行成功、2:执行失败）'
+)

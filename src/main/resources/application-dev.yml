@@ -2,3 +2,18 @@ server:
   port: 8888
   servlet:
     context-path: /pmanager
+spring:
+  datasource:
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/pmanager?characterEncoding=utf-8&serverTimezone=GMT%2B8
+    maxActive: 100
+    initialSize: 1
+    maxWait: 60000
+    test-on-borrow: true
+    test-on-return: false
+    time-between-eviction-runs-millis: 60000
+    min-evictable-idle-time-millis: 300000
+    max-pool-prepared-statement-per-connection-size: 20
+
