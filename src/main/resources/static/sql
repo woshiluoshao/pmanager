@@ -1,0 +1,25 @@
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for user_operation_log
+-- ----------------------------
+DROP TABLE IF EXISTS `user_operation_log`;
+CREATE TABLE `user_operation_log`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '操作日志id',
+  `userId` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '操作ID',
+  `username` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '操作人',
+  `module` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '执行模块',
+  `methods` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '模块注释',
+  `methodName` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '执行方法',
+  `acceptData` longtext CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT '请求内容',
+  `returnData` longtext CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT '操作内容',
+  `actionUrl` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '请求路径',
+  `serverIp` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '服务IP地址',
+  `visitIp` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '访问IP地址',
+  `createTime` datetime(0) DEFAULT NULL COMMENT '操作时间',
+  `comments` int(2) DEFAULT NULL COMMENT '执行描述（1:执行成功、2:执行失败）',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+SET FOREIGN_KEY_CHECKS = 1;

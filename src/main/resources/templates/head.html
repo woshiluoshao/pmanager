@@ -1,0 +1,29 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="header">
+    <nav id="pcTitle" class="navbar navbar-default navbar-fixed-top" style="color:#FFFFFF;background-color: #048FF2;height:100px; marign-left: 2%" role="navigation">
+        <div class="collapse navbar-collapse" id="navbar1">
+            <div class="nav navbar-nav" style="width:98%">
+                <div class="col-sm-9 ">
+         		<span style="cursor:pointer;" >
+         			<img th:src="@{/photo/back.jpg}" style="width: 100px;position: absolute;">
+	             	<h2 style="margin-left: 90px;">罗少科技简单测试平台</h2>
+	             </span>
+                </div>
+
+                <div class="col-sm-3 " style="float:right" >
+                    <ul class="nav navbar-nav navbar-right">
+                        <li style="margin-top: 25px;">
+                            <div class="dropdown navbar-right">
+
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+</div>
+</body>

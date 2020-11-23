@@ -4,9 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import jp.anno.NoStandParam;
 import jp.anno.StandJsonParam;
-import jp.db.dao.IDaoImpl;
 import jp.entity.UserOperationLogEntity;
 import jp.exception.CustomException;
+import jp.service.ThreadService;
 import jp.utils.CommonUtils;
 import jp.utils.DateUtils;
 import jp.utils.JsonUtils;
@@ -24,17 +24,13 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Objects;
-import java.util.concurrent.ThreadPoolExecutor;
 
 @Aspect
 @Component
 public class VisitAspect {
 
-    @Autowired(required = false)
-    ThreadPoolExecutor poolExecutor;
-
     @Autowired
-    IDaoImpl daoImpl;
+    ThreadService threadService;
 
     @Pointcut("@annotation(jp.anno.StandJsonParam)")
     public void standJsonPointCut() {
@@ -137,9 +133,7 @@ public class VisitAspect {
             return ResultVoUtil.error(code , msg);
         } finally {
             //插入日志(执行日志)
-            //poolExecutor.submit(()-> {
-                daoImpl.insertUserOperaLog(logEntity);
-           // });
+            threadService.runThread(logEntity);
         }
 
         return result;

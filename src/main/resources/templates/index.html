@@ -9,7 +9,7 @@
 
     <script type="text/javascript"  th:src="@{/bootstrap/bootstrap-3.3.7/js/bootstrap.min.js}"></script>
 
-    <style type="text/css">
+    <style th:inline="text">
         .drag{position: relative;width: 300px;height: 34px;background-color: #e8e8e8;line-height: 34px;}
         .bg{position: absolute;width: 40px;height: 100%;background-color: #7ac23c;}
         .text{position: absolute;width: 100%;margin: 0;text-align: center;}
@@ -20,31 +20,38 @@
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
+            /*background-color: white;*/
+            /*width: 400px;*/
         }
 
         input[type=‘text‘]{background:none;border:none;border-bottom:1px solid #ddd;}
         .inp{background:none;border:none;border-bottom:1px solid #ddd;outline:none;}
-
-
+        body{
+            background: url("[[@{/}]]photo/back.jpg");
+        }
     </style>
 </head>
-<body>
+<body >
+
 <div class="login">
     <div>
-        <table>
-            <tr>
-                <td style="float: right; ">账号:</td>
-                <td><input type="text" id="userId" size="30" placeholder="请输入账号" class="inp"></td>
-            </tr>
-            <tr >
-                <td style="float: right">密码:</td>
-                <td><input type="password" id="password" size="30" placeholder="请输入密码" class="inp"></td>
-            </tr>
-        </table>
-    </div>
-    <div>
-        <br>
-        <input type="button" style="width: 100%" value="登录" onclick="loginFun()">
+        <div>
+            <table>
+                <tr>
+                    <td style="float: right;color: #aedcdd">账号:</td>
+                    <td style="color: #aedcdd"><input type="text" id="userId" size="30" placeholder="请输入账号" class="inp"></td>
+                </tr>
+                <tr >
+                    <td style="float: right;color: #aedcdd ">密码:</td>
+                    <td style="color: #aedcdd"><input type="password" id="password" size="30" placeholder="请输入密码" class="inp"></td>
+                </tr>
+            </table>
+        </div>
+        <div>
+            <br>
+            <input type="button" style="width: 100%" value="登录" onclick="loginFun()">
+        </div>
+
     </div>
 <!--    <div class="drag">-->
 <!--        <div class="bg"></div>-->

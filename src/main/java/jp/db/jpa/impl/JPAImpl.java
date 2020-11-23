@@ -1,7 +1,7 @@
 package jp.db.jpa.impl;
 
 
-import jp.db.jpa.IJPADao;
+import jp.db.jpa.IJPAImpl;
 import org.hibernate.Session;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.query.internal.NativeQueryImpl;
@@ -13,7 +13,7 @@ import javax.persistence.PersistenceContext;
 import java.util.Map;
 
 @Repository
-public class JPADaoImpl implements IJPADao {
+public class JPAImpl implements IJPAImpl {
 
     @PersistenceContext
     private EntityManager entityManager;

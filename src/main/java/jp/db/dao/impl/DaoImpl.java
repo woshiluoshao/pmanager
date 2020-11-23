@@ -1,10 +1,9 @@
 package jp.db.dao.impl;
 
 import jp.db.dao.IDaoImpl;
-import jp.db.jpa.IJPADao;
+import jp.db.jpa.IJPAImpl;
 import jp.entity.UserOperationLogEntity;
 import jp.utils.CommonUtils;
-import jp.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +16,7 @@ import java.util.Map;
 public class DaoImpl implements IDaoImpl {
 
     @Autowired
-    IJPADao jpaDao;
+    IJPAImpl jpaDao;
 
     @Override
     public void insertUserOperaLog(UserOperationLogEntity logEntity) {

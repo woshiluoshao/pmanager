@@ -4,7 +4,7 @@ import org.hibernate.query.NativeQuery;
 
 import java.util.Map;
 
-public interface IJPADao {
+public interface IJPAImpl {
 
     /**
      *通过SQL命令执行查询
