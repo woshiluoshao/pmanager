@@ -17,3 +17,13 @@ spring:
     min-evictable-idle-time-millis: 300000
     max-pool-prepared-statement-per-connection-size: 20
 
+
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    jedis:
+      pool:
+        max-active: 100
+        max-idle: 10
+        max-wait: 100000
+

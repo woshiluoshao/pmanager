@@ -2,6 +2,7 @@ package jp.controller;
 
 import jp.anno.NoStandParam;
 import jp.anno.StandJsonParam;
+import jp.db.redis.RedisUtil;
 import jp.dto.LoginDto;
 import jp.enums.MessageEnum;
 import jp.utils.ResultVoUtil;
@@ -12,11 +13,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Controller
 public class LoginController {
+
+    @Resource
+    RedisUtil redisUtil;
 
     @RequestMapping(value = "/login", produces = "application/json;charset=UTF-8", method = RequestMethod.POST)
     @ResponseBody
@@ -27,6 +32,9 @@ public class LoginController {
             System.out.println("参数不完整");
             return ResultVoUtil.error(MessageEnum.E002, null, "账号", "密码");
         }
+
+        redisUtil.set("userInfo", loginDto);
+
         System.out.println("登录成功");
         return ResultVoUtil.success("登录成功");
     }
