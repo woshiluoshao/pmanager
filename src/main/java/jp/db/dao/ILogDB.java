@@ -2,7 +2,7 @@ package jp.db.dao;
 
 import jp.entity.UserOperationLogEntity;
 
-public interface IDaoImpl {
+public interface ILogDB {
 
     void insertUserOperaLog(UserOperationLogEntity logEntity);
 }

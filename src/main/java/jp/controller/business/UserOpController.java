@@ -1,42 +1,38 @@
-package jp.controller;
+package jp.controller.business;
 
 import jp.anno.NoStandParam;
 import jp.anno.StandJsonParam;
-import jp.db.redis.RedisUtil;
 import jp.dto.LoginDto;
-import jp.enums.MessageEnum;
+import jp.service.IUserService;
 import jp.utils.ResultVoUtil;
 import jp.vo.ResultVo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Controller
-public class LoginController {
+public class UserOpController {
 
-    @Resource
-    RedisUtil redisUtil;
+    @Autowired
+    IUserService userService;
 
-    @RequestMapping(value = "/login", produces = "application/json;charset=UTF-8", method = RequestMethod.POST)
+    @RequestMapping(value = "/login.json", produces = "application/json;charset=UTF-8", method = RequestMethod.POST)
     @ResponseBody
-    @NoStandParam(module = "内部访问日志", methods = "用户登录日志")
+    @NoStandParam(module = "内部访问日志", methods = "用户登录")
     public ResultVo loginMethod(LoginDto loginDto) {
+        return userService.loginExe(loginDto);
+    }
 
-        if(loginDto == null || StringUtils.isEmpty(loginDto.getUserId()) || StringUtils.isEmpty(loginDto.getPassword())) {
-            System.out.println("参数不完整");
-            return ResultVoUtil.error(MessageEnum.E002, null, "账号", "密码");
-        }
-
-        redisUtil.set("userInfo", loginDto);
-
-        System.out.println("登录成功");
-        return ResultVoUtil.success("登录成功");
+    @RequestMapping(value = "/register.json", produces = "application/json;charset=UTF-8", method = RequestMethod.POST)
+    @ResponseBody
+    @NoStandParam(module = "内部访问日志", methods = "用户注册")
+    public ResultVo registerMethod(LoginDto loginDto) {
+        return userService.registerExe(loginDto);
     }
 
     @RequestMapping(value = "/test", produces = "application/json;charset=UTF-8", method = RequestMethod.POST)

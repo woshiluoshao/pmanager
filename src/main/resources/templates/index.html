@@ -51,6 +51,9 @@
             <br>
             <input type="button" style="width: 100%" value="登录" onclick="loginFun()">
         </div>
+        <div>
+            <a th:href="@{'/register'}">没有账号？点击注册！</a>
+        </div>
 
     </div>
 <!--    <div class="drag">-->
@@ -64,12 +67,12 @@
 <script type="text/javascript"  th:src="@{/common/common.js}"></script>
 <script>
 
-    var basePath = '[[${#httpServletRequest.getScheme() + "://" + #httpServletRequest.getServerName() + ":" + #httpServletRequest.getServerPort() + #httpServletRequest.getContextPath()}]]';
+    const basePath = '[[${#httpServletRequest.getScheme() + "://" + #httpServletRequest.getServerName() + ":" + #httpServletRequest.getServerPort() + #httpServletRequest.getContextPath()}]]';
 
     function loginFun() {
 
-        var userId= $("#userId").val();
-        var password = $("#password").val();
+        const userId= $("#userId").val();
+        const password = $("#password").val();
         if(!userId){
             $.shotTotal("请输入账号！", "error");
             return false;
@@ -82,19 +85,25 @@
         $.showProgressBar("登录中...");
 
         $.ajax({
-            url     : basePath + "/login",
+            url     : basePath + "/login.json",
             dataType:"json",
             type    :"post",
             data    : {
-
                 'userId':userId,
                 'password':password
             },
             success:function (result) {
                 $.closeProgressBar();
-                var code = result.code;
+                const code = result.code;
+                const msg = result.msg;
+
                 if(code == "0000") {
-                    $.shotTotal("登陆成功", "success");
+                    $.shotTotal("登陆成功,页面跳转中", "success");
+                    setTimeout(function () {
+                        location.href = basePath + "/main";
+                    }, 1000)
+                } else {
+                    $.shotTotal(msg, "error");
                 }
             },
             error:function (result) {
@@ -105,7 +114,7 @@
         })
 
     }
-    // var $ = function(selector){
+    // const $ = function(selector){
     //         return document.querySelector(selector);
     //     },
     //     box = $('.drag'),//容器
@@ -115,13 +124,13 @@
     //     done = false;//是否通过验证
     //
     // btn.onmousedown = function(e){
-    //     var e = e || window.event;
-    //     var posX = e.clientX - this.offsetLeft;
+    //     const e = e || window.event;
+    //     const posX = e.clientX - this.offsetLeft;
     //
     //     btn.onmousemove = function(e){
-    //         var e = e || event;
+    //         const e = e || event;
     //
-    //         var x = e.clientX - posX;
+    //         const x = e.clientX - posX;
     //
     //         this.style.left = x + 'px';
     //         bg.style.width = this.offsetLeft + 'px';

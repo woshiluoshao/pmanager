@@ -1,6 +1,6 @@
 package jp.service;
 
-import jp.db.dao.IDaoImpl;
+import jp.db.dao.ILogDB;
 import jp.entity.UserOperationLogEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 public class ThreadService {
 
     @Autowired
-    IDaoImpl daoImpl;
+    ILogDB daoImpl;
 
     @Async(value = "multiThread")
     public void runThread(UserOperationLogEntity logEntity) {

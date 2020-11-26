@@ -1,6 +1,6 @@
 package jp.db.dao.impl;
 
-import jp.db.dao.IDaoImpl;
+import jp.db.dao.ILogDB;
 import jp.db.jpa.IJPAImpl;
 import jp.entity.UserOperationLogEntity;
 import jp.utils.CommonUtils;
@@ -13,7 +13,7 @@ import java.util.Map;
 
 @Service
 @Transactional
-public class DaoImpl implements IDaoImpl {
+public class LogDBImpl implements ILogDB {
 
     @Autowired
     IJPAImpl jpaDao;
