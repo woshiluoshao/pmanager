@@ -113,4 +113,12 @@ public class JPAImpl implements IJPAImpl {
         return query.getSingleResult();
     }
 
+    @Override
+    public NativeQuery queryByParam(String sql, Map<String, Object> param) {
+        NativeQuery query = getHibernateSession().createNativeQuery(sql).setProperties(param);
+        query.unwrap(NativeQueryImpl.class);
+
+        return query;
+    }
+
 }

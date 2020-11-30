@@ -4,12 +4,16 @@ import jp.db.dao.ILoginDB;
 import jp.db.jpa.IJPAImpl;
 import jp.dto.LoginDto;
 import jp.entity.UserListEntity;
+import jp.entity.UserLoginLogEntity;
 import jp.utils.CommonUtils;
 import jp.utils.DateUtils;
+import org.hibernate.query.NativeQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,5 +68,96 @@ public class LoginDBImpl implements ILoginDB {
         }
 
         return cnt;
+    }
+
+
+    public List<UserLoginLogEntity> selectLoginLog(Map<String, Object> param) {
+
+        List<UserLoginLogEntity> logList = null;
+        try {
+            String sql = "";
+            sql += " select *                  ";
+            sql += "   from user_login_log     ";
+            sql += "  where 1 = 1              ";
+
+            if(!StringUtils.isEmpty(param.get("startTime"))) {
+                sql +="and createTime >= :startTime ";
+            }
+
+            if(!StringUtils.isEmpty(param.get("endTime"))) {
+                sql +="and createTime < :endTime ";
+            }
+
+            if(Integer.valueOf(param.get("action").toString()) > 0) {
+                sql +="and action = :action";
+            }
+
+            sql += "   order by id, createTime ";
+
+            int limit = (int)param.get("limit");
+            int page = (int)param.get("page");
+
+            if(limit >0) {
+                sql += " limit  " + ((page -1) * limit) + "," + limit;
+            }
+
+            Map<String, Object> paramSql = new HashMap<String, Object>();
+            if(!StringUtils.isEmpty(param.get("startTime"))) {
+                paramSql.put("startTime"   , CommonUtils.objectToStr(param.get("startTime")));
+            }
+            if(!StringUtils.isEmpty(param.get("endTime"))) {
+                paramSql.put("endTime"   , CommonUtils.objectToStr(param.get("endTime")));
+            }
+
+            if(Integer.valueOf(param.get("action").toString()) > 0) {
+                paramSql.put("action"   , Integer.valueOf(param.get("action").toString()));
+            }
+
+            logList = jpaDao.queryListByParam(sql, UserLoginLogEntity.class, paramSql);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return logList;
+    }
+
+    public int countLoginLog(Map<String, Object> param) {
+
+        String sql = "";
+
+        sql += " select count(1)           ";
+        sql += "   from user_login_log     ";
+        sql += "  where 1 = 1              ";
+
+        if(!StringUtils.isEmpty(param.get("startTime"))) {
+            sql +="and createTime >= :startTime ";
+        }
+
+        if(!StringUtils.isEmpty(param.get("endTime"))) {
+            sql +="and createTime < :endTime ";
+        }
+
+        if(Integer.valueOf(param.get("action").toString()) > 0) {
+            sql +="and action = :action";
+        }
+
+        Map<String, Object> paramSql = new HashMap<String, Object>();
+        if(!StringUtils.isEmpty(param.get("startTime"))) {
+            paramSql.put("startTime"   , CommonUtils.objectToStr(param.get("startTime")));
+        }
+        if(!StringUtils.isEmpty(param.get("endTime"))) {
+            paramSql.put("endTime"   , CommonUtils.objectToStr(param.get("endTime")));
+        }
+
+        if(Integer.valueOf(param.get("action").toString()) > 0) {
+            paramSql.put("action"   , Integer.valueOf(param.get("action").toString()));
+        }
+
+        NativeQuery query = jpaDao.queryByParam(sql, param);
+
+        BigInteger cnt = (BigInteger)query.getSingleResult();
+        return cnt.intValue();
     }
 }

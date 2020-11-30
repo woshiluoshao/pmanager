@@ -56,4 +56,12 @@ public interface IJPAImpl {
      * @return
      */
     Object queryByParam(String sql, Class target, Map<String, Object> param);
+
+    /**
+     * 检索单条数据
+     * @param sql
+     * @param param
+     * @return
+     */
+    NativeQuery queryByParam(String sql, Map<String, Object> param);
 }

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <script type="text/javascript"  th:src="@{/jquery-3.4.0/jquery-3.4.0.min.js}"></script>
+    <link th:href="@{/layui/css/layui.css}" rel="stylesheet">
+
+    <style th:inline="text">
+        table{border-spacing: 10px 30px;}
+        tr {
+            display: block;
+            /*将tr设置为块体元素*/
+            margin: 3px 0;
+            /*设置tr间距为2px*/
+        }
+
+        .layui-tab-content {
+            height: 200vh;
+        }
+
+    </style>
+</head>
+<body>
+
+<div style="margin-left: 1%;margin-top: 1%">
+    <div>
+        <table>
+             <tr>
+                 <td>时间：</td>
+                 <td>
+                     <input type="date" class="form-control" name="birth" id="startTime"> ~
+                     <input type="date" class="form-control" name="birth" id="endTime">
+                 </td>
+             </tr>
+            <tr>
+                <td>操作：</td>
+                <td>
+                    <select id="action" value="0">
+                        <option value="0">ALL</option>
+                        <option value="1">登录</option>
+                        <option value="2">注册</option>
+                        <option value="3">退出</option>
+                    </select>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div style="margin-top: 1%;float: right;margin-right:2%;">
+        <input type="button" style="width: 100px" value="重置" onclick="reset()">
+        <input type="button" style="width: 100px" value="检索" onclick="search()">
+    </div>
+</div>
+<div style="margin-top:3%;margin-left:1%;margin-right:2%;">
+    <table class="layui-hide" id="test" lay-filter="table"></table>
+</div>
+
+<script type="text/javascript"  th:src="@{/common/common.js}"></script>
+<script th:src="@{/layui/layui.js}"></script>
+<script>
+
+    const basePath = '[[${#httpServletRequest.getScheme() + "://" + #httpServletRequest.getServerName() + ":" + #httpServletRequest.getServerPort() + #httpServletRequest.getContextPath()}]]';
+
+    $(function () {
+        search();
+    });
+
+    function reset() {
+        $("#startTime").val("");
+        $("#endTime").val("");
+        $('#action').val(0);
+        search();
+    }
+
+    function search() {
+
+        const startTime = $("#startTime").val();
+        const endTime = $("#endTime").val();
+        const action = $("#action").find("option:selected").val();
+
+        const param = "startTime="+startTime + "&endTime="+endTime+"&action="+action;
+
+        layui.use('table', function(){
+            var table = layui.table;
+
+            table.render({
+                elem: '#test'
+                ,url: basePath +'/selectLog.json?'+param
+                ,cols: [
+                    [
+                        {field:'id',title: 'ID', sort: true}
+                        ,{field:'userId', title: '账户'}
+                        ,{field:'action', title: '操作', sort: true}
+                        ,{field:'comments', title: '备注'}
+                        ,{field:'visitIp', title: '访问IP'}
+                        ,{field:'createTime', title: '创建时间', sort: true}
+                    ]
+                ]
+                ,page: true   //开启分页
+                ,limit:10   //默认十条数据一页
+                ,limits:[10,20]  //数据分页条
+            });
+        });
+    }
+
+
+
+
+</script>
+</body>
+</html>

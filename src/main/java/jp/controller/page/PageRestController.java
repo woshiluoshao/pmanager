@@ -2,7 +2,6 @@ package jp.controller.page;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +27,11 @@ public class PageRestController {
     @RequestMapping(value = "/main")
     public String mainPage() {
         return "main";
+    }
+
+    @RequestMapping(value = "/userLog")
+    public String logPage() {
+        return "userLog";
     }
 
 }
