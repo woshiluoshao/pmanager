@@ -56,6 +56,10 @@
     <table class="layui-hide" id="test" lay-filter="table"></table>
 </div>
 
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
 <script type="text/javascript"  th:src="@{/common/common.js}"></script>
 <script th:src="@{/layui/layui.js}"></script>
 <script>
@@ -89,23 +93,44 @@
                 ,url: basePath +'/selectLog.json?'+param
                 ,cols: [
                     [
-                        {field:'id',title: 'ID', sort: true}
-                        ,{field:'userId', title: '账户'}
-                        ,{field:'action', title: '操作', sort: true}
-                        ,{field:'comments', title: '备注'}
-                        ,{field:'visitIp', title: '访问IP'}
-                        ,{field:'createTime', title: '创建时间', sort: true}
+                        {field:'id',title: 'ID', align: 'center', sort: true}
+                        ,{field:'userId', align: 'center', title: '账户'}
+                        ,{field:'action', title: '操作', align: 'center', sort: true}
+                        ,{field:'comments', title: '备注', align: 'center', }
+                        ,{field:'visitIp', title: '访问IP', align: 'center', }
+                        ,{field:'createTime', title: '创建时间', align: 'center', sort: true}
+                        ,{fixed: 'right', title:'操作', align: 'center', toolbar: '#barDemo'}
                     ]
                 ]
                 ,page: true   //开启分页
                 ,limit:10   //默认十条数据一页
                 ,limits:[10,20]  //数据分页条
             });
+
+            table.on('tool(table)', function(obj){
+                const data = obj.data;
+                if(obj.event === 'del'){
+                    layer.confirm('真的删除行么', function(index){
+                        //走向后端进行数据的删除
+                        obj.del();
+                        layer.close(index);
+
+                    });
+                } else if(obj.event === 'edit'){
+                    layer.prompt({
+                        formType: 2
+                        ,value: data.email
+                    }, function(value, index){
+                        obj.update({
+                            email: value
+                        });
+                        layer.close(index);
+                    });
+                }
+            });
+
         });
     }
-
-
-
 
 </script>
 </body>
