@@ -18,6 +18,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +33,7 @@ public class UserServiceImpl implements IUserService {
     ILoginDB loginDB;
 
     @Override
-    public ResultVo loginExe(LoginDto loginDto) {
+    public ResultVo loginExe(LoginDto loginDto, HttpServletRequest request) {
 
         if(loginDto == null || StringUtils.isEmpty(loginDto.getUserId()) || StringUtils.isEmpty(loginDto.getPassword())) {
             System.out.println("参数不完整");
@@ -41,6 +42,12 @@ public class UserServiceImpl implements IUserService {
 
         UserListEntity model = loginDB.selectUserInfoById(loginDto.getUserId());
         if(model == null)  return ResultVoUtil.error(MessageEnum.E011);
+
+        if(!model.getPassword().equals(loginDto.getPassword())) return ResultVoUtil.error(MessageEnum.E012);
+
+        //将账号计入缓存中
+        HttpSession session = request.getSession();
+        session.setAttribute("userId", loginDto.getUserId());
 
         redisUtil.set("userInfo", JSON.toJSON(loginDto), 1800);
 
@@ -60,6 +67,16 @@ public class UserServiceImpl implements IUserService {
         int cnt = loginDB.insertUserInfo(loginDto);
         if(cnt > 0)  return ResultVoUtil.success("注册成功");
         return ResultVoUtil.error(MessageEnum.E013);
+    }
+
+    @Override
+    public ResultVo selectUserList(HttpServletRequest request) {
+
+        String userId = request.getParameter("userId");
+        List<UserListEntity> list = loginDB.selectUserList(userId);
+        if(list != null && list.size() > 0) return ResultVoUtil.success("查询成功", JSON.toJSONString(list));
+
+        return ResultVoUtil.error(MessageEnum.W001);
     }
 
     public Layui selectLogAll(HttpServletRequest request) {

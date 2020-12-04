@@ -2,9 +2,11 @@ package jp.interceptor;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import jp.anno.NoStandParam;
-import jp.anno.StandJsonParam;
+import jp.anno.InnerAnnounce;
+import jp.anno.LoginAnnounce;
+import jp.anno.OuterAnnounce;
 import jp.entity.UserOperationLogEntity;
+import jp.enums.MessageEnum;
 import jp.exception.CustomException;
 import jp.service.ThreadService;
 import jp.utils.CommonUtils;
@@ -32,25 +34,36 @@ public class VisitAspect {
     @Autowired
     ThreadService threadService;
 
-    @Pointcut("@annotation(jp.anno.StandJsonParam)")
-    public void standJsonPointCut() {
+    @Pointcut("@annotation(jp.anno.OuterAnnounce)")
+    public void outerPointCut() {
     }
 
-    @Pointcut("@annotation(jp.anno.NoStandParam)")
-    public void pointCut() {
+    @Pointcut("@annotation(jp.anno.InnerAnnounce)")
+    public void innerPointCut() {
     }
 
-    @Around("standJsonPointCut()")
-    public Object standAround(ProceedingJoinPoint joinPoint) {
+    @Pointcut("@annotation(jp.anno.LoginAnnounce)")
+    public void loginPointCut() {
+    }
+
+    @Around("outerPointCut()")
+    public Object outerAround(ProceedingJoinPoint joinPoint) {
 
         Object result = aspectFormVisit(joinPoint, 1);
         return result;
     }
 
-    @Around("pointCut()")
-    public Object around(ProceedingJoinPoint joinPoint) {
+    @Around("innerPointCut()")
+    public Object innerAround(ProceedingJoinPoint joinPoint) {
 
         Object result = aspectFormVisit(joinPoint, 2);
+        return result;
+    }
+
+    @Around("loginPointCut()")
+    public Object loginAround(ProceedingJoinPoint joinPoint) {
+
+        Object result = aspectFormVisit(joinPoint, 3);
         return result;
     }
 
@@ -77,6 +90,8 @@ public class VisitAspect {
         System.out.println("访问接口方法:" + methodName);
         logEntity.setMethodName(methodName);
 
+        logEntity.setCreateTime(DateUtils.getCurrentTime());
+
         StringBuilder module = new StringBuilder();
         StringBuilder methods = new StringBuilder();
 
@@ -93,7 +108,7 @@ public class VisitAspect {
             Method method = tarClass.getDeclaredMethod(methodName, methodSignature.getParameterTypes());
 
             if (flag == 1) {
-                StandJsonParam annotation = method.getAnnotation(StandJsonParam.class);
+                OuterAnnounce annotation = method.getAnnotation(OuterAnnounce.class);
                 module = new StringBuilder(annotation.module());
                 methods = new StringBuilder(annotation.methods());
 
@@ -101,14 +116,32 @@ public class VisitAspect {
                 String acceptData = JsonUtils.streamToJsonData(request);
                 System.out.println("acceptData:" + acceptData);
                 logEntity.setAcceptData(acceptData);
-            } else {
-                NoStandParam annotation = method.getAnnotation(NoStandParam.class);
+            } else if (flag == 2) {
+                InnerAnnounce annotation = method.getAnnotation(InnerAnnounce.class);
                 module = new StringBuilder(annotation.module());
                 methods = new StringBuilder(annotation.methods());
                 //将参数解析成JSON
-                String acceptData = JSON.toJSONString(arguments);
+                String acceptData = JSON.toJSONString(arguments[0]);
                 System.out.println("acceptData:" + acceptData);
                 logEntity.setAcceptData(acceptData);
+            } else if (flag == 3) {
+
+                LoginAnnounce annotation = method.getAnnotation(LoginAnnounce.class);
+                module = new StringBuilder(annotation.module());
+                methods = new StringBuilder(annotation.methods());
+                //将参数解析成JSON
+                String acceptData = JSON.toJSONString(arguments[0]);
+                System.out.println("acceptData:" + acceptData);
+                logEntity.setAcceptData(acceptData);
+                //将参数解析成JSON
+                String userId = JSONObject.parseObject(JSON.toJSONString(arguments[0])).getString("userId");
+                String sessionUserId = CommonUtils.objectToStr(request.getSession().getAttribute("userId"));
+
+//                if(userId.equals(sessionUserId)) {
+//                    result = ResultVoUtil.error(MessageEnum.W002);
+//                    logEntity.setReturnData(JSON.toJSONString(result));
+//                    return result;
+//                }
             }
 
             System.out.println("module:" + module);
@@ -120,7 +153,7 @@ public class VisitAspect {
             System.out.println("resultData:" + JSONObject.toJSONString(result));
             logEntity.setReturnData(JSONObject.toJSONString(result));
             logEntity.setComments(1);
-            logEntity.setCreateTime(DateUtils.getCurrentTime());
+
 
         } catch (Throwable throwable) {
             //throwable.printStackTrace();
@@ -130,7 +163,7 @@ public class VisitAspect {
             logEntity.setReturnData(JSONObject.toJSONString(ResultVoUtil.error(code , msg)));
             logEntity.setCreateTime(DateUtils.getCurrentTime());
             logEntity.setComments(2);
-            return ResultVoUtil.error(code , msg);
+            result = ResultVoUtil.error(code , msg);
         } finally {
             //插入日志(执行日志)
             threadService.runThread(logEntity);

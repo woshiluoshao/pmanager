@@ -1,6 +1,7 @@
 package jp.controller.business;
 
-import jp.anno.NoStandParam;
+import jp.anno.InnerAnnounce;
+import jp.anno.LoginAnnounce;
 import jp.dto.LoginDto;
 import jp.service.IUserService;
 import jp.utils.Layui;
@@ -19,24 +20,50 @@ public class UserOpController {
     @Autowired
     IUserService userService;
 
+    /**
+     * 登录
+     * @param loginDto
+     * @return
+     */
     @RequestMapping(value = "/login.json", produces = "application/json;charset=UTF-8", method = RequestMethod.POST)
     @ResponseBody
-    @NoStandParam(module = "内部访问日志", methods = "用户登录")
-    public ResultVo loginMethod(LoginDto loginDto) {
-        return userService.loginExe(loginDto);
+    @LoginAnnounce(module = "内部访问", methods = "用户登录")
+    public ResultVo loginMethod(LoginDto loginDto, HttpServletRequest request) {
+        return userService.loginExe(loginDto, request);
     }
 
+    /**
+     * 注册
+     * @param loginDto
+     * @return
+     */
     @RequestMapping(value = "/register.json", produces = "application/json;charset=UTF-8", method = RequestMethod.POST)
     @ResponseBody
-    @NoStandParam(module = "内部访问日志", methods = "用户注册")
+    @InnerAnnounce(module = "内部访问", methods = "用户注册")
     public ResultVo registerMethod(LoginDto loginDto) {
         return userService.registerExe(loginDto);
     }
 
+    /**
+     * 用户登录注册退出日志查询
+     * @param request
+     * @return
+     */
     @RequestMapping(value = "/selectLog.json", produces = "application/json;charset=UTF-8", method = RequestMethod.GET)
     @ResponseBody
     public Layui selectLogMethod(HttpServletRequest request) {
         return userService.selectLogAll(request);
+    }
+
+    /**
+     * 查询用户列表
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/selectOnline.json", produces = "application/json;charset=UTF-8", method = RequestMethod.POST)
+    @ResponseBody
+    public ResultVo selectUserListMethod(HttpServletRequest request) {
+        return userService.selectUserList(request);
     }
 
 

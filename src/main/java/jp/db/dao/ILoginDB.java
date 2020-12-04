@@ -13,4 +13,5 @@ public interface ILoginDB {
     int insertUserInfo(LoginDto loginDto);
     List<UserLoginLogEntity> selectLoginLog(Map<String, Object> param);
     int countLoginLog(Map<String, Object> param);
+    List<UserListEntity> selectUserList(String userId);
 }

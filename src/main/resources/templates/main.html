@@ -13,12 +13,20 @@
 
     <div class="layui-header">
         <div style="margin: 0 auto;text-align:center;font-size: 30px;color: #00C1B3"><p>简单测试平台</p></div>
-        <div class="layui-logo"><img th:src="@{'/photo/logo_1.png'}" style="width: 67px;">罗少科技</div>
+        <div class="layui-logo"><img th:src="@{'/photo/mlog.png'}" class="img-responsive"></div>
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item">
-                <a href="javascript:;">退出</a>
+                <a href="javascript:;">
+                    <img th:src="@{'/photo/plog.png'}" class="layui-nav-img">
+                    <span th:text="${sessionUserId}"></span>
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="">基本资料</a></dd>
+                    <dd><a href="">安全设置</a></dd>
+                </dl>
             </li>
         </ul>
+        <div></div>
     </div>
 
     <div class="layui-side layui-bg-black" >
@@ -40,8 +48,10 @@
                         <dd><a href="#" data-url="fjrs_compare" data-title="图像对比识别"  data-id="11" class="site-demo-active" data-type="tabAdd">图像对比识别</a></dd>
                     </dl>
                 </li>
-                <!--<li class="layui-nav-item"><a href="">云市场</a></li>
-                <li class="layui-nav-item"><a href="">发布商品</a></li>-->
+                <li class="layui-nav-item">
+                    <a href="#" data-url="chart" data-title="聊天"  data-id="7" class="site-demo-active" data-type="tabAdd">聊天</a>
+                </li>
+                <li class="layui-nav-item"><a href="">发布商品</a></li>
             </ul>
         </div>
     </div>

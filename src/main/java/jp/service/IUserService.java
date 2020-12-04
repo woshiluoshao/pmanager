@@ -8,7 +8,9 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface IUserService {
 
-    ResultVo loginExe(LoginDto loginDto);
+    ResultVo loginExe(LoginDto loginDto, HttpServletRequest request);
     ResultVo registerExe(LoginDto loginDto);
+    ResultVo selectUserList(HttpServletRequest request);
     Layui selectLogAll(HttpServletRequest request);
+
 }

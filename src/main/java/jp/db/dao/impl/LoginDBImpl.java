@@ -160,4 +160,20 @@ public class LoginDBImpl implements ILoginDB {
         BigInteger cnt = (BigInteger)query.getSingleResult();
         return cnt.intValue();
     }
+
+    @Override
+    public List<UserListEntity> selectUserList(String userId) {
+
+        String sql = "";
+        sql += " select *                 ";
+        sql += "   from user_list         ";
+        sql += "  where userId != :userId " +
+                " order by createTime     ";
+
+        Map<String, Object> paramSql = new HashMap<String, Object>();
+        paramSql.put("userId"   , CommonUtils.objectToStr(userId));
+        List<UserListEntity> userList = jpaDao.queryListByParam(sql,UserListEntity.class, paramSql);
+
+        return userList;
+    }
 }
