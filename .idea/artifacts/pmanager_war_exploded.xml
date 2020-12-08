@@ -98,6 +98,9 @@
           <element id="library" level="project" name="Maven: com.github.penggle:kaptcha:2.3.2" />
           <element id="library" level="project" name="Maven: javax.servlet:javax.servlet-api:4.0.1" />
           <element id="library" level="project" name="Maven: com.jhlabs:filters:2.0.235-1" />
+          <element id="library" level="project" name="Maven: org.springframework.boot:spring-boot-starter-websocket:2.3.5.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-messaging:5.2.10.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-websocket:5.2.10.RELEASE" />
         </element>
       </element>
       <element id="directory" name="META-INF">

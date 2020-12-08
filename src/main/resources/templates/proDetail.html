@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <script type="text/javascript"  th:src="@{/jquery-3.4.0/jquery-3.4.0.min.js}"></script>
+    <link th:href="@{/bootstrap/bootstrap-3.3.7/css/bootstrap.min.css}" rel="stylesheet" type="text/css" >
+
+    <script type="text/javascript"  th:src="@{/bootstrap/bootstrap-3.3.7/js/bootstrap.min.js}"></script>
+    <link th:href="@{/layui/css/layui.css}" rel="stylesheet">
+
+    <style th:inline="text">
+        table{border-spacing: 10px 30px;}
+        tr {
+            display: block;
+            /*将tr设置为块体元素*/
+            margin: 3px 0;
+            /*设置tr间距为2px*/
+        }
+
+        td {
+            text-align: right;
+        }
+
+        .layui-tab-content {
+            height: 200vh;
+        }
+
+    </style>
+</head>
+<body>
+
+<div style="margin-top:3%;margin-left:1%;margin-right:2%;">
+    <table class="layui-hide" id="test" lay-filter="table"></table>
+</div>
+
+<div id="addmain" style="display: none;">
+    <table style="margin-left: 2%; margin-top: 1%">
+        <tr>
+            <td style="width: 90px;">
+                开发者：
+            </td>
+            <td>
+                <input type="text" readonly="readonly" th:value="${session.userId}" style="width:500px;height:30px;" name="director" id="director">
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 90px;">
+                工程<label style="color: red">*</label>：
+            </td>
+            <td>
+                <input type="text" style="width:500px;height:30px;" name="project" id="project">
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 90px;">
+                工程名<label style="color: red">*</label>：
+            </td>
+            <td>
+                <input type="text" style="width:500px;height:30px;" name="projectName" id="projectName">
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 90px;">
+                部署类型：
+            </td>
+            <td>
+                <input type="text" style="width:500px;height:30px;" name="deployType" id="deployType">
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 90px;">
+                开发工具<label style="color: red">*</label>：
+            </td>
+            <td>
+                <input type="text" style="width:500px;height:30px;" name="developmentTool" id="developmentTool">
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 90px;">
+                开发架构<label style="color: red">*</label>：
+            </td>
+            <td>
+                <input type="text" style="width:500px;height:30px;" name="developmentArchitect" id="developmentArchitect">
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 90px;">
+                功能点<label style="color: red">*</label>：
+            </td>
+            <td>
+                <textarea  type="text" style="width:500px;" rows="5" name="functionPoint" id="functionPoint"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 90px;">
+                备注：
+            </td>
+            <td>
+                <textarea type="text" style="width:500px;" rows="3" name="comments" id="comments"></textarea>
+            </td>
+        </tr>
+    </table>
+
+</div>
+
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="addInterface">新增接口</button>
+        <button class="layui-btn layui-btn-sm" lay-event="delInterface">删除接口</button>
+    </div>
+</script>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script type="text/javascript"  th:src="@{/common/common.js}"></script>
+<script th:src="@{/layui/layui.js}"></script>
+<script>
+
+    const basePath = '[[${#httpServletRequest.getScheme() + "://" + #httpServletRequest.getServerName() + ":" + #httpServletRequest.getServerPort() + #httpServletRequest.getContextPath()}]]';
+
+    $(function () {
+        search();
+    });
+
+    function search() {
+
+        layui.use('table', function(){
+            var table = layui.table;
+
+            table.render({
+                elem: '#test'
+                ,url: basePath +'/interfaceSelect.json'
+                ,toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+                ,cols: [
+                    [
+                        {type: 'checkbox', fixed: 'left'}
+
+                        // ,{field:'director', align: 'center', title: '开发者'}
+                        ,{field:'project', title: '项目', align: 'center'}
+                        ,{field:'projectName', title: '项目名', align: 'center'}
+                        ,{field:'deployType', title: '部署类型', align: 'center', }
+                        ,{field:'developmentTool', title: '开发工具', align: 'center', }
+                        ,{field:'developmentArchitect', title: '开发架构', align: 'center', sort: true}
+                        // ,{field:'comments', title: '备注', align: 'center', sort: true}
+                        ,{field:'createTime', title: '创建时间', align: 'center', format: 'yyyy-MM-dd HH:mm:ss'}
+                        // ,{field:'updateTime', title: '更新时间', align: 'center', }
+                        ,{fixed: 'right', title:'操作', align: 'center', toolbar: '#barDemo'}
+                    ]
+                ]
+                ,page: true   //开启分页
+                ,limit:10   //默认十条数据一页
+                ,limits:[10,20]  //数据分页条
+            });
+
+            table.on('tool(table)', function(obj){
+                const data = obj.data;
+                if(obj.event === 'del'){
+                    layer.confirm('真的删除行么', function(index){
+                        //走向后端进行数据的删除
+                        obj.del();
+                        layer.close(index);
+
+                    });
+                } else if(obj.event === 'edit'){
+                    layer.prompt({
+                        formType: 2
+                        ,value: data.email
+                    }, function(value, index){
+                        obj.update({
+                            email: value
+                        });
+                        layer.close(index);
+                    });
+                }
+            });
+
+            //头工具栏事件
+            table.on('toolbar(table)', function(obj){
+                const checkStatus = table.checkStatus(obj.config.id);
+                switch(obj.event){
+                    case 'addInterface':
+                        //弹出模态框
+                        openModel();
+                        break;
+                    case 'getCheckLength':
+                        var data = checkStatus.data;
+                        layer.msg('选中了：'+ data.length + ' 个');
+                        break;
+                    case 'isAll':
+                        layer.msg(checkStatus.isAll ? '全选': '未全选');
+                        break;
+
+                    //自定义头工具栏右侧图标 - 提示
+                    case 'LAYTABLE_TIPS':
+                        layer.alert('这是工具栏右侧自定义的一个图标按钮');
+                        break;
+                };
+            });
+
+        });
+    }
+
+    //弹出模态库
+    function openModel() {
+        layer.open({
+            type: 1,
+            title: '接口信息',
+            area: ['700px', '500px'],
+            shadeClose: false, //点击遮罩关闭
+            content: $('#addmain'),
+            offset: '50px',
+            btn: ['确定', '取消'],
+            yes: function(index, layero) {
+                interExe();
+
+            },
+            cancel: function () {
+                return;
+            },
+            end: function () {
+                $('#addmain').css("display", "none");
+            }
+        });
+    }
+
+    function interExe() {
+
+        const director = $("#director").val();
+        const project = $("#project").val();
+        const projectName = $("#projectName").val();
+        const deployType = $("#deployType").val();
+        const developmentTool = $("#developmentTool").val();
+        const developmentArchitect = $("#developmentArchitect").val();
+        const functionPoint = $("#functionPoint").val();
+        const comments = $("#comments").val();
+
+        if(!project) {
+            layer.msg("工程不能为空！", { time :1000});
+            return;
+        }
+        if(!projectName) {
+            layer.msg("工程名不能为空！", { time :1000});
+            return;
+        }
+
+        if(!developmentTool) {
+            layer.msg("开发工具不能为空！", { time :1000});
+            return;
+        }
+
+        if(!developmentArchitect) {
+            layer.msg("开发架构不能为空！", { time :1000});
+            return;
+        }
+
+        if(!functionPoint) {
+            layer.msg("功能描述不能为空！", { time :1000});
+            return;
+        }
+
+        const param = {
+
+            "director":director,
+            "project":project,
+            "projectName":projectName,
+            "deployType":deployType,
+            "developmentTool":developmentTool,
+            "developmentArchitect":developmentArchitect,
+            "functionPoint":functionPoint,
+            "comments":comments
+        }
+
+        //连接后端进行数据插入
+        //ajaxPostNoData(basePath + "/interfaceAdd.json", param);
+        $.showProgressBar("处理中...");
+        $.ajax({
+            url     : basePath + "/interfaceAdd.json",
+            dataType:"json",
+            type    :"post",
+            async   : false,
+            data    : param,
+            success:function (result) {
+                $.closeProgressBar();
+                const code = result.code;
+                const msg = result.msg;
+
+                if(code == "0000") {
+                    $.shotTotal(msg, "success");
+                } else {
+                    $.shotTotal(msg, "error");
+                }
+            },
+            error:function (result) {
+                $.closeProgressBar();
+                $.shotTotal(result, "error");
+            }
+
+        })
+    }
+
+</script>
+</body>
+</html>

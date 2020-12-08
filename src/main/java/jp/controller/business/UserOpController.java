@@ -3,6 +3,7 @@ package jp.controller.business;
 import jp.anno.InnerAnnounce;
 import jp.anno.LoginAnnounce;
 import jp.dto.LoginDto;
+import jp.service.IInterfaceService;
 import jp.service.IUserService;
 import jp.utils.Layui;
 import jp.vo.ResultVo;
@@ -19,6 +20,9 @@ public class UserOpController {
 
     @Autowired
     IUserService userService;
+
+    @Autowired
+    IInterfaceService interfaceService;
 
     /**
      * 登录
@@ -66,6 +70,24 @@ public class UserOpController {
         return userService.selectUserList(request);
     }
 
+
+    //region 接口信息操作
+
+    @RequestMapping(value = "/interfaceSelect.json", produces = "application/json;charset=UTF-8", method = RequestMethod.GET)
+    @ResponseBody
+    public Layui interfaceSelectMethod(HttpServletRequest request) {
+        return interfaceService.selectPerResInterface(request);
+    }
+
+
+    @RequestMapping(value = "/interfaceAdd.json", produces = "application/json;charset=UTF-8", method = RequestMethod.POST)
+    @ResponseBody
+    public ResultVo interfaceAddMethod(HttpServletRequest request) {
+        return interfaceService.addPerResInterface(request);
+    }
+
+
+    //endregion
 
 
 }

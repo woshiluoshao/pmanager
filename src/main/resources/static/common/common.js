@@ -286,3 +286,65 @@ function getRequestPrefix () {
     var urlPrefix = protocol + "//" + domainPort + "/" + webApp;
     return urlPrefix;
 }
+
+function ajaxPostHaveData(pathUrl, param) {
+
+    let back = "";
+
+    $.ajax({
+        url     : pathUrl,
+        dataType:"json",
+        type    :"post",
+        data    : param,
+        success:function (result) {
+            $.closeProgressBar();
+            const code = result.code;
+            const msg = result.msg;
+
+            if(code == "0000") {
+                back = result.data;
+            } else {
+                $.shotTotal(msg, "error");
+            }
+        },
+        error:function (result) {
+            $.closeProgressBar();
+            $.shotTotal(result, "error");
+        }
+
+    })
+
+    return back;
+}
+
+function ajaxPostNoData(pathUrl, param) {
+
+    let codeStr = "";
+
+    $.ajax({
+        url     : pathUrl,
+        dataType:"json",
+        async   : false,
+        type    :"post",
+        data    : param,
+        success:function (result) {
+            $.closeProgressBar();
+            const code = result.code;
+            const msg = result.msg;
+            codeStr = code;
+
+            if(code == "0000") {
+                $.shotTotal(msg, "success");
+            } else {
+                $.shotTotal(msg, "error");
+            }
+        },
+        error:function (result) {
+            $.closeProgressBar();
+            $.shotTotal(result, "error");
+        }
+
+    })
+
+    return codeStr;
+}

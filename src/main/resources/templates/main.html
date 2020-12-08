@@ -12,8 +12,8 @@
 <div class="layui-layout layui-layout-admin">
 
     <div class="layui-header">
-        <div style="margin: 0 auto;text-align:center;font-size: 30px;color: #00C1B3"><p>简单测试平台</p></div>
-        <div class="layui-logo"><img th:src="@{'/photo/mlog.png'}" class="img-responsive"></div>
+        <div style="margin: 0 auto;text-align:center;font-size: 30px;color: #00C1B3"><p><!--简单测试平台--></p></div>
+        <div class="layui-logo"><img th:src="@{'/photo/mlog2.png'}" class="img-responsive" style="width: 50%"></div>
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item">
                 <a href="javascript:;">
@@ -33,25 +33,24 @@
         <div class="layui-side-scroll">
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
             <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+                <li class="layui-nav-item">
+                    <a href="javascript:;"><strong>项目一览</strong></a>
+                    <dl class="layui-nav-child">
+                        <dd ><a href="#" data-url="proDetail" data-title="项目详情"  data-id="1" class="site-demo-active" data-type="tabAdd">项目详情</a></dd>
+                        <dd><a href="#" data-url="deployDetail" data-title="部署详情"  data-id="2" class="site-demo-active" data-type="tabAdd">部署详情</a></dd>
+                        <dd><a href="#" data-url="exceptHandle" data-title="异常处理"  data-id="3" class="site-demo-active" data-type="tabAdd">异常处理</a></dd>
+                    </dl>
+                </li>
                 <li class="layui-nav-item layui-nav-itemed">
-                    <a class="" href="javascript:;"><strong>日志</strong></a>
+                    <a class="" href="javascript:;"><strong>日志一览</strong></a>
                     <dl class="layui-nav-child">
-                        <dd><a href="#" data-url="userLog" data-title="用户操作日志"  data-id="1" class="site-demo-active" data-type="tabAdd">用户操作日志</a></dd>
-                        <dd><a href="#" data-url="fjrs_file" data-title="文件转换工具"  data-id="3" class="site-demo-active" data-type="tabAdd">文件转换工具</a></dd>
-                        <dd><a href="#" data-url="fjrs_qrcode" data-title="二维码工具"  data-id="4" class="site-demo-active" data-type="tabAdd">二维码工具</a></dd>
+                        <dd><a href="#" data-url="userLog" data-title="内部账号日志"  data-id="5" class="site-demo-active" data-type="tabAdd">用户操作日志</a></dd>
+
                     </dl>
                 </li>
                 <li class="layui-nav-item">
-                    <a href="javascript:;">阿里云</a>
-                    <dl class="layui-nav-child">
-                        <dd shiro:hasPermission="user:normal"><a href="#" data-url="fjrs_ocr" data-title="OCR图像识别"  data-id="10" class="site-demo-active" data-type="tabAdd">OCR图像识别</a></dd>
-                        <dd><a href="#" data-url="fjrs_compare" data-title="图像对比识别"  data-id="11" class="site-demo-active" data-type="tabAdd">图像对比识别</a></dd>
-                    </dl>
+                    <a href="#" data-url="chart" data-title="聊天"  data-id="4" class="site-demo-active" data-type="tabAdd">聊天</a>
                 </li>
-                <li class="layui-nav-item">
-                    <a href="#" data-url="chart" data-title="聊天"  data-id="7" class="site-demo-active" data-type="tabAdd">聊天</a>
-                </li>
-                <li class="layui-nav-item"><a href="">发布商品</a></li>
             </ul>
         </div>
     </div>
@@ -68,7 +67,7 @@
     </div>
 
     <div class="layui-footer">
-        Copyright © 2018&nbsp;罗少信息科技有限公司版权所有&nbsp;闽ICP备000000000号
+        Copyright © 2020&nbsp;罗少信息科技有限公司版权所有&nbsp;闽ICP备000000000号
     </div>
 </div>
 <script th:src="@{/layui/layui.all.js}"></script>

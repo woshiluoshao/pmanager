@@ -53,4 +53,9 @@ public class PageRestController {
         return "chart";
     }
 
+    @RequestMapping(value = "/proDetail")
+    public String proDetailPage() {
+        return "proDetail";
+    }
+
 }
