@@ -69,23 +69,51 @@ public class PersonResInterDBImpl implements IPersonResInterDB {
     }
 
     @Override
-    public int delPersonRes(String userId, String project) {
+    public int delPersonRes(String director, String project) {
 
-        String sql = "";
+        int cnt = -1;
+        try {
+            String sql = "";
 
-        sql += " delete                             ";
-        sql += "   from person_response_interface   ";
-        sql += "  where userId  = :userId           " +
-                "   and project = :project          ";
+            sql += " delete                             ";
+            sql += "   from person_response_interface   ";
+            sql += "  where director  = :director       " +
+                    "   and project = :project          ";
 
-        Map<String, Object> paramSql = new HashMap<String, Object>();
-        paramSql.put("userId"   , CommonUtils.objectToStr(userId));
-        paramSql.put("project"  , CommonUtils.objectToStr(project));
+            Map<String, Object> paramSql = new HashMap<String, Object>();
+            paramSql.put("director"   , CommonUtils.objectToStr(director));
+            paramSql.put("project"  , CommonUtils.objectToStr(project));
 
-        NativeQuery query = jpaDao.queryByParam(sql, paramSql);
+            cnt = jpaDao.commonQueryByParam(sql, paramSql);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        BigInteger cnt = (BigInteger)query.getSingleResult();
-        return cnt.intValue();
+        return cnt;
+    }
+
+    @Override
+    public int delBatchPersonRes(String director, String projectList) {
+
+        int cnt = -1;
+        try {
+            String sql = "";
+
+            sql += " delete                             ";
+            sql += "   from person_response_interface   ";
+            sql += "  where director  = :director       " +
+                    "   and project   in ("+ projectList +")     ";
+
+            Map<String, Object> paramSql = new HashMap<String, Object>();
+            paramSql.put("director"   , CommonUtils.objectToStr(director));
+            //paramSql.put("project"  , CommonUtils.objectToStr(projectList));
+
+            cnt = jpaDao.commonQueryByParam(sql, paramSql);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return cnt;
     }
 
     @Override
@@ -94,18 +122,18 @@ public class PersonResInterDBImpl implements IPersonResInterDB {
         String sql = "";
 
         sql += " insert into person_response_interface ( ";
-        sql += "        userId                           ";
+        sql += "        director                         ";
         sql += "       ,project                          ";
         sql += "       ,projectName                      ";
-        sql += "       ,deployType                       ";
         sql += "       ,developmentTool                  ";
+        sql += "       ,deployType                       ";
         sql += "       ,developmentArchi                 ";
         sql += "       ,functionPoint                    ";
         sql += "       ,comments                         ";
         sql += "       ,createTime                       ";
         sql += "       ,updateCount                      ";
         sql += "       ,updateTime ) values (            ";
-        sql += "        :userId                          ";
+        sql += "        :director                        ";
         sql += "       ,:project                         ";
         sql += "       ,:projectName                     ";
         sql += "       ,:deployType                      ";
@@ -118,7 +146,7 @@ public class PersonResInterDBImpl implements IPersonResInterDB {
         sql += "       ,:updateTime 	    )            ";
 
         Map<String, Object> paramSql = new HashMap<String, Object>();
-        //paramSql.put("userId"   , CommonUtils.objectToStr(userId));
+        //paramSql.put("director"   , CommonUtils.objectToStr(director));
         //paramSql.put("action"   , CommonUtils.objectToStr(project));
 
         return 0;
@@ -177,5 +205,28 @@ public class PersonResInterDBImpl implements IPersonResInterDB {
         }
 
         return addCnt;
+    }
+
+    @Override
+    public List<PersonResInterfaceEntity> getPersonResByKey(String director, String project) {
+
+        List<PersonResInterfaceEntity> logList = null;
+        try {
+            String sql = "";
+            sql += " select *                         ";
+            sql += "   from person_response_interface ";
+            sql += "  where director = :director      ";
+            sql += "    and project  = :project       ";
+
+            Map<String, Object> paramSql = new HashMap<String, Object>();
+            paramSql.put("director"   , CommonUtils.objectToStr(director));
+            paramSql.put("project"   , CommonUtils.objectToStr(project));
+            logList = jpaDao.queryListByParam(sql, PersonResInterfaceEntity.class, paramSql);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return logList;
     }
 }

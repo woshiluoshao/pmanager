@@ -20,8 +20,10 @@ public enum MessageEnum implements BaseEnumInterface{
     E012("E012","密码不正确"),
     E013("E013","注册失败"),
     E014("E014","账号已存在"),
+    E015("E015","删除失败"),
     W001("W001","提示:未查询到数据!"),
     W002("W002","账号已登录,请勿重复操作!"),
+    W003("W003","{0}已存在,请确认!"),
     ;
 
     private String code;

@@ -29,12 +29,11 @@
     </style>
 </head>
 <body>
-
 <div style="margin-top:3%;margin-left:1%;margin-right:2%;">
     <table class="layui-hide" id="test" lay-filter="table"></table>
 </div>
 
-<div id="addmain" style="display: none;">
+<div id="addModel" style="display: none;">
     <table style="margin-left: 2%; margin-top: 1%">
         <tr>
             <td style="width: 90px;">
@@ -103,6 +102,10 @@
     </table>
 
 </div>
+<div id="delModel" style="display: none;margin-top: 1%; margin-left: 1%">
+    <span id="delMsg"></span><br>
+    <span id="delContent"></span>
+</div>
 
 <script type="text/html" id="toolbarDemo">
     <div class="layui-btn-container">
@@ -139,8 +142,8 @@
                         {type: 'checkbox', fixed: 'left'}
 
                         // ,{field:'director', align: 'center', title: '开发者'}
-                        ,{field:'project', title: '项目', align: 'center'}
-                        ,{field:'projectName', title: '项目名', align: 'center'}
+                        ,{field:'project', title: '工程', align: 'center'}
+                        ,{field:'projectName', title: '工程名', align: 'center'}
                         ,{field:'deployType', title: '部署类型', align: 'center', }
                         ,{field:'developmentTool', title: '开发工具', align: 'center', }
                         ,{field:'developmentArchitect', title: '开发架构', align: 'center', sort: true}
@@ -185,22 +188,100 @@
                         //弹出模态框
                         openModel();
                         break;
-                    case 'getCheckLength':
-                        var data = checkStatus.data;
-                        layer.msg('选中了：'+ data.length + ' 个');
-                        break;
-                    case 'isAll':
-                        layer.msg(checkStatus.isAll ? '全选': '未全选');
-                        break;
-
-                    //自定义头工具栏右侧图标 - 提示
-                    case 'LAYTABLE_TIPS':
-                        layer.alert('这是工具栏右侧自定义的一个图标按钮');
+                    case 'delInterface':
+                        const data = checkStatus.data;
+                        delOpenFun(data);
                         break;
                 };
             });
 
         });
+    }
+
+    //弹出删除确认框
+    function delOpenFun(data) {
+
+        const length = data.length;
+        if(length <=0) {
+            layer.msg("未选中数据", { time :800});
+            return;
+        }
+        let msg = "您将删除" + length + "条数据:\r\n";
+        let projectStr = "";
+        let projectParam = "";
+        for (let i = 0; i < length; i++) {
+            const json = data[i];
+            const project = json.project;
+            projectParam += project + ",";
+            projectStr += project + "、";
+        }
+        projectStr = projectStr.substr(0, projectStr.length -1);
+        $("#delMsg").html(msg);
+        $("#delContent").html(projectStr);
+
+        const director = $("#director").val();
+
+        if(!director) {
+            layer.msg("开发者不能为空！", { time :1000});
+            return;
+        }
+        if(!projectParam) {
+            layer.msg("项目不能为空！", { time :1000});
+            return;
+        }
+        const param = {
+            "director":director,
+            "project":projectParam.substr(0, projectParam.length -1),
+        }
+
+        layer.open({
+            type: 1,
+            title: '删除确认',
+            area: ['300px', '200px'],
+            shadeClose: false, //点击遮罩关闭
+            content: $('#delModel'),
+            offset: '100px',
+            btn: ['确定', '取消'],
+            yes: function(index, layero) {
+                delExe(index, param);
+            },
+            cancel: function () {
+                return;
+            },
+            end: function () {
+                location.reload();
+            }
+        });
+    }
+
+    function delExe(index, param) {
+
+        $.ajax({
+            url     : basePath + "/interfaceDel.json",
+            dataType:"json",
+            type    :"post",
+            async   : false,
+            data    : param,
+            success:function (result) {
+
+                const code = result.code;
+                const msg = result.msg;
+
+                if(code == "0000") {
+                    layer.msg("删除成功", { time :2000});
+                    setTimeout(function() {
+                        layer.close(index);
+                    }, 1000);
+
+                } else {
+                    layer.msg(msg, { time :2000});
+                }
+            },
+            error:function (result) {
+                $.shotTotal(result, "error");
+            }
+
+        })
     }
 
     //弹出模态库
@@ -210,23 +291,24 @@
             title: '接口信息',
             area: ['700px', '500px'],
             shadeClose: false, //点击遮罩关闭
-            content: $('#addmain'),
-            offset: '50px',
+            content: $('#addModel'),
+            offset: '20px',
             btn: ['确定', '取消'],
             yes: function(index, layero) {
-                interExe();
+                interExe(index);
 
             },
             cancel: function () {
                 return;
             },
             end: function () {
-                $('#addmain').css("display", "none");
+                $('#addModel').css("display", "none");
+                location.reload();
             }
         });
     }
 
-    function interExe() {
+    function interExe(index) {
 
         const director = $("#director").val();
         const project = $("#project").val();
@@ -275,7 +357,7 @@
 
         //连接后端进行数据插入
         //ajaxPostNoData(basePath + "/interfaceAdd.json", param);
-        $.showProgressBar("处理中...");
+
         $.ajax({
             url     : basePath + "/interfaceAdd.json",
             dataType:"json",
@@ -288,13 +370,18 @@
                 const msg = result.msg;
 
                 if(code == "0000") {
-                    $.shotTotal(msg, "success");
+                    layer.msg(msg, { time :2000});
+                    setTimeout(function() {
+                        //成功之后将模态库去除，然后刷新界面
+                        $('#addModel').css("display", "none");
+                        layer.close(index);
+                    }, 1000);
+
                 } else {
-                    $.shotTotal(msg, "error");
+                    layer.msg(msg, { time :2000});
                 }
             },
             error:function (result) {
-                $.closeProgressBar();
                 $.shotTotal(result, "error");
             }
 

@@ -10,7 +10,12 @@ public interface IPersonResInterDB {
 
     List<PersonResInterfaceEntity> getPersonResList(Map<String, Object> param);
     int countPerResList(Map<String, Object> param);
-    int delPersonRes(String userId, String project);
+    int delPersonRes(String director, String project);
+    int delBatchPersonRes(String director, String projectList);
     int updatePersonRes(PersonResInterfaceEntity personResInterfaceEntity);
     int addPersonRes(PersonResInterfaceEntity personResInterfaceEntity);
+    List<PersonResInterfaceEntity> getPersonResByKey(String director, String project);
+
+
+
 }

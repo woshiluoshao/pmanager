@@ -29,8 +29,10 @@ public class InterfaceServiceImpl implements IInterfaceService {
     public ResultVo addPerResInterface(HttpServletRequest request) {
 
         PersonResInterfaceEntity personResInterfaceEntity = new PersonResInterfaceEntity();
-        personResInterfaceEntity.setDirector(request.getParameter("director"));
-        personResInterfaceEntity.setProject(request.getParameter("project"));
+        String director = request.getParameter("director");
+        String project = request.getParameter("project");
+        personResInterfaceEntity.setDirector(director);
+        personResInterfaceEntity.setProject(project);
         personResInterfaceEntity.setProjectName(request.getParameter("projectName"));
         personResInterfaceEntity.setDeployType(request.getParameter("deployType"));
         personResInterfaceEntity.setDevelopmentTool(request.getParameter("developmentTool"));
@@ -40,6 +42,12 @@ public class InterfaceServiceImpl implements IInterfaceService {
         Date nowTime = DateUtils.getCurrentTime();
         personResInterfaceEntity.setCreateTime(nowTime);
         personResInterfaceEntity.setUpdateTime(nowTime);
+
+        List<PersonResInterfaceEntity> keyModel = personResInterDB.getPersonResByKey(director, project);
+        if(keyModel!= null && keyModel.size() > 0) {
+
+            return ResultVoUtil.error(MessageEnum.W003, null, "项目(project)");
+        }
 
         int cnt = personResInterDB.addPersonRes(personResInterfaceEntity);
 
@@ -71,5 +79,33 @@ public class InterfaceServiceImpl implements IInterfaceService {
         }
 
         return Layui.data(0, null);
+    }
+
+    @Override
+    public ResultVo delPerResInterface(HttpServletRequest request) {
+
+        PersonResInterfaceEntity personResInterfaceEntity = new PersonResInterfaceEntity();
+        String director = request.getParameter("director");
+        String projectList = request.getParameter("project");
+
+        String[] array = projectList.split(",");
+
+        if(array.length <= 0 ) return ResultVoUtil.error(MessageEnum.E007, null, "工程不存在");
+
+        StringBuilder suffer= new StringBuilder();
+        for(int i = 0; i < array.length ; i++){
+            suffer.append("\'");
+            suffer.append(array[i]);
+            suffer.append("\',");
+        }
+
+        String projectParam = suffer.substring(0, suffer.length()-1);
+
+
+        int cnt = personResInterDB.delBatchPersonRes(director, projectParam);
+
+        if(cnt > 0) return ResultVoUtil.success();
+
+        return ResultVoUtil.error(MessageEnum.E015);
     }
 }
