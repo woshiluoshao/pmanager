@@ -59,20 +59,15 @@
                 <input type="text" style="width:500px;height:30px;" name="projectName" id="projectName">
             </td>
         </tr>
+
         <tr>
             <td style="width: 90px;">
-                部署类型：
+                开发语言<label style="color: red">*</label>：
             </td>
             <td>
-                <input type="text" style="width:500px;height:30px;" name="deployType" id="deployType">
-            </td>
-        </tr>
-        <tr>
-            <td style="width: 90px;">
-                开发工具<label style="color: red">*</label>：
-            </td>
-            <td>
-                <input type="text" style="width:500px;height:30px;" name="developmentTool" id="developmentTool">
+                <select name="developmentLanguage" id="developmentLanguage" value="0">
+                    <option th:each="developmentLanguageEnum:${developmentLanguageEnum}" th:value="${developmentLanguageEnum.paramValue}" th:text="${developmentLanguageEnum.paramValue}"></option>
+                </select>
             </td>
         </tr>
         <tr>
@@ -80,7 +75,19 @@
                 开发架构<label style="color: red">*</label>：
             </td>
             <td>
-                <input type="text" style="width:500px;height:30px;" name="developmentArchitect" id="developmentArchitect">
+                <select name="developmentArchitect" id="developmentArchitect" value="0">
+                    <option th:each="developmentArchitectEnum:${developmentArchitectEnum}" th:value="${developmentArchitectEnum.paramValue}" th:text="${developmentArchitectEnum.paramValue}"></option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 90px;">
+                部署类型：
+            </td>
+            <td>
+                <select name="deployType" id="deployType" value="0">
+                    <option th:each="deployTypeEnum:${deployTypeEnum}" th:value="${deployTypeEnum.paramValue}" th:text="${deployTypeEnum.paramValue}"></option>
+                </select>
             </td>
         </tr>
         <tr>
@@ -131,7 +138,7 @@
     function search() {
 
         layui.use('table', function(){
-            var table = layui.table;
+            const table = layui.table;
 
             table.render({
                 elem: '#test'
@@ -145,7 +152,7 @@
                         ,{field:'project', title: '工程', align: 'center'}
                         ,{field:'projectName', title: '工程名', align: 'center'}
                         ,{field:'deployType', title: '部署类型', align: 'center', }
-                        ,{field:'developmentTool', title: '开发工具', align: 'center', }
+                        ,{field:'developmentLanguage', title: '开发工具', align: 'center', }
                         ,{field:'developmentArchitect', title: '开发架构', align: 'center', sort: true}
                         // ,{field:'comments', title: '备注', align: 'center', sort: true}
                         ,{field:'createTime', title: '创建时间', align: 'center', format: 'yyyy-MM-dd HH:mm:ss'}
@@ -168,15 +175,19 @@
 
                     });
                 } else if(obj.event === 'edit'){
-                    layer.prompt({
-                        formType: 2
-                        ,value: data.email
-                    }, function(value, index){
-                        obj.update({
-                            email: value
-                        });
-                        layer.close(index);
-                    });
+                    //赋值
+                    $("#project").val(data.project);
+                    $("#projectName").val(data.projectName);
+                    $("#deployType").val(data.deployType);
+                    $("#developmentLanguage").val(data.developmentLanguage);
+                    $("#developmentArchitect").val(data.developmentArchitect);
+                    $("#functionPoint").val(data.functionPoint);
+                    $("#comments").val(data.comments);
+                    //$("#project").val(data.project);
+
+
+
+                    openModel();
                 }
             });
 
@@ -267,7 +278,7 @@
                 const code = result.code;
                 const msg = result.msg;
 
-                if(code == "0000") {
+                if(code === "0000") {
                     layer.msg("删除成功", { time :2000});
                     setTimeout(function() {
                         layer.close(index);
@@ -314,7 +325,7 @@
         const project = $("#project").val();
         const projectName = $("#projectName").val();
         const deployType = $("#deployType").val();
-        const developmentTool = $("#developmentTool").val();
+        const developmentLanguage = $("#developmentLanguage").val();
         const developmentArchitect = $("#developmentArchitect").val();
         const functionPoint = $("#functionPoint").val();
         const comments = $("#comments").val();
@@ -328,7 +339,7 @@
             return;
         }
 
-        if(!developmentTool) {
+        if(!developmentLanguage) {
             layer.msg("开发工具不能为空！", { time :1000});
             return;
         }
@@ -349,11 +360,11 @@
             "project":project,
             "projectName":projectName,
             "deployType":deployType,
-            "developmentTool":developmentTool,
+            "developmentLanguage":developmentLanguage,
             "developmentArchitect":developmentArchitect,
             "functionPoint":functionPoint,
             "comments":comments
-        }
+        };
 
         //连接后端进行数据插入
         //ajaxPostNoData(basePath + "/interfaceAdd.json", param);
@@ -369,7 +380,7 @@
                 const code = result.code;
                 const msg = result.msg;
 
-                if(code == "0000") {
+                if(code === "0000") {
                     layer.msg(msg, { time :2000});
                     setTimeout(function() {
                         //成功之后将模态库去除，然后刷新界面

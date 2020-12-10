@@ -10,4 +10,5 @@ public interface IInterfaceService {
     ResultVo addPerResInterface(HttpServletRequest request);
     Layui selectPerResInterface(HttpServletRequest request);
     ResultVo delPerResInterface(HttpServletRequest request);
+
 }

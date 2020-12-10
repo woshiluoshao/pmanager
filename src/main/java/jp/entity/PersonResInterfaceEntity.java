@@ -12,7 +12,7 @@ public class PersonResInterfaceEntity {
     private String project;
     private String projectName;
     private String deployType;
-    private String developmentTool;
+    private String developmentLanguage;
     private String developmentArchitect;
     private String functionPoint;
     private String comments;

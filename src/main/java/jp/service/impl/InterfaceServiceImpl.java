@@ -35,7 +35,7 @@ public class InterfaceServiceImpl implements IInterfaceService {
         personResInterfaceEntity.setProject(project);
         personResInterfaceEntity.setProjectName(request.getParameter("projectName"));
         personResInterfaceEntity.setDeployType(request.getParameter("deployType"));
-        personResInterfaceEntity.setDevelopmentTool(request.getParameter("developmentTool"));
+        personResInterfaceEntity.setDevelopmentLanguage(request.getParameter("developmentLanguage"));
         personResInterfaceEntity.setDevelopmentArchitect(request.getParameter("developmentArchitect"));
         personResInterfaceEntity.setFunctionPoint(request.getParameter("functionPoint"));
         personResInterfaceEntity.setComments(request.getParameter("comments"));

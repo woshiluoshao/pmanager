@@ -125,7 +125,7 @@ public class PersonResInterDBImpl implements IPersonResInterDB {
         sql += "        director                         ";
         sql += "       ,project                          ";
         sql += "       ,projectName                      ";
-        sql += "       ,developmentTool                  ";
+        sql += "       ,developmentLanguage              ";
         sql += "       ,deployType                       ";
         sql += "       ,developmentArchi                 ";
         sql += "       ,functionPoint                    ";
@@ -164,7 +164,7 @@ public class PersonResInterDBImpl implements IPersonResInterDB {
             sql += "       ,project                          ";
             sql += "       ,projectName                      ";
             sql += "       ,deployType                       ";
-            sql += "       ,developmentTool                  ";
+            sql += "       ,developmentLanguage              ";
             sql += "       ,developmentArchitect             ";
             sql += "       ,functionPoint                    ";
             sql += "       ,comments                         ";
@@ -175,7 +175,7 @@ public class PersonResInterDBImpl implements IPersonResInterDB {
             sql += "       ,:project                         ";
             sql += "       ,:projectName                     ";
             sql += "       ,:deployType                      ";
-            sql += "       ,:developmentTool                 ";
+            sql += "       ,:developmentLanguage             ";
             sql += "       ,:developmentArchitect            ";
             sql += "       ,:functionPoint                   ";
             sql += "       ,:comments                        ";
@@ -188,7 +188,7 @@ public class PersonResInterDBImpl implements IPersonResInterDB {
             paramSql.put("project"   , CommonUtils.objectToStr(personResInterfaceEntity.getProject()));
             paramSql.put("projectName"   , CommonUtils.objectToStr(personResInterfaceEntity.getProjectName()));
             paramSql.put("deployType"   , CommonUtils.objectToStr(personResInterfaceEntity.getDeployType()));
-            paramSql.put("developmentTool"   , CommonUtils.objectToStr(personResInterfaceEntity.getDevelopmentTool()));
+            paramSql.put("developmentLanguage"   , CommonUtils.objectToStr(personResInterfaceEntity.getDevelopmentLanguage()));
             paramSql.put("developmentArchitect"   , CommonUtils.objectToStr(personResInterfaceEntity.getDevelopmentArchitect()));
             paramSql.put("functionPoint"   , CommonUtils.objectToStr(personResInterfaceEntity.getFunctionPoint()));
             paramSql.put("comments"   , CommonUtils.objectToStr(personResInterfaceEntity.getComments()));
