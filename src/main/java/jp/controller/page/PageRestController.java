@@ -84,8 +84,8 @@ public class PageRestController {
         param.put("paramKey", "deployType");
         List<DynamicParamEntity> deployTypeList = dynamicParamDB.getDynamicParamList(param);
 
-        model.addAttribute("developmentLanguageEnum", developmentLanguageList);
-        model.addAttribute("developmentArchitectEnum", developmentArchitectList);
+        model.addAttribute("languageEnum", developmentLanguageList);
+        model.addAttribute("devArchitectEnum", developmentArchitectList);
         model.addAttribute("deployTypeEnum", deployTypeList);
         return "proDetail";
     }

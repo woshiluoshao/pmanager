@@ -66,7 +66,7 @@
             </td>
             <td>
                 <select name="developmentLanguage" id="developmentLanguage" value="0">
-                    <option th:each="developmentLanguageEnum:${developmentLanguageEnum}" th:value="${developmentLanguageEnum.paramValue}" th:text="${developmentLanguageEnum.paramValue}"></option>
+                    <option th:each="languageEnum:${languageEnum}" th:value="${languageEnum.paramValue}" th:text="${languageEnum.paramValue}"></option>
                 </select>
             </td>
         </tr>
@@ -76,7 +76,7 @@
             </td>
             <td>
                 <select name="developmentArchitect" id="developmentArchitect" value="0">
-                    <option th:each="developmentArchitectEnum:${developmentArchitectEnum}" th:value="${developmentArchitectEnum.paramValue}" th:text="${developmentArchitectEnum.paramValue}"></option>
+                    <option th:each="devArchitectEnum:${devArchitectEnum}" th:value="${devArchitectEnum.paramValue}" th:text="${devArchitectEnum.paramValue}"></option>
                 </select>
             </td>
         </tr>
@@ -122,8 +122,8 @@
 </script>
 
 <script type="text/html" id="barDemo">
-    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit">详情</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="update">变更</a>
 </script>
 <script type="text/javascript"  th:src="@{/common/common.js}"></script>
 <script th:src="@{/layui/layui.js}"></script>
@@ -167,13 +167,8 @@
 
             table.on('tool(table)', function(obj){
                 const data = obj.data;
-                if(obj.event === 'del'){
-                    layer.confirm('真的删除行么', function(index){
-                        //走向后端进行数据的删除
-                        obj.del();
-                        layer.close(index);
-
-                    });
+                if(obj.event === 'update'){
+                    layer.msg("功能暂未开通,请先删后新增", {time : 800});
                 } else if(obj.event === 'edit'){
                     //赋值
                     $("#project").val(data.project);
@@ -183,11 +178,14 @@
                     $("#developmentArchitect").val(data.developmentArchitect);
                     $("#functionPoint").val(data.functionPoint);
                     $("#comments").val(data.comments);
-                    //$("#project").val(data.project);
-
-
-
-                    openModel();
+                    $("#project").attr("readonly", "true");
+                    $("#projectName").attr("readonly", "true");
+                    $("#deployType").attr("disabled", "disabled");
+                    $("#developmentLanguage").attr("disabled", "disabled");
+                    $("#developmentArchitect").attr("disabled", "disabled");
+                    $("#functionPoint").attr("readonly", "true");
+                    $("#comments").attr("readonly", "true");
+                    readModel();
                 }
             });
 
@@ -203,7 +201,7 @@
                         const data = checkStatus.data;
                         delOpenFun(data);
                         break;
-                };
+                }
             });
 
         });
@@ -257,7 +255,6 @@
                 delExe(index, param);
             },
             cancel: function () {
-                return;
             },
             end: function () {
                 location.reload();
@@ -316,6 +313,17 @@
                 $('#addModel').css("display", "none");
                 location.reload();
             }
+        });
+    }
+
+    function readModel() {
+        layer.open({
+            type: 1,
+            title: '接口信息',
+            area: ['700px', '500px'],
+            shadeClose: false, //点击遮罩关闭
+            content: $('#addModel'),
+            offset: '20px'
         });
     }
 
