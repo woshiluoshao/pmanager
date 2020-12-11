@@ -1,8 +1,8 @@
 package jp.db.dao.impl;
 
-import jp.db.dao.IPersonResInterDB;
+import jp.db.dao.IInterfaceResponseInfoDB;
 import jp.db.jpa.IJPAImpl;
-import jp.entity.PersonResInterfaceEntity;
+import jp.entity.InterfaceResponseInfoEntity;
 import jp.utils.CommonUtils;
 import org.hibernate.query.NativeQuery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,19 +16,19 @@ import java.util.Map;
 
 @Service
 @Transactional
-public class PersonResInterDBImpl implements IPersonResInterDB {
+public class InterfaceResponseInfoDBImpl implements IInterfaceResponseInfoDB {
 
     @Autowired
     IJPAImpl jpaDao;
 
     @Override
-    public List<PersonResInterfaceEntity> getPersonResList(Map<String, Object> param) {
+    public List<InterfaceResponseInfoEntity> getPersonResList(Map<String, Object> param) {
 
-        List<PersonResInterfaceEntity> logList = null;
+        List<InterfaceResponseInfoEntity> logList = null;
         try {
             String sql = "";
             sql += " select *                         ";
-            sql += "   from person_response_interface ";
+            sql += "   from interface_response_info ";
             sql += "  where 1 = 1                     ";
             sql += "   order by createTime desc       ";
 
@@ -42,7 +42,7 @@ public class PersonResInterDBImpl implements IPersonResInterDB {
             Map<String, Object> paramSql = new HashMap<String, Object>();
 
 
-            logList = jpaDao.queryListByParam(sql, PersonResInterfaceEntity.class, paramSql);
+            logList = jpaDao.queryListByParam(sql, InterfaceResponseInfoEntity.class, paramSql);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -58,7 +58,7 @@ public class PersonResInterDBImpl implements IPersonResInterDB {
         String sql = "";
 
         sql += " select count(1)                    ";
-        sql += "   from person_response_interface   ";
+        sql += "   from interface_response_info   ";
 
         Map<String, Object> paramSql = new HashMap<String, Object>();
 
@@ -76,7 +76,7 @@ public class PersonResInterDBImpl implements IPersonResInterDB {
             String sql = "";
 
             sql += " delete                             ";
-            sql += "   from person_response_interface   ";
+            sql += "   from interface_response_info   ";
             sql += "  where director  = :director       " +
                     "   and project = :project          ";
 
@@ -100,7 +100,7 @@ public class PersonResInterDBImpl implements IPersonResInterDB {
             String sql = "";
 
             sql += " delete                             ";
-            sql += "   from person_response_interface   ";
+            sql += "   from interface_response_info   ";
             sql += "  where director  = :director       " +
                     "   and project   in ("+ projectList +")     ";
 
@@ -117,11 +117,11 @@ public class PersonResInterDBImpl implements IPersonResInterDB {
     }
 
     @Override
-    public int updatePersonRes(PersonResInterfaceEntity personResInterfaceEntity) {
+    public int updatePersonRes(InterfaceResponseInfoEntity personResInterfaceEntity) {
 
         String sql = "";
 
-        sql += " insert into person_response_interface ( ";
+        sql += " insert into interface_response_info ( ";
         sql += "        director                         ";
         sql += "       ,project                          ";
         sql += "       ,projectName                      ";
@@ -153,13 +153,13 @@ public class PersonResInterDBImpl implements IPersonResInterDB {
     }
 
     @Override
-    public int addPersonRes(PersonResInterfaceEntity personResInterfaceEntity) {
+    public int addPersonRes(InterfaceResponseInfoEntity personResInterfaceEntity) {
 
         int addCnt = -1;
         try {
             String sql = "";
 
-            sql += " insert into person_response_interface ( ";
+            sql += " insert into interface_response_info ( ";
             sql += "        director                         ";
             sql += "       ,project                          ";
             sql += "       ,projectName                      ";
@@ -208,20 +208,20 @@ public class PersonResInterDBImpl implements IPersonResInterDB {
     }
 
     @Override
-    public List<PersonResInterfaceEntity> getPersonResByKey(String director, String project) {
+    public List<InterfaceResponseInfoEntity> getPersonResByKey(String director, String project) {
 
-        List<PersonResInterfaceEntity> logList = null;
+        List<InterfaceResponseInfoEntity> logList = null;
         try {
             String sql = "";
             sql += " select *                         ";
-            sql += "   from person_response_interface ";
+            sql += "   from interface_response_info   ";
             sql += "  where director = :director      ";
             sql += "    and project  = :project       ";
 
             Map<String, Object> paramSql = new HashMap<String, Object>();
             paramSql.put("director"   , CommonUtils.objectToStr(director));
             paramSql.put("project"   , CommonUtils.objectToStr(project));
-            logList = jpaDao.queryListByParam(sql, PersonResInterfaceEntity.class, paramSql);
+            logList = jpaDao.queryListByParam(sql, InterfaceResponseInfoEntity.class, paramSql);
 
         } catch (Exception e) {
             e.printStackTrace();

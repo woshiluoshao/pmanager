@@ -1,9 +1,9 @@
 package jp.db.dao.impl;
 
-import jp.db.dao.ILoginDB;
+import jp.db.dao.IDirectorInfoDB;
 import jp.db.jpa.IJPAImpl;
 import jp.dto.LoginDto;
-import jp.entity.UserListEntity;
+import jp.entity.DirectorInfoEntity;
 import jp.entity.UserLoginLogEntity;
 import jp.utils.CommonUtils;
 import jp.utils.DateUtils;
@@ -20,23 +20,23 @@ import java.util.Map;
 
 @Service
 @Transactional
-public class LoginDBImpl implements ILoginDB {
+public class DirectorInfoDBImpl implements IDirectorInfoDB {
 
     @Autowired
     IJPAImpl jpaDao;
 
     @Override
-    public UserListEntity selectUserInfoById(String userId) {
+    public DirectorInfoEntity selectUserInfoById(String userId) {
 
-        UserListEntity model = null;
+        DirectorInfoEntity model = null;
 
         try {
             String sql = "";
-            sql += " select * from user_list where userId = :userId ";
+            sql += " select * from director_info where userId = :userId ";
             Map<String, Object> param = new HashMap<String, Object>();
             param.put("userId"   , CommonUtils.objectToStr(userId));
 
-            List<UserListEntity> modelList = jpaDao.queryListByParam(sql, UserListEntity.class, param);
+            List<DirectorInfoEntity> modelList = jpaDao.queryListByParam(sql, DirectorInfoEntity.class, param);
             if(modelList.size() > 0) {
                  model = modelList.get(0);
             }
@@ -52,7 +52,7 @@ public class LoginDBImpl implements ILoginDB {
         int cnt = -1;
         try {
             String sql = "";
-            sql += " insert into user_list(userId, password, createTime) " +
+            sql += " insert into director_info(userId, password, createTime) " +
                     "       values (:userId  "   +
                     "              ,:password" +
                     "              ,:createTime)";
@@ -162,17 +162,17 @@ public class LoginDBImpl implements ILoginDB {
     }
 
     @Override
-    public List<UserListEntity> selectUserList(String userId) {
+    public List<DirectorInfoEntity> selectUserList(String userId) {
 
         String sql = "";
         sql += " select *                 ";
-        sql += "   from user_list         ";
+        sql += "   from director_info         ";
         sql += "  where userId != :userId " +
                 " order by createTime     ";
 
         Map<String, Object> paramSql = new HashMap<String, Object>();
         paramSql.put("userId"   , CommonUtils.objectToStr(userId));
-        List<UserListEntity> userList = jpaDao.queryListByParam(sql,UserListEntity.class, paramSql);
+        List<DirectorInfoEntity> userList = jpaDao.queryListByParam(sql, DirectorInfoEntity.class, paramSql);
 
         return userList;
     }

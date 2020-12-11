@@ -1,10 +1,10 @@
 package jp.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import jp.db.dao.ILoginDB;
+import jp.db.dao.IDirectorInfoDB;
 import jp.db.redis.RedisUtil;
 import jp.dto.LoginDto;
-import jp.entity.UserListEntity;
+import jp.entity.DirectorInfoEntity;
 import jp.entity.UserLoginLogEntity;
 import jp.enums.MessageEnum;
 import jp.service.IUserService;
@@ -30,7 +30,7 @@ public class UserServiceImpl implements IUserService {
     RedisUtil redisUtil;
 
     @Autowired
-    ILoginDB loginDB;
+    IDirectorInfoDB directorInfoDB;
 
     @Override
     public ResultVo loginExe(LoginDto loginDto, HttpServletRequest request) {
@@ -40,7 +40,7 @@ public class UserServiceImpl implements IUserService {
             return ResultVoUtil.error(MessageEnum.E002, null, "账号", "密码");
         }
 
-        UserListEntity model = loginDB.selectUserInfoById(loginDto.getUserId());
+        DirectorInfoEntity model = directorInfoDB.selectUserInfoById(loginDto.getUserId());
         if(model == null)  return ResultVoUtil.error(MessageEnum.E011);
 
         if(!model.getPassword().equals(loginDto.getPassword())) return ResultVoUtil.error(MessageEnum.E012);
@@ -60,11 +60,11 @@ public class UserServiceImpl implements IUserService {
 
         //判断库表是否存在;
         //存在则返回说账号已存在
-        UserListEntity model = loginDB.selectUserInfoById(loginDto.getUserId());
+        DirectorInfoEntity model = directorInfoDB.selectUserInfoById(loginDto.getUserId());
         if(model != null)  return ResultVoUtil.error(MessageEnum.E014);
 
         //入库
-        int cnt = loginDB.insertUserInfo(loginDto);
+        int cnt = directorInfoDB.insertUserInfo(loginDto);
         if(cnt > 0)  return ResultVoUtil.success("注册成功");
         return ResultVoUtil.error(MessageEnum.E013);
     }
@@ -73,7 +73,7 @@ public class UserServiceImpl implements IUserService {
     public ResultVo selectUserList(HttpServletRequest request) {
 
         String userId = request.getParameter("userId");
-        List<UserListEntity> list = loginDB.selectUserList(userId);
+        List<DirectorInfoEntity> list = directorInfoDB.selectUserList(userId);
         if(list != null && list.size() > 0) return ResultVoUtil.success("查询成功", JSON.toJSONString(list));
 
         return ResultVoUtil.error(MessageEnum.W001);
@@ -96,8 +96,8 @@ public class UserServiceImpl implements IUserService {
             param.put("page", page);
 
             //一般都是支持后端分页;减少数据的查询时间
-            List<UserLoginLogEntity> list = loginDB.selectLoginLog(param);
-            int total = loginDB.countLoginLog(param);
+            List<UserLoginLogEntity> list = directorInfoDB.selectLoginLog(param);
+            int total = directorInfoDB.countLoginLog(param);
             if(list.size() > 0) {
                 PageUtils pageUtil = new PageUtils(list, total, 10,1);
                 return Layui.data(pageUtil.getTotalCount(), pageUtil.getList());

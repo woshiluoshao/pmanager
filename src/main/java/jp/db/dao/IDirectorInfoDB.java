@@ -1,17 +1,17 @@
 package jp.db.dao;
 
 import jp.dto.LoginDto;
-import jp.entity.UserListEntity;
+import jp.entity.DirectorInfoEntity;
 import jp.entity.UserLoginLogEntity;
 
 import java.util.List;
 import java.util.Map;
 
-public interface ILoginDB {
+public interface IDirectorInfoDB {
 
-    UserListEntity selectUserInfoById(String userId);
+    DirectorInfoEntity selectUserInfoById(String userId);
     int insertUserInfo(LoginDto loginDto);
     List<UserLoginLogEntity> selectLoginLog(Map<String, Object> param);
     int countLoginLog(Map<String, Object> param);
-    List<UserListEntity> selectUserList(String userId);
+    List<DirectorInfoEntity> selectUserList(String userId);
 }

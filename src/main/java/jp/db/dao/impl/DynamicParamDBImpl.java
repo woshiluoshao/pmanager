@@ -3,7 +3,6 @@ package jp.db.dao.impl;
 import jp.db.dao.IDynamicParamDB;
 import jp.db.jpa.IJPAImpl;
 import jp.entity.DynamicParamEntity;
-import jp.entity.PersonResInterfaceEntity;
 import jp.utils.CommonUtils;
 import org.hibernate.query.NativeQuery;
 import org.springframework.beans.factory.annotation.Autowired;

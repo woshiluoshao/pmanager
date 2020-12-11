@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class PersonResInterfaceEntity {
+public class InterfaceResponseInfoEntity {
 
     private String director;
     private String project;

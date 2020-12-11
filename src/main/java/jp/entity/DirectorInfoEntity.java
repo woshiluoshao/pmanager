@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class UserListEntity {
+public class DirectorInfoEntity {
 
     private String userId;
     private String password;

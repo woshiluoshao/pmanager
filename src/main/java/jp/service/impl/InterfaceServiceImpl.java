@@ -1,8 +1,7 @@
 package jp.service.impl;
 
-import jp.db.dao.IPersonResInterDB;
-import jp.entity.PersonResInterfaceEntity;
-import jp.entity.UserLoginLogEntity;
+import jp.db.dao.IInterfaceResponseInfoDB;
+import jp.entity.InterfaceResponseInfoEntity;
 import jp.enums.MessageEnum;
 import jp.service.IInterfaceService;
 import jp.utils.DateUtils;
@@ -23,12 +22,12 @@ import java.util.Map;
 public class InterfaceServiceImpl implements IInterfaceService {
 
     @Autowired
-    IPersonResInterDB personResInterDB;
+    IInterfaceResponseInfoDB interfaceResponseInfoDB;
 
     @Override
     public ResultVo addPerResInterface(HttpServletRequest request) {
 
-        PersonResInterfaceEntity personResInterfaceEntity = new PersonResInterfaceEntity();
+        InterfaceResponseInfoEntity personResInterfaceEntity = new InterfaceResponseInfoEntity();
         String director = request.getParameter("director");
         String project = request.getParameter("project");
         personResInterfaceEntity.setDirector(director);
@@ -43,13 +42,13 @@ public class InterfaceServiceImpl implements IInterfaceService {
         personResInterfaceEntity.setCreateTime(nowTime);
         personResInterfaceEntity.setUpdateTime(nowTime);
 
-        List<PersonResInterfaceEntity> keyModel = personResInterDB.getPersonResByKey(director, project);
+        List<InterfaceResponseInfoEntity> keyModel = interfaceResponseInfoDB.getPersonResByKey(director, project);
         if(keyModel!= null && keyModel.size() > 0) {
 
             return ResultVoUtil.error(MessageEnum.W003, null, "项目(project)");
         }
 
-        int cnt = personResInterDB.addPersonRes(personResInterfaceEntity);
+        int cnt = interfaceResponseInfoDB.addPersonRes(personResInterfaceEntity);
 
         if(cnt > 0) return ResultVoUtil.success("添加成功");
 
@@ -69,8 +68,8 @@ public class InterfaceServiceImpl implements IInterfaceService {
             param.put("page", page);
 
             //一般都是支持后端分页;减少数据的查询时间
-            List<PersonResInterfaceEntity> list = personResInterDB.getPersonResList(param);
-            int total = personResInterDB.countPerResList(param);
+            List<InterfaceResponseInfoEntity> list = interfaceResponseInfoDB.getPersonResList(param);
+            int total = interfaceResponseInfoDB.countPerResList(param);
             if(list.size() > 0) {
                 PageUtils pageUtil = new PageUtils(list, total, 10,1);
                 return Layui.data(pageUtil.getTotalCount(), pageUtil.getList());
@@ -84,7 +83,7 @@ public class InterfaceServiceImpl implements IInterfaceService {
     @Override
     public ResultVo delPerResInterface(HttpServletRequest request) {
 
-        PersonResInterfaceEntity personResInterfaceEntity = new PersonResInterfaceEntity();
+        InterfaceResponseInfoEntity personResInterfaceEntity = new InterfaceResponseInfoEntity();
         String director = request.getParameter("director");
         String projectList = request.getParameter("project");
 
@@ -102,7 +101,7 @@ public class InterfaceServiceImpl implements IInterfaceService {
         String projectParam = suffer.substring(0, suffer.length()-1);
 
 
-        int cnt = personResInterDB.delBatchPersonRes(director, projectParam);
+        int cnt = interfaceResponseInfoDB.delBatchPersonRes(director, projectParam);
 
         if(cnt > 0) return ResultVoUtil.success();
 

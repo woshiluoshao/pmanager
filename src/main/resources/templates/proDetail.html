@@ -106,6 +106,15 @@
                 <textarea type="text" style="width:500px;" rows="3" name="comments" id="comments"></textarea>
             </td>
         </tr>
+
+        <tr id="timeTr" style="display: none">
+            <td style="width: 90px;">
+                创建时间<label style="color: red">*</label>：
+            </td>
+            <td>
+                <input type="text" readonly="readonly" style="width:500px;height:30px;" name="createTime" id="createTime">
+            </td>
+        </tr>
     </table>
 
 </div>
@@ -178,6 +187,7 @@
                     $("#developmentArchitect").val(data.developmentArchitect);
                     $("#functionPoint").val(data.functionPoint);
                     $("#comments").val(data.comments);
+                    $("#createTime").val(data.createTime);
                     $("#project").attr("readonly", "true");
                     $("#projectName").attr("readonly", "true");
                     $("#deployType").attr("disabled", "disabled");
@@ -185,6 +195,7 @@
                     $("#developmentArchitect").attr("disabled", "disabled");
                     $("#functionPoint").attr("readonly", "true");
                     $("#comments").attr("readonly", "true");
+                    $('#timeTr').css("display", "block");
                     readModel();
                 }
             });
@@ -195,6 +206,7 @@
                 switch(obj.event){
                     case 'addInterface':
                         //弹出模态框
+                        $('#timeTr').css("display", "none");
                         openModel();
                         break;
                     case 'delInterface':
