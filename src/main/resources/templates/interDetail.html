@@ -205,29 +205,8 @@
                     layer.msg("功能暂未开通,请先删后新增", {time : 800});
                 } else if(obj.event === 'details'){
                     //赋值
-                    $("#project").val(data.project);
-                    $("#projectName").val(data.projectName);
-                    $("#projectStart").val(data.projectStart);
-                    $("#projectEnd").val(data.projectEnd);
-                    $("#director").val(data.director);
-                    $("#collaborator").val(data.collaborator);
-                    $("#projectManager").val(data.projectManager);
-                    $("#projectStatus").val(data.projectStatus);
-                    $("#developmentLanguage").val(data.developmentLanguage);
-                    $("#developmentArchitect").val(data.developmentArchitect);
-                    $("#functionPoint").val(data.functionPoint);
-                    $("#comments").val(data.comments);
-                    $("#createTime").val(data.createTime);
-
-                    $("#project").attr("readonly", "true");
-                    $("#projectName").attr("readonly", "true");
-                    $("#projectStatus").attr("disabled", "disabled");
-                    $("#developmentLanguage").attr("disabled", "disabled");
-                    $("#developmentArchitect").attr("disabled", "disabled");
-                    $("#functionPoint").attr("readonly", "true");
-                    $("#comments").attr("readonly", "true");
-                    $('#timeTr').css("display", "block");
-                    readModel();
+                    assignData(data);
+                    openReadModel();
                 }
             });
 
@@ -247,6 +226,95 @@
                 }
             });
 
+        });
+    }
+
+    //初始化模态库
+    function initModel() {
+
+        $("#project").val("");
+        $("#projectName").val("");
+        $("#projectStart").val("");
+        $("#projectEnd").val("");
+        $("#director").val("");
+        $("#collaborator").val("");
+        $("#projectManager").val("");
+        $("#projectStatus").val("");
+        $("#developmentLanguage").val("");
+        $("#developmentArchitect").val("");
+        $("#functionPoint").val("");
+        $("#comments").val("");
+        $("#createTime").val("");
+
+        $("#project").removeAttr("readonly");
+        $("#projectName").removeAttr("readonly");
+        $("#projectStart").removeAttr("readonly");
+        $("#projectEnd").removeAttr("readonly");
+        $("#director").removeAttr("readonly");
+        $("#collaborator").removeAttr("readonly");
+        $("#projectManager").removeAttr("readonly");
+        $("#projectStatus").removeAttr("disabled");
+        $("#developmentLanguage").removeAttr("disabled");
+        $("#developmentArchitect").removeAttr("disabled");
+        $("#functionPoint").removeAttr("readonly");
+        $("#comments").removeAttr("readonly");
+        $('#timeTr').css("display", "none");
+
+    }
+
+    //数据赋值
+    function assignData(data) {
+
+        $("#project").val(data.project);
+        $("#projectName").val(data.projectName);
+        $("#projectStart").val(data.projectStart);
+        $("#projectEnd").val(data.projectEnd);
+        $("#director").val(data.director);
+        $("#collaborator").val(data.collaborator);
+        $("#projectManager").val(data.projectManager);
+        $("#projectStatus").val(data.projectStatus);
+        $("#developmentLanguage").val(data.developmentLanguage);
+        $("#developmentArchitect").val(data.developmentArchitect);
+        $("#functionPoint").val(data.functionPoint);
+        $("#comments").val(data.comments);
+        $("#createTime").val(data.createTime);
+
+        $("#project").attr("readonly", "true");
+        $("#projectName").attr("readonly", "true");
+        $("#projectStart").attr("readonly", "true");
+        $("#projectEnd").attr("readonly", "true");
+        $("#director").attr("readonly", "true");
+        $("#collaborator").attr("readonly", "true");
+        $("#projectManager").attr("readonly", "true");
+        $("#projectStatus").attr("disabled", "disabled");
+        $("#developmentLanguage").attr("disabled", "disabled");
+        $("#developmentArchitect").attr("disabled", "disabled");
+        $("#functionPoint").attr("readonly", "true");
+        $("#comments").attr("readonly", "true");
+        $('#timeTr').css("display", "block");
+    }
+
+    //弹出模态库
+    function openAddModel() {
+        initModel();
+        layer.open({
+            type: 1,
+            title: '项目信息',
+            area: ['700px', '500px'],
+            shadeClose: false, //点击遮罩关闭
+            content: $('#addModel'),
+            offset: '20px',
+            btn: ['确定', '取消'],
+            yes: function(index, layero) {
+                addAjaxFun(index);
+            },
+            cancel: function () {
+                return;
+            },
+            end: function () {
+                $('#addModel').css("display", "none");
+                location.reload();
+            }
         });
     }
 
@@ -290,7 +358,7 @@
             offset: '100px',
             btn: ['确定', '取消'],
             yes: function(index, layero) {
-                delExe(index, param);
+                delAjaxFun(index, param);
             },
             cancel: function () {
             },
@@ -300,60 +368,7 @@
         });
     }
 
-    function delExe(index, param) {
-
-        $.ajax({
-            url     : basePath + "/interfaceDel.json",
-            dataType:"json",
-            type    :"post",
-            async   : false,
-            data    : param,
-            success:function (result) {
-
-                const code = result.code;
-                const msg = result.msg;
-
-                if(code === "0000") {
-                    layer.msg("删除成功", { time :2000});
-                    setTimeout(function() {
-                        layer.close(index);
-                    }, 1000);
-
-                } else {
-                    layer.msg(msg, { time :2000});
-                }
-            },
-            error:function (result) {
-                $.shotTotal(result, "error");
-            }
-
-        })
-    }
-
-    //弹出模态库
-    function openAddModel() {
-        layer.open({
-            type: 1,
-            title: '项目信息',
-            area: ['700px', '500px'],
-            shadeClose: false, //点击遮罩关闭
-            content: $('#addModel'),
-            offset: '20px',
-            btn: ['确定', '取消'],
-            yes: function(index, layero) {
-                interExe(index);
-            },
-            cancel: function () {
-                return;
-            },
-            end: function () {
-                $('#addModel').css("display", "none");
-                location.reload();
-            }
-        });
-    }
-
-    function readModel() {
+    function openReadModel() {
         layer.open({
             type: 1,
             title: '接口信息',
@@ -364,7 +379,7 @@
         });
     }
 
-    function interExe(index) {
+    function addAjaxFun(index) {
 
         const project = $("#project").val();
         const projectName = $("#projectName").val();
@@ -458,6 +473,35 @@
                 $.shotTotal(result, "error");
             }
 
+        })
+    }
+
+    function delAjaxFun(index, param) {
+
+        $.ajax({
+            url     : basePath + "/interfaceDel.json",
+            dataType:"json",
+            type    :"post",
+            async   : false,
+            data    : param,
+            success:function (result) {
+
+                const code = result.code;
+                const msg = result.msg;
+
+                if(code === "0000") {
+                    layer.msg("删除成功", { time :2000});
+                    setTimeout(function() {
+                        layer.close(index);
+                    }, 1000);
+
+                } else {
+                    layer.msg(msg, { time :2000});
+                }
+            },
+            error:function (result) {
+                $.shotTotal(result, "error");
+            }
         })
     }
 
