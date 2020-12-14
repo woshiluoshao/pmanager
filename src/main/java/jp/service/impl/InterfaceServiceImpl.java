@@ -8,6 +8,7 @@ import jp.utils.*;
 import jp.vo.ResultVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
@@ -25,10 +26,10 @@ public class InterfaceServiceImpl implements IInterfaceService {
     public ResultVo addPerResInterface(HttpServletRequest request) {
 
         InterfaceResponseInfoEntity responseInfoEntity = new InterfaceResponseInfoEntity();
+        String projectId = request.getParameter("projectId");
         String director = request.getParameter("director");
         String project = request.getParameter("project");
 
-        responseInfoEntity.setProjectId(CommonUtils.getUuid());
         responseInfoEntity.setDirector(director);
         responseInfoEntity.setProject(project);
         responseInfoEntity.setProjectName(request.getParameter("projectName"));
@@ -46,6 +47,28 @@ public class InterfaceServiceImpl implements IInterfaceService {
         responseInfoEntity.setProjectManager(request.getParameter("projectManager"));
         responseInfoEntity.setProjectStatus(request.getParameter("projectStatus"));
 
+        if(!StringUtils.isEmpty(projectId)) {
+            responseInfoEntity.setProjectId(projectId);
+            List<InterfaceResponseInfoEntity> responseInfoEntityList = interfaceResponseInfoDB.getResponseInfoByProjectId(projectId);
+            if(responseInfoEntityList != null && responseInfoEntityList.size() > 0) {
+                String updateCount = request.getParameter("updateCount");
+                if(!StringUtils.isEmpty(updateCount)) {
+                    int count = responseInfoEntityList.get(0).getUpdateCount();
+                    if(!updateCount.equals(String.valueOf(count))) {
+                        return ResultVoUtil.error(MessageEnum.W004);
+                    }
+                    responseInfoEntity.setUpdateCount(count);
+                }
+
+                int cnt = interfaceResponseInfoDB.updatePersonRes(responseInfoEntity);
+                if(cnt < 0) {
+                    return ResultVoUtil.error(MessageEnum.E007, null, "数据更新失败");
+                } else {
+                    return ResultVoUtil.success("更新成功");
+                }
+            }
+        }
+        responseInfoEntity.setProjectId(CommonUtils.getUuid());
         List<InterfaceResponseInfoEntity> keyModel = interfaceResponseInfoDB.getPersonResByKey(director, project);
         if(keyModel!= null && keyModel.size() > 0) {
 

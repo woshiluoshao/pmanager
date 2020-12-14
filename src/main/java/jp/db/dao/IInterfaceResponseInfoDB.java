@@ -14,6 +14,7 @@ public interface IInterfaceResponseInfoDB {
     int updatePersonRes(InterfaceResponseInfoEntity personResInterfaceEntity);
     int addPersonRes(InterfaceResponseInfoEntity personResInterfaceEntity);
     List<InterfaceResponseInfoEntity> getPersonResByKey(String director, String project);
+    List<InterfaceResponseInfoEntity> getResponseInfoByProjectId(String projectId);
 
 
 

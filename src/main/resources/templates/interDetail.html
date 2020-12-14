@@ -160,7 +160,7 @@
 
 <script type="text/html" id="barDemo">
     <a class="layui-btn layui-btn-xs" lay-event="details">详情</a>
-    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="update">部署</a>
+    <!--<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="update">部署</a>-->
     <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="update">变更</a>
 </script>
 <script type="text/javascript"  th:src="@{/common/common.js}"></script>
@@ -191,6 +191,7 @@
                         ,{field:'projectStart', title: '项目开始时间', align: 'center', }
                         ,{field:'director', title: '开发者', align: 'center', }
                         ,{field:'projectManager', title: '项目经理', align: 'center'}
+                        ,{field:'updateCount', title: '更新数', hide: true, align: 'center'}
                         ,{fixed: 'right', title:'操作', align: 'center', toolbar: '#barDemo'}
                     ]
                 ]
@@ -202,10 +203,13 @@
             table.on('tool(table)', function(obj){
                 const data = obj.data;
                 if(obj.event === 'update'){
-                    layer.msg("功能暂未开通,请先删后新增", {time : 800});
+                    assignData(data);
+                    controlEnable();
+                    openAddModel(data);
                 } else if(obj.event === 'details'){
                     //赋值
                     assignData(data);
+                    controlDisable();
                     openReadModel();
                 }
             });
@@ -216,7 +220,8 @@
                 switch(obj.event){
                     case 'addInterface':
                         //弹出模态框
-                        $('#timeTr').css("display", "none");
+                        initModel();
+                        controlEnable();
                         openAddModel();
                         break;
                     case 'delInterface':
@@ -245,21 +250,6 @@
         $("#functionPoint").val("");
         $("#comments").val("");
         $("#createTime").val("");
-
-        $("#project").removeAttr("readonly");
-        $("#projectName").removeAttr("readonly");
-        $("#projectStart").removeAttr("readonly");
-        $("#projectEnd").removeAttr("readonly");
-        $("#director").removeAttr("readonly");
-        $("#collaborator").removeAttr("readonly");
-        $("#projectManager").removeAttr("readonly");
-        $("#projectStatus").removeAttr("disabled");
-        $("#developmentLanguage").removeAttr("disabled");
-        $("#developmentArchitect").removeAttr("disabled");
-        $("#functionPoint").removeAttr("readonly");
-        $("#comments").removeAttr("readonly");
-        $('#timeTr').css("display", "none");
-
     }
 
     //数据赋值
@@ -278,7 +268,9 @@
         $("#functionPoint").val(data.functionPoint);
         $("#comments").val(data.comments);
         $("#createTime").val(data.createTime);
+    }
 
+    function controlDisable() {
         $("#project").attr("readonly", "true");
         $("#projectName").attr("readonly", "true");
         $("#projectStart").attr("readonly", "true");
@@ -294,9 +286,26 @@
         $('#timeTr').css("display", "block");
     }
 
+    function controlEnable() {
+        $("#project").removeAttr("readonly");
+        $("#projectName").removeAttr("readonly");
+        $("#projectStart").removeAttr("readonly");
+        $("#projectEnd").removeAttr("readonly");
+        $("#director").removeAttr("readonly");
+        $("#collaborator").removeAttr("readonly");
+        $("#projectManager").removeAttr("readonly");
+        $("#projectStatus").removeAttr("disabled");
+        $("#developmentLanguage").removeAttr("disabled");
+        $("#developmentArchitect").removeAttr("disabled");
+        $("#functionPoint").removeAttr("readonly");
+        $("#comments").removeAttr("readonly");
+        $('#timeTr').css("display", "none");
+    }
+
+
     //弹出模态库
-    function openAddModel() {
-        initModel();
+    function openAddModel(data) {
+
         layer.open({
             type: 1,
             title: '项目信息',
@@ -306,7 +315,7 @@
             offset: '20px',
             btn: ['确定', '取消'],
             yes: function(index, layero) {
-                addAjaxFun(index);
+                addAjaxFun(index, data);
             },
             cancel: function () {
                 return;
@@ -379,7 +388,7 @@
         });
     }
 
-    function addAjaxFun(index) {
+    function addAjaxFun(index, data) {
 
         const project = $("#project").val();
         const projectName = $("#projectName").val();
@@ -428,7 +437,15 @@
             return;
         }
 
+        let projectId = "";
+        let updateCount = "";
+        if(data != null) {
+            projectId = data.projectId;
+            updateCount = data.updateCount;
+        }
+
         const param = {
+            "projectId":projectId,
             "project":project,
             "projectName":projectName,
             "projectStart":projectStart,
@@ -440,7 +457,8 @@
             "developmentLanguage":developmentLanguage,
             "developmentArchitect":developmentArchitect,
             "functionPoint":functionPoint,
-            "comments":comments
+            "comments":comments,
+            "updateCount":updateCount
         };
 
         //连接后端进行数据插入

@@ -24,6 +24,7 @@ public enum MessageEnum implements BaseEnumInterface{
     W001("W001","提示:未查询到数据!"),
     W002("W002","账号已登录,请勿重复操作!"),
     W003("W003","{0}已存在,请确认!"),
+    W004("W004","数据可能已被其他用户更新,请刷新数据后操作!"),
     ;
 
     private String code;
