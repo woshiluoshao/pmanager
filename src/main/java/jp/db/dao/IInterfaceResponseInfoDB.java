@@ -9,8 +9,8 @@ public interface IInterfaceResponseInfoDB {
 
     List<InterfaceResponseInfoEntity> getPersonResList(Map<String, Object> param);
     int countPerResList(Map<String, Object> param);
-    int delPersonRes(String director, String project);
-    int delBatchPersonRes(String director, String projectList);
+    int delPersonRes(String projectId);
+    int delBatchPersonRes(String projectIdList);
     int updatePersonRes(InterfaceResponseInfoEntity personResInterfaceEntity);
     int addPersonRes(InterfaceResponseInfoEntity personResInterfaceEntity);
     List<InterfaceResponseInfoEntity> getPersonResByKey(String director, String project);

@@ -14,3 +14,20 @@
 主页显示哪些功能？
 （1）用户登录、注册、退出的记录表
 
+
+表命名
+接口类
+interface_response_info 个人负责接口
+interface_deploy_info    接口部署信息
+interface_table          接口对应表字段
+history_table            表修改履历
+history_deploy           部署履历
+history_user_action      用户操作履历
+
+director_info            负责人信息
+record_deploy            部署所需的记录
+record_third_part        第三方信息的记录
+
+
+
+

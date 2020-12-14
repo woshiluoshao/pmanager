@@ -35,28 +35,66 @@
 
 <div id="addModel" style="display: none;">
     <table style="margin-left: 2%; margin-top: 1%">
-        <tr>
-            <td style="width: 90px;">
-                开发者：
-            </td>
-            <td>
-                <input type="text" readonly="readonly" th:value="${session.userId}" style="width:500px;height:30px;" name="director" id="director">
-            </td>
-        </tr>
+
         <tr>
             <td style="width: 90px;">
                 工程<label style="color: red">*</label>：
             </td>
             <td>
-                <input type="text" style="width:500px;height:30px;" name="project" id="project">
+                <input type="text" style="width:165px;height:30px;" name="project" id="project">
             </td>
-        </tr>
-        <tr>
             <td style="width: 90px;">
                 工程名<label style="color: red">*</label>：
             </td>
             <td>
-                <input type="text" style="width:500px;height:30px;" name="projectName" id="projectName">
+                <input type="text" style="width:200px;height:30px;" name="projectName" id="projectName">
+            </td>
+        </tr>
+
+        <tr>
+            <td style="width: 90px;">
+                开始时间<label style="color: red">*</label>：
+            </td>
+            <td>
+                <input type="date" class="form-control" name="birth" id="projectStart">
+            </td>
+            <td style="width: 90px;">
+                结束时间：
+            </td>
+            <td>
+                <input type="date" class="form-control" name="birth" id="projectEnd">
+            </td>
+        </tr>
+
+        <tr>
+            <td style="width: 90px;">
+                开发者<label style="color: red">*</label>：
+            </td>
+            <td>
+                <input type="text" style="width:165px;height:30px;" name="director" id="director">
+            </td>
+            <td style="width: 90px;">
+                协作者：
+            </td>
+            <td>
+                <input type="text" style="width:200px;height:30px;" name="collaborator" id="collaborator">
+            </td>
+        </tr>
+
+        <tr>
+            <td style="width: 90px;">
+                项目经理：
+            </td>
+            <td>
+                <input type="text" style="width:165px;height:30px;" name="projectManager" id="projectManager">
+            </td>
+            <td style="width: 90px;">
+                项目状态<label style="color: red">*</label>：
+            </td>
+            <td>
+                <select style="width:200px;height:30px;" name="projectStatus" id="projectStatus" value="0">
+                    <option th:each="projectStatusEnum:${projectStatusEnum}" th:value="${projectStatusEnum.paramValue}" th:text="${projectStatusEnum.paramValue}"></option>
+                </select>
             </td>
         </tr>
 
@@ -65,39 +103,29 @@
                 开发语言<label style="color: red">*</label>：
             </td>
             <td>
-                <select name="developmentLanguage" id="developmentLanguage" value="0">
+                <select style="width:165px;height:30px;" name="developmentLanguage" id="developmentLanguage" value="0">
                     <option th:each="languageEnum:${languageEnum}" th:value="${languageEnum.paramValue}" th:text="${languageEnum.paramValue}"></option>
                 </select>
             </td>
-        </tr>
-        <tr>
             <td style="width: 90px;">
                 开发架构<label style="color: red">*</label>：
             </td>
             <td>
-                <select name="developmentArchitect" id="developmentArchitect" value="0">
+                <select style="width:165px;height:30px;" name="developmentArchitect" id="developmentArchitect" value="0">
                     <option th:each="devArchitectEnum:${devArchitectEnum}" th:value="${devArchitectEnum.paramValue}" th:text="${devArchitectEnum.paramValue}"></option>
                 </select>
             </td>
         </tr>
+
         <tr>
             <td style="width: 90px;">
-                部署类型：
-            </td>
-            <td>
-                <select name="deployType" id="deployType" value="0">
-                    <option th:each="deployTypeEnum:${deployTypeEnum}" th:value="${deployTypeEnum.paramValue}" th:text="${deployTypeEnum.paramValue}"></option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td style="width: 90px;">
-                功能点<label style="color: red">*</label>：
+                功能描述<label style="color: red">*</label>：
             </td>
             <td>
                 <textarea  type="text" style="width:500px;" rows="5" name="functionPoint" id="functionPoint"></textarea>
             </td>
         </tr>
+
         <tr>
             <td style="width: 90px;">
                 备注：
@@ -131,8 +159,9 @@
 </script>
 
 <script type="text/html" id="barDemo">
-    <a class="layui-btn layui-btn-xs" lay-event="edit">详情</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="update">变更</a>
+    <a class="layui-btn layui-btn-xs" lay-event="details">详情</a>
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="update">部署</a>
+    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="update">变更</a>
 </script>
 <script type="text/javascript"  th:src="@{/common/common.js}"></script>
 <script th:src="@{/layui/layui.js}"></script>
@@ -156,16 +185,12 @@
                 ,cols: [
                     [
                         {type: 'checkbox', fixed: 'left'}
-
-                        // ,{field:'director', align: 'center', title: '开发者'}
                         ,{field:'project', title: '工程', align: 'center'}
                         ,{field:'projectName', title: '工程名', align: 'center'}
-                        ,{field:'deployType', title: '部署类型', align: 'center', }
-                        ,{field:'developmentLanguage', title: '开发工具', align: 'center', }
-                        ,{field:'developmentArchitect', title: '开发架构', align: 'center', sort: true}
-                        // ,{field:'comments', title: '备注', align: 'center', sort: true}
-                        ,{field:'createTime', title: '创建时间', align: 'center', format: 'yyyy-MM-dd HH:mm:ss'}
-                        // ,{field:'updateTime', title: '更新时间', align: 'center', }
+                        ,{field:'projectStatus', title: '项目状态', align: 'center', }
+                        ,{field:'projectStart', title: '项目开始时间', align: 'center', }
+                        ,{field:'director', title: '开发者', align: 'center', }
+                        ,{field:'projectManager', title: '项目经理', align: 'center'}
                         ,{fixed: 'right', title:'操作', align: 'center', toolbar: '#barDemo'}
                     ]
                 ]
@@ -178,19 +203,25 @@
                 const data = obj.data;
                 if(obj.event === 'update'){
                     layer.msg("功能暂未开通,请先删后新增", {time : 800});
-                } else if(obj.event === 'edit'){
+                } else if(obj.event === 'details'){
                     //赋值
                     $("#project").val(data.project);
                     $("#projectName").val(data.projectName);
-                    $("#deployType").val(data.deployType);
+                    $("#projectStart").val(data.projectStart);
+                    $("#projectEnd").val(data.projectEnd);
+                    $("#director").val(data.director);
+                    $("#collaborator").val(data.collaborator);
+                    $("#projectManager").val(data.projectManager);
+                    $("#projectStatus").val(data.projectStatus);
                     $("#developmentLanguage").val(data.developmentLanguage);
                     $("#developmentArchitect").val(data.developmentArchitect);
                     $("#functionPoint").val(data.functionPoint);
                     $("#comments").val(data.comments);
                     $("#createTime").val(data.createTime);
+
                     $("#project").attr("readonly", "true");
                     $("#projectName").attr("readonly", "true");
-                    $("#deployType").attr("disabled", "disabled");
+                    $("#projectStatus").attr("disabled", "disabled");
                     $("#developmentLanguage").attr("disabled", "disabled");
                     $("#developmentArchitect").attr("disabled", "disabled");
                     $("#functionPoint").attr("readonly", "true");
@@ -207,11 +238,11 @@
                     case 'addInterface':
                         //弹出模态框
                         $('#timeTr').css("display", "none");
-                        openModel();
+                        openAddModel();
                         break;
                     case 'delInterface':
                         const data = checkStatus.data;
-                        delOpenFun(data);
+                        openDelModel(data);
                         break;
                 }
             });
@@ -220,7 +251,7 @@
     }
 
     //弹出删除确认框
-    function delOpenFun(data) {
+    function openDelModel(data) {
 
         const length = data.length;
         if(length <=0) {
@@ -232,9 +263,9 @@
         let projectParam = "";
         for (let i = 0; i < length; i++) {
             const json = data[i];
-            const project = json.project;
+            const project = json.projectId;
             projectParam += project + ",";
-            projectStr += project + "、";
+            projectStr += json.project + "、";
         }
         projectStr = projectStr.substr(0, projectStr.length -1);
         $("#delMsg").html(msg);
@@ -242,17 +273,12 @@
 
         const director = $("#director").val();
 
-        if(!director) {
-            layer.msg("开发者不能为空！", { time :1000});
-            return;
-        }
         if(!projectParam) {
             layer.msg("项目不能为空！", { time :1000});
             return;
         }
         const param = {
-            "director":director,
-            "project":projectParam.substr(0, projectParam.length -1),
+            "projectId":projectParam.substr(0, projectParam.length -1),
         }
 
         layer.open({
@@ -305,10 +331,10 @@
     }
 
     //弹出模态库
-    function openModel() {
+    function openAddModel() {
         layer.open({
             type: 1,
-            title: '接口信息',
+            title: '项目信息',
             area: ['700px', '500px'],
             shadeClose: false, //点击遮罩关闭
             content: $('#addModel'),
@@ -316,7 +342,6 @@
             btn: ['确定', '取消'],
             yes: function(index, layero) {
                 interExe(index);
-
             },
             cancel: function () {
                 return;
@@ -341,10 +366,14 @@
 
     function interExe(index) {
 
-        const director = $("#director").val();
         const project = $("#project").val();
         const projectName = $("#projectName").val();
-        const deployType = $("#deployType").val();
+        const projectStart = $("#projectStart").val();
+        const projectEnd = $("#projectEnd").val();
+        const director = $("#director").val();
+        const collaborator = $("#collaborator").val();
+        const projectManager = $("#projectManager").val();
+        const projectStatus = $("#projectStatus").val();
         const developmentLanguage = $("#developmentLanguage").val();
         const developmentArchitect = $("#developmentArchitect").val();
         const functionPoint = $("#functionPoint").val();
@@ -358,7 +387,18 @@
             layer.msg("工程名不能为空！", { time :1000});
             return;
         }
-
+        if(!projectStart) {
+            layer.msg("开始时间不能为空！", { time :1000});
+            return;
+        }
+        if(!director) {
+            layer.msg("开发者不能为空！", { time :1000});
+            return;
+        }
+        if(!projectStatus) {
+            layer.msg("项目状态不能为空！", { time :1000});
+            return;
+        }
         if(!developmentLanguage) {
             layer.msg("开发工具不能为空！", { time :1000});
             return;
@@ -368,18 +408,20 @@
             layer.msg("开发架构不能为空！", { time :1000});
             return;
         }
-
         if(!functionPoint) {
             layer.msg("功能描述不能为空！", { time :1000});
             return;
         }
 
         const param = {
-
-            "director":director,
             "project":project,
             "projectName":projectName,
-            "deployType":deployType,
+            "projectStart":projectStart,
+            "projectEnd":projectEnd,
+            "director":director,
+            "collaborator":collaborator,
+            "projectManager":projectManager,
+            "projectStatus":projectStatus,
             "developmentLanguage":developmentLanguage,
             "developmentArchitect":developmentArchitect,
             "functionPoint":functionPoint,

@@ -4,10 +4,7 @@ import jp.db.dao.IInterfaceResponseInfoDB;
 import jp.entity.InterfaceResponseInfoEntity;
 import jp.enums.MessageEnum;
 import jp.service.IInterfaceService;
-import jp.utils.DateUtils;
-import jp.utils.Layui;
-import jp.utils.PageUtils;
-import jp.utils.ResultVoUtil;
+import jp.utils.*;
 import jp.vo.ResultVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,20 +24,27 @@ public class InterfaceServiceImpl implements IInterfaceService {
     @Override
     public ResultVo addPerResInterface(HttpServletRequest request) {
 
-        InterfaceResponseInfoEntity personResInterfaceEntity = new InterfaceResponseInfoEntity();
+        InterfaceResponseInfoEntity responseInfoEntity = new InterfaceResponseInfoEntity();
         String director = request.getParameter("director");
         String project = request.getParameter("project");
-        personResInterfaceEntity.setDirector(director);
-        personResInterfaceEntity.setProject(project);
-        personResInterfaceEntity.setProjectName(request.getParameter("projectName"));
-        personResInterfaceEntity.setDeployType(request.getParameter("deployType"));
-        personResInterfaceEntity.setDevelopmentLanguage(request.getParameter("developmentLanguage"));
-        personResInterfaceEntity.setDevelopmentArchitect(request.getParameter("developmentArchitect"));
-        personResInterfaceEntity.setFunctionPoint(request.getParameter("functionPoint"));
-        personResInterfaceEntity.setComments(request.getParameter("comments"));
+
+        responseInfoEntity.setProjectId(CommonUtils.getUuid());
+        responseInfoEntity.setDirector(director);
+        responseInfoEntity.setProject(project);
+        responseInfoEntity.setProjectName(request.getParameter("projectName"));
+        responseInfoEntity.setDevelopmentLanguage(request.getParameter("developmentLanguage"));
+        responseInfoEntity.setDevelopmentArchitect(request.getParameter("developmentArchitect"));
+        responseInfoEntity.setFunctionPoint(request.getParameter("functionPoint"));
+        responseInfoEntity.setComments(request.getParameter("comments"));
         Date nowTime = DateUtils.getCurrentTime();
-        personResInterfaceEntity.setCreateTime(nowTime);
-        personResInterfaceEntity.setUpdateTime(nowTime);
+        responseInfoEntity.setCreateTime(nowTime);
+        responseInfoEntity.setUpdateTime(nowTime);
+        responseInfoEntity.setUpdateCount(0);
+        responseInfoEntity.setProjectStart(request.getParameter("projectStart"));
+        responseInfoEntity.setProjectEnd(request.getParameter("projectEnd"));
+        responseInfoEntity.setCollaborator(request.getParameter("collaborator"));
+        responseInfoEntity.setProjectManager(request.getParameter("projectManager"));
+        responseInfoEntity.setProjectStatus(request.getParameter("projectStatus"));
 
         List<InterfaceResponseInfoEntity> keyModel = interfaceResponseInfoDB.getPersonResByKey(director, project);
         if(keyModel!= null && keyModel.size() > 0) {
@@ -48,7 +52,7 @@ public class InterfaceServiceImpl implements IInterfaceService {
             return ResultVoUtil.error(MessageEnum.W003, null, "项目(project)");
         }
 
-        int cnt = interfaceResponseInfoDB.addPersonRes(personResInterfaceEntity);
+        int cnt = interfaceResponseInfoDB.addPersonRes(responseInfoEntity);
 
         if(cnt > 0) return ResultVoUtil.success("添加成功");
 
@@ -60,10 +64,10 @@ public class InterfaceServiceImpl implements IInterfaceService {
 
         try {
 
-            int limit = Integer.valueOf(request.getParameter("limit"));
-            int page = Integer.valueOf(request.getParameter("page"));
+            int limit = Integer.parseInt(request.getParameter("limit"));
+            int page = Integer.parseInt(request.getParameter("page"));
 
-            Map<String, Object> param = new HashMap<String, Object>();
+            Map<String, Object> param = new HashMap<>();
             param.put("limit", limit);
             param.put("page", page);
 
@@ -74,7 +78,7 @@ public class InterfaceServiceImpl implements IInterfaceService {
                 PageUtils pageUtil = new PageUtils(list, total, 10,1);
                 return Layui.data(pageUtil.getTotalCount(), pageUtil.getList());
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         return Layui.data(0, null);
@@ -83,25 +87,22 @@ public class InterfaceServiceImpl implements IInterfaceService {
     @Override
     public ResultVo delPerResInterface(HttpServletRequest request) {
 
-        InterfaceResponseInfoEntity personResInterfaceEntity = new InterfaceResponseInfoEntity();
-        String director = request.getParameter("director");
-        String projectList = request.getParameter("project");
+        String projectIdList = request.getParameter("projectId");
 
-        String[] array = projectList.split(",");
+        String[] array = projectIdList.split(",");
 
         if(array.length <= 0 ) return ResultVoUtil.error(MessageEnum.E007, null, "工程不存在");
 
         StringBuilder suffer= new StringBuilder();
-        for(int i = 0; i < array.length ; i++){
+        for (String s : array) {
             suffer.append("\'");
-            suffer.append(array[i]);
+            suffer.append(s);
             suffer.append("\',");
         }
 
-        String projectParam = suffer.substring(0, suffer.length()-1);
+        String projectIdParam = suffer.substring(0, suffer.length()-1);
 
-
-        int cnt = interfaceResponseInfoDB.delBatchPersonRes(director, projectParam);
+        int cnt = interfaceResponseInfoDB.delBatchPersonRes(projectIdParam);
 
         if(cnt > 0) return ResultVoUtil.success();
 

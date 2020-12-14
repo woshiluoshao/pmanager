@@ -64,12 +64,7 @@ public class PageRestController {
         return "chart";
     }
 
-    @RequestMapping(value = "/proDetail")
-    public String proDetailPage() {
-        return "proDetail";
-    }
-
-    @RequestMapping(value = "/proDetail2")
+    @RequestMapping(value = "/interDetail")
     public String interDetailPage(Model model) {
 
         Map<String, Object> param = new HashMap<String, Object>();
@@ -81,13 +76,13 @@ public class PageRestController {
         List<DynamicParamEntity> developmentArchitectList = dynamicParamDB.getDynamicParamList(param);
 
         param = new HashMap<String, Object>();
-        param.put("paramKey", "deployType");
-        List<DynamicParamEntity> deployTypeList = dynamicParamDB.getDynamicParamList(param);
+        param.put("paramKey", "projectStatus");
+        List<DynamicParamEntity> projectStatusList = dynamicParamDB.getDynamicParamList(param);
 
         model.addAttribute("languageEnum", developmentLanguageList);
         model.addAttribute("devArchitectEnum", developmentArchitectList);
-        model.addAttribute("deployTypeEnum", deployTypeList);
-        return "proDetail";
+        model.addAttribute("projectStatusEnum", projectStatusList);
+        return "interDetail";
     }
 
 }

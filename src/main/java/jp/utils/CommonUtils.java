@@ -3,6 +3,7 @@ package jp.utils;
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.UUID;
 
 public class CommonUtils {
 
@@ -100,6 +101,11 @@ public class CommonUtils {
         return ipAddress;
     }
 
+    /**
+     * 对象转String
+     * @param param
+     * @return
+     */
     public static String objectToStr(Object param) {
 
         String result = "";
@@ -110,5 +116,20 @@ public class CommonUtils {
         }
 
         return result;
+    }
+
+    /**
+     * 获取UUID
+     * @return
+     */
+    public static String getUuid() {
+        String uuid = "";
+        try {
+            uuid = UUID.randomUUID().toString().replaceAll("-", "");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return uuid;
     }
 }

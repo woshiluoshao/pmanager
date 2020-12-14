@@ -69,20 +69,18 @@ public class InterfaceResponseInfoDBImpl implements IInterfaceResponseInfoDB {
     }
 
     @Override
-    public int delPersonRes(String director, String project) {
+    public int delPersonRes(String projectId) {
 
         int cnt = -1;
         try {
             String sql = "";
 
-            sql += " delete                             ";
+            sql += " delete                           ";
             sql += "   from interface_response_info   ";
-            sql += "  where director  = :director       " +
-                    "   and project = :project          ";
+            sql += "  where projectId = :projectId    ";
 
             Map<String, Object> paramSql = new HashMap<String, Object>();
-            paramSql.put("director"   , CommonUtils.objectToStr(director));
-            paramSql.put("project"  , CommonUtils.objectToStr(project));
+            paramSql.put("projectId"   , CommonUtils.objectToStr(projectId));
 
             cnt = jpaDao.commonQueryByParam(sql, paramSql);
         } catch (Exception e) {
@@ -93,20 +91,17 @@ public class InterfaceResponseInfoDBImpl implements IInterfaceResponseInfoDB {
     }
 
     @Override
-    public int delBatchPersonRes(String director, String projectList) {
+    public int delBatchPersonRes(String projectIdList) {
 
         int cnt = -1;
         try {
             String sql = "";
 
-            sql += " delete                             ";
-            sql += "   from interface_response_info   ";
-            sql += "  where director  = :director       " +
-                    "   and project   in ("+ projectList +")     ";
+            sql += " delete                                    ";
+            sql += "   from interface_response_info            ";
+            sql += "  where projectId in ("+ projectIdList +") ";
 
             Map<String, Object> paramSql = new HashMap<String, Object>();
-            paramSql.put("director"   , CommonUtils.objectToStr(director));
-            //paramSql.put("project"  , CommonUtils.objectToStr(projectList));
 
             cnt = jpaDao.commonQueryByParam(sql, paramSql);
         } catch (Exception e) {
@@ -160,34 +155,46 @@ public class InterfaceResponseInfoDBImpl implements IInterfaceResponseInfoDB {
             String sql = "";
 
             sql += " insert into interface_response_info ( ";
-            sql += "        director                         ";
-            sql += "       ,project                          ";
-            sql += "       ,projectName                      ";
-            sql += "       ,deployType                       ";
-            sql += "       ,developmentLanguage              ";
-            sql += "       ,developmentArchitect             ";
-            sql += "       ,functionPoint                    ";
-            sql += "       ,comments                         ";
-            sql += "       ,createTime                       ";
-            sql += "       ,updateCount                      ";
-            sql += "       ,updateTime ) values (            ";
-            sql += "        :director                        ";
-            sql += "       ,:project                         ";
-            sql += "       ,:projectName                     ";
-            sql += "       ,:deployType                      ";
-            sql += "       ,:developmentLanguage             ";
-            sql += "       ,:developmentArchitect            ";
-            sql += "       ,:functionPoint                   ";
-            sql += "       ,:comments                        ";
-            sql += "       ,:createTime                      ";
-            sql += "       ,:updateCount                     ";
-            sql += "       ,:updateTime 	    )            ";
+            sql += "        projectId                      ";
+            sql += "       ,director                       ";
+            sql += "       ,project                        ";
+            sql += "       ,projectName                    ";
+            sql += "       ,developmentLanguage            ";
+            sql += "       ,developmentArchitect           ";
+            sql += "       ,functionPoint                  ";
+            sql += "       ,comments                       ";
+            sql += "       ,createTime                     ";
+            sql += "       ,updateCount                    ";
+            sql += "       ,updateTime                     ";
+            sql += "       ,projectStart                   ";
+            sql += "       ,projectEnd                     ";
+            sql += "       ,collaborator                   ";
+            sql += "       ,projectManager                 ";
+            sql += "       ,projectStatus                  ";
+            sql += "       ,flowChart ) values (           ";
+            sql += "        :projectId                     ";
+            sql += "       ,:director                      ";
+            sql += "       ,:project                       ";
+            sql += "       ,:projectName                   ";
+            sql += "       ,:developmentLanguage           ";
+            sql += "       ,:developmentArchitect          ";
+            sql += "       ,:functionPoint                 ";
+            sql += "       ,:comments                      ";
+            sql += "       ,:createTime                    ";
+            sql += "       ,:updateCount                   ";
+            sql += "       ,:updateTime 	               ";
+            sql += "       ,:projectStart                  ";
+            sql += "       ,:projectEnd                    ";
+            sql += "       ,:collaborator                  ";
+            sql += "       ,:projectManager                ";
+            sql += "       ,:projectStatus                 ";
+            sql += "       ,:flowChart )                   ";
 
             Map<String, Object> paramSql = new HashMap<String, Object>();
+            paramSql.put("projectId"   , CommonUtils.objectToStr(personResInterfaceEntity.getProjectId()));
             paramSql.put("director"   , CommonUtils.objectToStr(personResInterfaceEntity.getDirector()));
             paramSql.put("project"   , CommonUtils.objectToStr(personResInterfaceEntity.getProject()));
             paramSql.put("projectName"   , CommonUtils.objectToStr(personResInterfaceEntity.getProjectName()));
-            paramSql.put("deployType"   , CommonUtils.objectToStr(personResInterfaceEntity.getDeployType()));
             paramSql.put("developmentLanguage"   , CommonUtils.objectToStr(personResInterfaceEntity.getDevelopmentLanguage()));
             paramSql.put("developmentArchitect"   , CommonUtils.objectToStr(personResInterfaceEntity.getDevelopmentArchitect()));
             paramSql.put("functionPoint"   , CommonUtils.objectToStr(personResInterfaceEntity.getFunctionPoint()));
@@ -195,11 +202,14 @@ public class InterfaceResponseInfoDBImpl implements IInterfaceResponseInfoDB {
             paramSql.put("createTime"   , CommonUtils.objectToStr(personResInterfaceEntity.getCreateTime()));
             paramSql.put("updateCount"   , 0);
             paramSql.put("updateTime"   , CommonUtils.objectToStr(personResInterfaceEntity.getCreateTime()));
+            paramSql.put("projectStart"   , CommonUtils.objectToStr(personResInterfaceEntity.getProjectStart()));
+            paramSql.put("projectEnd"   , CommonUtils.objectToStr(personResInterfaceEntity.getProjectEnd()));
+            paramSql.put("collaborator"   , CommonUtils.objectToStr(personResInterfaceEntity.getCollaborator()));
+            paramSql.put("projectManager"   , CommonUtils.objectToStr(personResInterfaceEntity.getProjectManager()));
+            paramSql.put("projectStatus"   , CommonUtils.objectToStr(personResInterfaceEntity.getProjectStatus()));
+            paramSql.put("flowChart"   , CommonUtils.objectToStr(personResInterfaceEntity.getFlowChart()));
 
             addCnt = jpaDao.commonQueryByParam(sql, paramSql);
-
-            //BigInteger cnt = (BigInteger)query.getSingleResult();
-            //addCnt = cnt.intValue();
         } catch (Exception e) {
             e.printStackTrace();
         }
