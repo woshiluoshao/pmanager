@@ -70,44 +70,4 @@ public class UserOpController {
         return userService.selectUserList(request);
     }
 
-
-    //region 接口信息操作
-
-    /**
-     * 查询接口信息
-     * @param request
-     * @return
-     */
-    @RequestMapping(value = "/interfaceSelect.json", produces = "application/json;charset=UTF-8", method = RequestMethod.GET)
-    @ResponseBody
-    public Layui interfaceSelectMethod(HttpServletRequest request) {
-        return interfaceService.selectPerResInterface(request);
-    }
-
-    /**
-     * 接口增加
-     * @param request
-     * @return
-     */
-    @RequestMapping(value = "/interfaceAdd.json", produces = "application/json;charset=UTF-8", method = RequestMethod.POST)
-    @ResponseBody
-    public ResultVo interfaceAddMethod(HttpServletRequest request) {
-        return interfaceService.addPerResInterface(request);
-    }
-
-    /**
-     * 接口删除
-     * @param request
-     * @return
-     */
-    @RequestMapping(value = "/interfaceDel.json", produces = "application/json;charset=UTF-8", method = RequestMethod.POST)
-    @ResponseBody
-    public ResultVo interfaceDelMethod(HttpServletRequest request) {
-        return interfaceService.delPerResInterface(request);
-    }
-
-
-    //endregion
-
-
 }

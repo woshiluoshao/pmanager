@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.db.mybatis.dao.RecordThirdPartMapper">
+  <resultMap id="BaseResultMap" type="jp.db.mybatis.model.RecordThirdPart">
+    <id column="uuid" jdbcType="VARCHAR" property="uuid" />
+    <result column="company" jdbcType="VARCHAR" property="company" />
+    <result column="companyName" jdbcType="VARCHAR" property="companyname" />
+    <result column="scene" jdbcType="VARCHAR" property="scene" />
+    <result column="contact" jdbcType="VARCHAR" property="contact" />
+    <result column="contactInformation" jdbcType="VARCHAR" property="contactinformation" />
+    <result column="localContact" jdbcType="VARCHAR" property="localcontact" />
+    <result column="localContactInfo" jdbcType="VARCHAR" property="localcontactinfo" />
+    <result column="createTime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="updateCount" jdbcType="INTEGER" property="updatecount" />
+    <result column="updateTime" jdbcType="TIMESTAMP" property="updatetime" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="jp.db.mybatis.model.RecordThirdPartWithBLOBs">
+    <result column="testParam" jdbcType="LONGVARCHAR" property="testparam" />
+    <result column="formalParam" jdbcType="LONGVARCHAR" property="formalparam" />
+    <result column="comments" jdbcType="LONGVARCHAR" property="comments" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    uuid, company, companyName, scene, contact, contactInformation, localContact, localContactInfo, 
+    createTime, updateCount, updateTime
+  </sql>
+  <sql id="Blob_Column_List">
+    testParam, formalParam, comments
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from record_third_part
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from record_third_part
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="jp.db.mybatis.model.RecordThirdPartWithBLOBs">
+    insert into record_third_part (uuid, company, companyName, 
+      scene, contact, contactInformation, 
+      localContact, localContactInfo, createTime, 
+      updateCount, updateTime, testParam, 
+      formalParam, comments)
+    values (#{uuid,jdbcType=VARCHAR}, #{company,jdbcType=VARCHAR}, #{companyname,jdbcType=VARCHAR}, 
+      #{scene,jdbcType=VARCHAR}, #{contact,jdbcType=VARCHAR}, #{contactinformation,jdbcType=VARCHAR}, 
+      #{localcontact,jdbcType=VARCHAR}, #{localcontactinfo,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, 
+      #{updatecount,jdbcType=INTEGER}, #{updatetime,jdbcType=TIMESTAMP}, #{testparam,jdbcType=LONGVARCHAR}, 
+      #{formalparam,jdbcType=LONGVARCHAR}, #{comments,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="jp.db.mybatis.model.RecordThirdPartWithBLOBs">
+    insert into record_third_part
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="uuid != null">
+        uuid,
+      </if>
+      <if test="company != null">
+        company,
+      </if>
+      <if test="companyname != null">
+        companyName,
+      </if>
+      <if test="scene != null">
+        scene,
+      </if>
+      <if test="contact != null">
+        contact,
+      </if>
+      <if test="contactinformation != null">
+        contactInformation,
+      </if>
+      <if test="localcontact != null">
+        localContact,
+      </if>
+      <if test="localcontactinfo != null">
+        localContactInfo,
+      </if>
+      <if test="createtime != null">
+        createTime,
+      </if>
+      <if test="updatecount != null">
+        updateCount,
+      </if>
+      <if test="updatetime != null">
+        updateTime,
+      </if>
+      <if test="testparam != null">
+        testParam,
+      </if>
+      <if test="formalparam != null">
+        formalParam,
+      </if>
+      <if test="comments != null">
+        comments,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="uuid != null">
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="company != null">
+        #{company,jdbcType=VARCHAR},
+      </if>
+      <if test="companyname != null">
+        #{companyname,jdbcType=VARCHAR},
+      </if>
+      <if test="scene != null">
+        #{scene,jdbcType=VARCHAR},
+      </if>
+      <if test="contact != null">
+        #{contact,jdbcType=VARCHAR},
+      </if>
+      <if test="contactinformation != null">
+        #{contactinformation,jdbcType=VARCHAR},
+      </if>
+      <if test="localcontact != null">
+        #{localcontact,jdbcType=VARCHAR},
+      </if>
+      <if test="localcontactinfo != null">
+        #{localcontactinfo,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null">
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatecount != null">
+        #{updatecount,jdbcType=INTEGER},
+      </if>
+      <if test="updatetime != null">
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="testparam != null">
+        #{testparam,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="formalparam != null">
+        #{formalparam,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="comments != null">
+        #{comments,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="jp.db.mybatis.model.RecordThirdPartWithBLOBs">
+    update record_third_part
+    <set>
+      <if test="company != null">
+        company = #{company,jdbcType=VARCHAR},
+      </if>
+      <if test="companyname != null">
+        companyName = #{companyname,jdbcType=VARCHAR},
+      </if>
+      <if test="scene != null">
+        scene = #{scene,jdbcType=VARCHAR},
+      </if>
+      <if test="contact != null">
+        contact = #{contact,jdbcType=VARCHAR},
+      </if>
+      <if test="contactinformation != null">
+        contactInformation = #{contactinformation,jdbcType=VARCHAR},
+      </if>
+      <if test="localcontact != null">
+        localContact = #{localcontact,jdbcType=VARCHAR},
+      </if>
+      <if test="localcontactinfo != null">
+        localContactInfo = #{localcontactinfo,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null">
+        createTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatecount != null">
+        updateCount = #{updatecount,jdbcType=INTEGER},
+      </if>
+      <if test="updatetime != null">
+        updateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="testparam != null">
+        testParam = #{testparam,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="formalparam != null">
+        formalParam = #{formalparam,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="comments != null">
+        comments = #{comments,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="jp.db.mybatis.model.RecordThirdPartWithBLOBs">
+    update record_third_part
+    set company = #{company,jdbcType=VARCHAR},
+      companyName = #{companyname,jdbcType=VARCHAR},
+      scene = #{scene,jdbcType=VARCHAR},
+      contact = #{contact,jdbcType=VARCHAR},
+      contactInformation = #{contactinformation,jdbcType=VARCHAR},
+      localContact = #{localcontact,jdbcType=VARCHAR},
+      localContactInfo = #{localcontactinfo,jdbcType=VARCHAR},
+      createTime = #{createtime,jdbcType=TIMESTAMP},
+      updateCount = #{updatecount,jdbcType=INTEGER},
+      updateTime = #{updatetime,jdbcType=TIMESTAMP},
+      testParam = #{testparam,jdbcType=LONGVARCHAR},
+      formalParam = #{formalparam,jdbcType=LONGVARCHAR},
+      comments = #{comments,jdbcType=LONGVARCHAR}
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="jp.db.mybatis.model.RecordThirdPart">
+    update record_third_part
+    set company = #{company,jdbcType=VARCHAR},
+      companyName = #{companyname,jdbcType=VARCHAR},
+      scene = #{scene,jdbcType=VARCHAR},
+      contact = #{contact,jdbcType=VARCHAR},
+      contactInformation = #{contactinformation,jdbcType=VARCHAR},
+      localContact = #{localcontact,jdbcType=VARCHAR},
+      localContactInfo = #{localcontactinfo,jdbcType=VARCHAR},
+      createTime = #{createtime,jdbcType=TIMESTAMP},
+      updateCount = #{updatecount,jdbcType=INTEGER},
+      updateTime = #{updatetime,jdbcType=TIMESTAMP}
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+  <select id="countThirdPartList" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+    select count(1)
+      from record_third_part
+  </select>
+  <select id="getThirdPartList" parameterType="java.util.HashMap" resultMap="ResultMapWithBLOBs">
+    select *
+      from record_third_part
+    order by updateTime desc
+     <if test="start != null and len != null">
+       limit #{start}, #{len}
+     </if>
+  </select>
+</mapper>

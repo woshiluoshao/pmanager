@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+  PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+  "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+
+    <!-- <classPathEntry location="F:/cache/mysql-connector-java-5.1.28-bin.jar" /> -->
+    <context id="testTables"    targetRuntime="MyBatis3">
+
+        <commentGenerator>
+            <property name="suppressAllComments" value="true"/>
+        </commentGenerator>
+
+		<!-- jdbc连接 -->  
+        <!-- <jdbcConnection driverClass="org.postgresql.Driver" connectionURL="jdbc:postgresql://localhost:5432/postgres" userId="postgres" password="ymslx-1997">
+        </jdbcConnection> -->
+
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://localhost:3306/pmanager" userId="root" password="123456">
+
+        </jdbcConnection>
+        
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+        
+        <javaModelGenerator targetPackage="jp.db.mybatis.model" targetProject=".\src\main\resources\mybatis">
+            <property name="enableSubPackages" value="false"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+        
+        <sqlMapGenerator targetPackage="jp.db.mybatis.mapper" targetProject=".\src\main\resources\mybatis">
+            <property name="enableSubPackages" value="false"/>
+        </sqlMapGenerator>
+        
+        <javaClientGenerator type="XMLMAPPER" targetPackage="jp.db.mybatis.dao" targetProject=".\src\main\resources\mybatis">
+            <property name="enableSubPackages" value="false"/>
+        </javaClientGenerator>
+        
+        
+        <table tableName="record_third_part"
+         enableCountByExample="false" 
+         enableUpdateByExample="false" 
+         enableDeleteByExample="false"
+         enableSelectByExample="false" 
+         selectByExampleQueryId="false"
+        >
+        </table>
+        
+    </context>
+</generatorConfiguration>

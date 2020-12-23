@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <script type="text/javascript"  th:src="@{/jquery-3.4.0/jquery-3.4.0.min.js}"></script>
+    <link th:href="@{/bootstrap/bootstrap-3.3.7/css/bootstrap.min.css}" rel="stylesheet" type="text/css" >
+
+    <script type="text/javascript"  th:src="@{/bootstrap/bootstrap-3.3.7/js/bootstrap.min.js}"></script>
+    <link th:href="@{/layui/css/layui.css}" rel="stylesheet">
+
+    <style th:inline="text">
+        table{border-spacing: 10px 30px;}
+        tr {
+            display: block;
+            /*将tr设置为块体元素*/
+            margin: 3px 0;
+            /*设置tr间距为2px*/
+        }
+
+        td {
+            text-align: right;
+        }
+
+        .layui-tab-content {
+            height: 200vh;
+        }
+
+    </style>
+</head>
+<body>
+<div style="margin-top:3%;margin-left:1%;margin-right:2%;">
+    <table class="layui-hide" id="test" lay-filter="table"></table>
+</div>
+
+<div id="addModel" style="display: none;">
+    <table style="margin-left: 2%; margin-top: 1%">
+
+        <tr>
+            <td style="width: 90px;">
+                工程<label style="color: red">*</label>：
+            </td>
+            <td>
+                <input type="text" style="width:165px;height:30px;" name="project" id="project">
+            </td>
+            <td style="width: 90px;">
+                工程名<label style="color: red">*</label>：
+            </td>
+            <td>
+                <input type="text" style="width:200px;height:30px;" name="projectName" id="projectName">
+            </td>
+        </tr>
+
+        <tr>
+            <td style="width: 90px;">
+                开始时间<label style="color: red">*</label>：
+            </td>
+            <td>
+                <input type="date" class="form-control" name="birth" id="projectStart">
+            </td>
+            <td style="width: 90px;">
+                结束时间：
+            </td>
+            <td>
+                <input type="date" class="form-control" name="birth" id="projectEnd">
+            </td>
+        </tr>
+
+        <tr>
+            <td style="width: 90px;">
+                开发者<label style="color: red">*</label>：
+            </td>
+            <td>
+                <input type="text" style="width:165px;height:30px;" name="director" id="director">
+            </td>
+            <td style="width: 90px;">
+                协作者：
+            </td>
+            <td>
+                <input type="text" style="width:200px;height:30px;" name="collaborator" id="collaborator">
+            </td>
+        </tr>
+
+        <tr>
+            <td style="width: 90px;">
+                项目经理：
+            </td>
+            <td>
+                <input type="text" style="width:165px;height:30px;" name="projectManager" id="projectManager">
+            </td>
+            <td style="width: 90px;">
+                项目状态<label style="color: red">*</label>：
+            </td>
+            <td>
+                <select style="width:200px;height:30px;" name="projectStatus" id="projectStatus" value="0">
+                    <option th:each="projectStatusEnum:${projectStatusEnum}" th:value="${projectStatusEnum.paramValue}" th:text="${projectStatusEnum.paramValue}"></option>
+                </select>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="width: 90px;">
+                开发语言<label style="color: red">*</label>：
+            </td>
+            <td>
+                <select style="width:165px;height:30px;" name="developmentLanguage" id="developmentLanguage" value="0">
+                    <option th:each="languageEnum:${languageEnum}" th:value="${languageEnum.paramValue}" th:text="${languageEnum.paramValue}"></option>
+                </select>
+            </td>
+            <td style="width: 90px;">
+                开发架构<label style="color: red">*</label>：
+            </td>
+            <td>
+                <select style="width:165px;height:30px;" name="developmentArchitect" id="developmentArchitect" value="0">
+                    <option th:each="devArchitectEnum:${devArchitectEnum}" th:value="${devArchitectEnum.paramValue}" th:text="${devArchitectEnum.paramValue}"></option>
+                </select>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="width: 90px;">
+                功能描述<label style="color: red">*</label>：
+            </td>
+            <td>
+                <textarea  type="text" style="width:500px;" rows="5" name="functionPoint" id="functionPoint"></textarea>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="width: 90px;">
+                备注：
+            </td>
+            <td>
+                <textarea type="text" style="width:500px;" rows="3" name="comments" id="comments"></textarea>
+            </td>
+        </tr>
+
+        <tr id="timeTr" style="display: none">
+            <td style="width: 90px;">
+                创建时间<label style="color: red">*</label>：
+            </td>
+            <td>
+                <input type="text" readonly="readonly" style="width:500px;height:30px;" name="createTime" id="createTime">
+            </td>
+        </tr>
+    </table>
+
+</div>
+<div id="delModel" style="display: none;margin-top: 1%; margin-left: 1%">
+    <span id="delMsg"></span><br>
+    <span id="delContent"></span>
+</div>
+
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="addInterface">添加厂商</button>
+<!--        <button class="layui-btn layui-btn-sm" lay-event="delInterface">删除接口</button>-->
+    </div>
+</script>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="details">详情</a>
+    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="update">变更</a>
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script type="text/javascript"  th:src="@{/common/common.js}"></script>
+<script th:src="@{/layui/layui.js}"></script>
+<script>
+
+    const basePath = '[[${#httpServletRequest.getScheme() + "://" + #httpServletRequest.getServerName() + ":" + #httpServletRequest.getServerPort() + #httpServletRequest.getContextPath()}]]';
+
+    $(function () {
+        search();
+    });
+
+    function search() {
+
+        layui.use('table', function(){
+            const table = layui.table;
+
+            table.render({
+                elem: '#test'
+                ,url: basePath +'/thirdSelect.json'
+                ,toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+                ,cols: [
+                    [
+                        {type: 'checkbox', fixed: 'left'}
+                        ,{field:'companyname', title: '厂商', align: 'center'}
+                        ,{field:'scene', title: '使用场景', align: 'center'}
+                        ,{field:'contact', title: '联系人', align: 'center', }
+                        ,{field:'contactinformation', title: '联系方式', align: 'center', }
+                        ,{field:'localcontact', title: '对接人', align: 'center', }
+                        ,{field:'localcontactinfo', title: '对接人联系方式', align: 'center'}
+                        ,{field:'updateCount', title: '更新数', hide: true, align: 'center'}
+                        ,{fixed: 'right', title:'操作', align: 'center', toolbar: '#barDemo'}
+                    ]
+                ]
+                ,page: true   //开启分页
+                ,limit:10   //默认十条数据一页
+                ,limits:[10,20]  //数据分页条
+            });
+
+            table.on('tool(table)', function(obj){
+                const data = obj.data;
+                if(obj.event === 'update'){
+                    assignData(data);
+                    controlEnable();
+                    openAddModel(data);
+                } else if(obj.event === 'details'){
+                    //赋值
+                    assignData(data);
+                    controlDisable();
+                    openReadModel();
+                }
+            });
+
+            //头工具栏事件
+            table.on('toolbar(table)', function(obj){
+                const checkStatus = table.checkStatus(obj.config.id);
+                switch(obj.event){
+                    case 'addInterface':
+                        //弹出模态框
+                        initModel();
+                        controlEnable();
+                        openAddModel();
+                        break;
+                    case 'delInterface':
+                        const data = checkStatus.data;
+                        openDelModel(data);
+                        break;
+                }
+            });
+
+        });
+    }
+
+    //初始化模态库
+    function initModel() {
+
+        $("#project").val("");
+        $("#projectName").val("");
+        $("#projectStart").val("");
+        $("#projectEnd").val("");
+        $("#director").val("");
+        $("#collaborator").val("");
+        $("#projectManager").val("");
+        $("#projectStatus").val("");
+        $("#developmentLanguage").val("");
+        $("#developmentArchitect").val("");
+        $("#functionPoint").val("");
+        $("#comments").val("");
+        $("#createTime").val("");
+    }
+
+    //数据赋值
+    function assignData(data) {
+
+        $("#project").val(data.project);
+        $("#projectName").val(data.projectName);
+        $("#projectStart").val(data.projectStart);
+        $("#projectEnd").val(data.projectEnd);
+        $("#director").val(data.director);
+        $("#collaborator").val(data.collaborator);
+        $("#projectManager").val(data.projectManager);
+        $("#projectStatus").val(data.projectStatus);
+        $("#developmentLanguage").val(data.developmentLanguage);
+        $("#developmentArchitect").val(data.developmentArchitect);
+        $("#functionPoint").val(data.functionPoint);
+        $("#comments").val(data.comments);
+        $("#createTime").val(data.createTime);
+    }
+
+    function controlDisable() {
+        $("#project").attr("readonly", "true");
+        $("#projectName").attr("readonly", "true");
+        $("#projectStart").attr("readonly", "true");
+        $("#projectEnd").attr("readonly", "true");
+        $("#director").attr("readonly", "true");
+        $("#collaborator").attr("readonly", "true");
+        $("#projectManager").attr("readonly", "true");
+        $("#projectStatus").attr("disabled", "disabled");
+        $("#developmentLanguage").attr("disabled", "disabled");
+        $("#developmentArchitect").attr("disabled", "disabled");
+        $("#functionPoint").attr("readonly", "true");
+        $("#comments").attr("readonly", "true");
+        $('#timeTr').css("display", "block");
+    }
+
+    function controlEnable() {
+        $("#project").removeAttr("readonly");
+        $("#projectName").removeAttr("readonly");
+        $("#projectStart").removeAttr("readonly");
+        $("#projectEnd").removeAttr("readonly");
+        $("#director").removeAttr("readonly");
+        $("#collaborator").removeAttr("readonly");
+        $("#projectManager").removeAttr("readonly");
+        $("#projectStatus").removeAttr("disabled");
+        $("#developmentLanguage").removeAttr("disabled");
+        $("#developmentArchitect").removeAttr("disabled");
+        $("#functionPoint").removeAttr("readonly");
+        $("#comments").removeAttr("readonly");
+        $('#timeTr').css("display", "none");
+    }
+
+
+    //弹出模态库
+    function openAddModel(data) {
+
+        layer.open({
+            type: 1,
+            title: '项目信息',
+            area: ['700px', '500px'],
+            shadeClose: false, //点击遮罩关闭
+            content: $('#addModel'),
+            offset: '20px',
+            btn: ['确定', '取消'],
+            yes: function(index, layero) {
+                addAjaxFun(index, data);
+            },
+            cancel: function () {
+                return;
+            },
+            end: function () {
+                $('#addModel').css("display", "none");
+                location.reload();
+            }
+        });
+    }
+
+    //弹出删除确认框
+    function openDelModel(data) {
+
+        const length = data.length;
+        if(length <=0) {
+            layer.msg("未选中数据", { time :800});
+            return;
+        }
+        let msg = "您将删除" + length + "条数据:\r\n";
+        let projectStr = "";
+        let projectParam = "";
+        for (let i = 0; i < length; i++) {
+            const json = data[i];
+            const project = json.projectId;
+            projectParam += project + ",";
+            projectStr += json.project + "、";
+        }
+        projectStr = projectStr.substr(0, projectStr.length -1);
+        $("#delMsg").html(msg);
+        $("#delContent").html(projectStr);
+
+        const director = $("#director").val();
+
+        if(!projectParam) {
+            layer.msg("项目不能为空！", { time :1000});
+            return;
+        }
+        const param = {
+            "projectId":projectParam.substr(0, projectParam.length -1),
+        }
+
+        layer.open({
+            type: 1,
+            title: '删除确认',
+            area: ['300px', '200px'],
+            shadeClose: false, //点击遮罩关闭
+            content: $('#delModel'),
+            offset: '100px',
+            btn: ['确定', '取消'],
+            yes: function(index, layero) {
+                delAjaxFun(index, param);
+            },
+            cancel: function () {
+            },
+            end: function () {
+                location.reload();
+            }
+        });
+    }
+
+    function openReadModel() {
+        layer.open({
+            type: 1,
+            title: '接口信息',
+            area: ['700px', '500px'],
+            shadeClose: false, //点击遮罩关闭
+            content: $('#addModel'),
+            offset: '20px'
+        });
+    }
+
+    function addAjaxFun(index, data) {
+
+        const project = $("#project").val();
+        const projectName = $("#projectName").val();
+        const projectStart = $("#projectStart").val();
+        const projectEnd = $("#projectEnd").val();
+        const director = $("#director").val();
+        const collaborator = $("#collaborator").val();
+        const projectManager = $("#projectManager").val();
+        const projectStatus = $("#projectStatus").val();
+        const developmentLanguage = $("#developmentLanguage").val();
+        const developmentArchitect = $("#developmentArchitect").val();
+        const functionPoint = $("#functionPoint").val();
+        const comments = $("#comments").val();
+
+        if(!project) {
+            layer.msg("工程不能为空！", { time :1000});
+            return;
+        }
+        if(!projectName) {
+            layer.msg("工程名不能为空！", { time :1000});
+            return;
+        }
+        if(!projectStart) {
+            layer.msg("开始时间不能为空！", { time :1000});
+            return;
+        }
+        if(!director) {
+            layer.msg("开发者不能为空！", { time :1000});
+            return;
+        }
+        if(!projectStatus) {
+            layer.msg("项目状态不能为空！", { time :1000});
+            return;
+        }
+        if(!developmentLanguage) {
+            layer.msg("开发工具不能为空！", { time :1000});
+            return;
+        }
+
+        if(!developmentArchitect) {
+            layer.msg("开发架构不能为空！", { time :1000});
+            return;
+        }
+        if(!functionPoint) {
+            layer.msg("功能描述不能为空！", { time :1000});
+            return;
+        }
+
+        let projectId = "";
+        let updateCount = "";
+        if(data != null) {
+            projectId = data.projectId;
+            updateCount = data.updateCount;
+        }
+
+        const param = {
+            "projectId":projectId,
+            "project":project,
+            "projectName":projectName,
+            "projectStart":projectStart,
+            "projectEnd":projectEnd,
+            "director":director,
+            "collaborator":collaborator,
+            "projectManager":projectManager,
+            "projectStatus":projectStatus,
+            "developmentLanguage":developmentLanguage,
+            "developmentArchitect":developmentArchitect,
+            "functionPoint":functionPoint,
+            "comments":comments,
+            "updateCount":updateCount
+        };
+
+        //连接后端进行数据插入
+        //ajaxPostNoData(basePath + "/interfaceAdd.json", param);
+
+        $.ajax({
+            url     : basePath + "/interfaceAdd.json",
+            dataType:"json",
+            type    :"post",
+            async   : false,
+            data    : param,
+            success:function (result) {
+                $.closeProgressBar();
+                const code = result.code;
+                const msg = result.msg;
+
+                if(code === "0000") {
+                    layer.msg(msg, { time :2000});
+                    setTimeout(function() {
+                        //成功之后将模态库去除，然后刷新界面
+                        $('#addModel').css("display", "none");
+                        layer.close(index);
+                    }, 1000);
+
+                } else {
+                    layer.msg(msg, { time :2000});
+                }
+            },
+            error:function (result) {
+                $.shotTotal(result, "error");
+            }
+
+        })
+    }
+
+    function delAjaxFun(index, param) {
+
+        $.ajax({
+            url     : basePath + "/interfaceDel.json",
+            dataType:"json",
+            type    :"post",
+            async   : false,
+            data    : param,
+            success:function (result) {
+
+                const code = result.code;
+                const msg = result.msg;
+
+                if(code === "0000") {
+                    layer.msg("删除成功", { time :2000});
+                    setTimeout(function() {
+                        layer.close(index);
+                    }, 1000);
+
+                } else {
+                    layer.msg(msg, { time :2000});
+                }
+            },
+            error:function (result) {
+                $.shotTotal(result, "error");
+            }
+        })
+    }
+
+</script>
+</body>
+</html>

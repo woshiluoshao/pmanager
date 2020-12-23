@@ -19,3 +19,8 @@ spring:
         max-idle: 10
         max-wait: 100000
 
+#用于mybatis
+mybatis:
+  mapper-locations: classpath:jp/db/mybatis/*/*.xml
+  type-aliases-package: jp.db.mybatis.model
+

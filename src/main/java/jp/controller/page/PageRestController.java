@@ -64,7 +64,7 @@ public class PageRestController {
         return "chart";
     }
 
-    @RequestMapping(value = "/interDetail")
+    @RequestMapping(value = "/infoInter")
     public String interDetailPage(Model model) {
 
         Map<String, Object> param = new HashMap<String, Object>();
@@ -82,7 +82,11 @@ public class PageRestController {
         model.addAttribute("languageEnum", developmentLanguageList);
         model.addAttribute("devArchitectEnum", developmentArchitectList);
         model.addAttribute("projectStatusEnum", projectStatusList);
-        return "interDetail";
+        return "infoInter";
     }
 
+    @RequestMapping(value = "/infoThird")
+    public String thirdDetailPage() {
+        return "infoThird";
+    }
 }

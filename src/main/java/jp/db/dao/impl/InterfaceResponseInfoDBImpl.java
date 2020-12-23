@@ -30,7 +30,7 @@ public class InterfaceResponseInfoDBImpl implements IInterfaceResponseInfoDB {
         try {
             String sql = "";
             sql += " select *                         ";
-            sql += "   from interface_response_info ";
+            sql += "   from interface_response_info   ";
             sql += "  where 1 = 1                     ";
             sql += "   order by createTime desc       ";
 
