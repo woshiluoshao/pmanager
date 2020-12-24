@@ -38,91 +38,103 @@
 
         <tr>
             <td style="width: 90px;">
-                工程<label style="color: red">*</label>：
+                厂商<label style="color: red">*</label>：
             </td>
             <td>
-                <input type="text" style="width:165px;height:30px;" name="project" id="project">
+                <input type="text" style="width:165px;height:30px;" name="company" id="company">
             </td>
             <td style="width: 90px;">
-                工程名<label style="color: red">*</label>：
+                厂商名称<label style="color: red">*</label>：
             </td>
             <td>
-                <input type="text" style="width:200px;height:30px;" name="projectName" id="projectName">
+                <input type="text" style="width:200px;height:30px;" name="companyName" id="companyName">
+            </td>
+
+            <td style="width: 90px;">
+                使用场景<label style="color: red">*</label>：
+            </td>
+            <td>
+                <input type="text" style="width:200px;height:30px;" name="scene" id="scene">
             </td>
         </tr>
 
         <tr>
             <td style="width: 90px;">
-                开始时间<label style="color: red">*</label>：
+                服务地址：
             </td>
             <td>
-                <input type="date" class="form-control" name="birth" id="projectStart">
-            </td>
-            <td style="width: 90px;">
-                结束时间：
-            </td>
-            <td>
-                <input type="date" class="form-control" name="birth" id="projectEnd">
+                <input type="text" style="width:745px;height:30px;" name="serverUrl" id="serverUrl">
             </td>
         </tr>
 
         <tr>
             <td style="width: 90px;">
-                开发者<label style="color: red">*</label>：
+                账号：
             </td>
             <td>
-                <input type="text" style="width:165px;height:30px;" name="director" id="director">
+                <input type="text" style="width:165px;height:30px;" name="account" id="account">
             </td>
             <td style="width: 90px;">
-                协作者：
+                用户名：
             </td>
             <td>
-                <input type="text" style="width:200px;height:30px;" name="collaborator" id="collaborator">
+                <input type="text" style="width:200px;height:30px;" name="username" id="username">
+            </td>
+
+            <td style="width: 90px;">
+                密码：
+            </td>
+            <td>
+                <input type="text" style="width:200px;height:30px;" name="password" id="password">
             </td>
         </tr>
 
         <tr>
             <td style="width: 90px;">
-                项目经理：
+                联系人<label style="color: red">*</label>：
             </td>
             <td>
-                <input type="text" style="width:165px;height:30px;" name="projectManager" id="projectManager">
+                <input type="text" style="width:165px;height:30px;" name="contact" id="contact">
             </td>
             <td style="width: 90px;">
-                项目状态<label style="color: red">*</label>：
+                联系方式<label style="color: red">*</label>：
             </td>
             <td>
-                <select style="width:200px;height:30px;" name="projectStatus" id="projectStatus" value="0">
-                    <option th:each="projectStatusEnum:${projectStatusEnum}" th:value="${projectStatusEnum.paramValue}" th:text="${projectStatusEnum.paramValue}"></option>
-                </select>
+                <input type="text" style="width:200px;height:30px;" name="contactInformation" id="contactInformation">
+            </td>
+
+        </tr>
+
+        <tr>
+            <td style="width: 90px;">
+                本地对接人<label style="color: red">*</label>：
+            </td>
+            <td>
+                <input type="text" style="width:165px;height:30px;" name="localContact" id="localContact">
+            </td>
+            <td style="width: 90px;">
+                对接人电话<label style="color: red">*</label>：
+            </td>
+            <td>
+                <input type="text" style="width:200px;height:30px;" name="localContactInfo" id="localContactInfo">
             </td>
         </tr>
 
         <tr>
             <td style="width: 90px;">
-                开发语言<label style="color: red">*</label>：
+                测试参数<label style="color: red">*</label>：
             </td>
             <td>
-                <select style="width:165px;height:30px;" name="developmentLanguage" id="developmentLanguage" value="0">
-                    <option th:each="languageEnum:${languageEnum}" th:value="${languageEnum.paramValue}" th:text="${languageEnum.paramValue}"></option>
-                </select>
-            </td>
-            <td style="width: 90px;">
-                开发架构<label style="color: red">*</label>：
-            </td>
-            <td>
-                <select style="width:165px;height:30px;" name="developmentArchitect" id="developmentArchitect" value="0">
-                    <option th:each="devArchitectEnum:${devArchitectEnum}" th:value="${devArchitectEnum.paramValue}" th:text="${devArchitectEnum.paramValue}"></option>
-                </select>
+                <textarea  type="text" style="width:745px;" rows="5" name="testParam" id="testParam"></textarea>
             </td>
         </tr>
 
         <tr>
             <td style="width: 90px;">
-                功能描述<label style="color: red">*</label>：
+                正式参数<label style="color: red">*</label>：
             </td>
             <td>
-                <textarea  type="text" style="width:500px;" rows="5" name="functionPoint" id="functionPoint"></textarea>
+                <textarea  type="text" style="width:745px;" rows="5" name="formalParam" id="formalParam"></textarea>
             </td>
         </tr>
 
@@ -131,7 +143,7 @@
                 备注：
             </td>
             <td>
-                <textarea type="text" style="width:500px;" rows="3" name="comments" id="comments"></textarea>
+                <textarea type="text" style="width:745px;" rows="3" name="comments" id="comments"></textarea>
             </td>
         </tr>
 
@@ -184,13 +196,14 @@
                 ,toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
                 ,cols: [
                     [
-                        {type: 'checkbox', fixed: 'left'}
-                        ,{field:'companyname', title: '厂商', align: 'center'}
+                        // {type: 'checkbox', fixed: 'left'}
+                        {field:'company', title: '厂商', align: 'center'}
+                        ,{field:'companyName', title: '厂商名称', align: 'center'}
                         ,{field:'scene', title: '使用场景', align: 'center'}
                         ,{field:'contact', title: '联系人', align: 'center', }
-                        ,{field:'contactinformation', title: '联系方式', align: 'center', }
-                        ,{field:'localcontact', title: '对接人', align: 'center', }
-                        ,{field:'localcontactinfo', title: '对接人联系方式', align: 'center'}
+                        ,{field:'contactInformation', title: '联系方式', align: 'center', }
+                        ,{field:'localContact', title: '对接人', align: 'center', }
+                        ,{field:'localContactInfo', title: '对接人联系方式', align: 'center'}
                         ,{field:'updateCount', title: '更新数', hide: true, align: 'center'}
                         ,{fixed: 'right', title:'操作', align: 'center', toolbar: '#barDemo'}
                     ]
@@ -211,23 +224,20 @@
                     assignData(data);
                     controlDisable();
                     openReadModel();
+                } else if(obj.event === 'del') {
+                    //删除
+                    openDelModel(data);
                 }
             });
 
             //头工具栏事件
             table.on('toolbar(table)', function(obj){
                 const checkStatus = table.checkStatus(obj.config.id);
-                switch(obj.event){
-                    case 'addInterface':
-                        //弹出模态框
-                        initModel();
-                        controlEnable();
-                        openAddModel();
-                        break;
-                    case 'delInterface':
-                        const data = checkStatus.data;
-                        openDelModel(data);
-                        break;
+                if(obj.event === "addInterface") {
+                    //弹出模态框
+                    initModel();
+                    controlEnable();
+                    openAddModel();
                 }
             });
 
@@ -237,79 +247,86 @@
     //初始化模态库
     function initModel() {
 
-        $("#project").val("");
-        $("#projectName").val("");
-        $("#projectStart").val("");
-        $("#projectEnd").val("");
-        $("#director").val("");
-        $("#collaborator").val("");
-        $("#projectManager").val("");
-        $("#projectStatus").val("");
-        $("#developmentLanguage").val("");
-        $("#developmentArchitect").val("");
-        $("#functionPoint").val("");
+        $("#company").val("");
+        $("#companyName").val("");
+        $("#scene").val("");
+        $("#testParam").val("");
+        $("#formalParam").val("");
+        $("#contact").val("");
+        $("#contactInformation").val("");
+        $("#localContact").val("");
+        $("#localContactInfo").val("");
         $("#comments").val("");
+        $("#serverUrl").val("");
+        $("#account").val("");
+        $("#username").val("");
+        $("#password").val("");
         $("#createTime").val("");
     }
 
     //数据赋值
     function assignData(data) {
 
-        $("#project").val(data.project);
-        $("#projectName").val(data.projectName);
-        $("#projectStart").val(data.projectStart);
-        $("#projectEnd").val(data.projectEnd);
-        $("#director").val(data.director);
-        $("#collaborator").val(data.collaborator);
-        $("#projectManager").val(data.projectManager);
-        $("#projectStatus").val(data.projectStatus);
-        $("#developmentLanguage").val(data.developmentLanguage);
-        $("#developmentArchitect").val(data.developmentArchitect);
-        $("#functionPoint").val(data.functionPoint);
+        $("#company").val(data.company);
+        $("#companyName").val(data.companyName);
+        $("#scene").val(data.scene);
+        $("#testParam").val(data.testParam);
+        $("#formalParam").val(data.formalParam);
+        $("#contact").val(data.contact);
+        $("#contactInformation").val(data.contactInformation);
+        $("#localContact").val(data.localContact);
+        $("#localContactInfo").val(data.localContactInfo);
         $("#comments").val(data.comments);
+        $("#serverUrl").val(data.serverUrl);
+        $("#account").val(data.account);
+        $("#username").val(data.username);
+        $("#password").val(data.password);
         $("#createTime").val(data.createTime);
     }
 
     function controlDisable() {
-        $("#project").attr("readonly", "true");
-        $("#projectName").attr("readonly", "true");
-        $("#projectStart").attr("readonly", "true");
-        $("#projectEnd").attr("readonly", "true");
-        $("#director").attr("readonly", "true");
-        $("#collaborator").attr("readonly", "true");
-        $("#projectManager").attr("readonly", "true");
-        $("#projectStatus").attr("disabled", "disabled");
-        $("#developmentLanguage").attr("disabled", "disabled");
-        $("#developmentArchitect").attr("disabled", "disabled");
-        $("#functionPoint").attr("readonly", "true");
+        $("#company").attr("readonly", "true");
+        $("#companyName").attr("readonly", "true");
+        $("#scene").attr("readonly", "true");
+        $("#testParam").attr("readonly", "true");
+        $("#formalParam").attr("readonly", "true");
+        $("#contact").attr("readonly", "true");
+        $("#contactInformation").attr("readonly", "true");
+        $("#localContact").attr("readonly", "true");
+        $("#localContactInfo").attr("readonly", "true");
         $("#comments").attr("readonly", "true");
+        $("#serverUrl").attr("readonly", "true");
+        $("#account").attr("readonly", "true");
+        $("#username").attr("readonly", "true");
+        $("#password").attr("readonly", "true");
         $('#timeTr').css("display", "block");
     }
 
     function controlEnable() {
-        $("#project").removeAttr("readonly");
-        $("#projectName").removeAttr("readonly");
-        $("#projectStart").removeAttr("readonly");
-        $("#projectEnd").removeAttr("readonly");
-        $("#director").removeAttr("readonly");
-        $("#collaborator").removeAttr("readonly");
-        $("#projectManager").removeAttr("readonly");
-        $("#projectStatus").removeAttr("disabled");
-        $("#developmentLanguage").removeAttr("disabled");
-        $("#developmentArchitect").removeAttr("disabled");
-        $("#functionPoint").removeAttr("readonly");
+        $("#company").removeAttr("readonly");
+        $("#companyName").removeAttr("readonly");
+        $("#scene").removeAttr("readonly");
+        $("#testParam").removeAttr("readonly");
+        $("#formalParam").removeAttr("readonly");
+        $("#contact").removeAttr("readonly");
+        $("#contactInformation").removeAttr("readonly");
+        $("#localContact").removeAttr("readonly");
+        $("#localContactInfo").removeAttr("readonly");
         $("#comments").removeAttr("readonly");
+        $("#serverUrl").removeAttr("readonly");
+        $("#account").removeAttr("readonly");
+        $("#username").removeAttr("readonly");
+        $("#password").removeAttr("readonly");
         $('#timeTr').css("display", "none");
     }
-
 
     //弹出模态库
     function openAddModel(data) {
 
         layer.open({
             type: 1,
-            title: '项目信息',
-            area: ['700px', '500px'],
+            title: '厂商信息',
+            area: ['80%', '75%'],
             shadeClose: false, //点击遮罩关闭
             content: $('#addModel'),
             offset: '20px',
@@ -330,44 +347,20 @@
     //弹出删除确认框
     function openDelModel(data) {
 
-        const length = data.length;
-        if(length <=0) {
-            layer.msg("未选中数据", { time :800});
-            return;
-        }
-        let msg = "您将删除" + length + "条数据:\r\n";
-        let projectStr = "";
-        let projectParam = "";
-        for (let i = 0; i < length; i++) {
-            const json = data[i];
-            const project = json.projectId;
-            projectParam += project + ",";
-            projectStr += json.project + "、";
-        }
-        projectStr = projectStr.substr(0, projectStr.length -1);
-        $("#delMsg").html(msg);
-        $("#delContent").html(projectStr);
-
-        const director = $("#director").val();
-
-        if(!projectParam) {
-            layer.msg("项目不能为空！", { time :1000});
-            return;
-        }
         const param = {
-            "projectId":projectParam.substr(0, projectParam.length -1),
-        }
+            'uuid':data.uuid
+        };
 
         layer.open({
-            type: 1,
-            title: '删除确认',
-            area: ['300px', '200px'],
+            title: '删除',
             shadeClose: false, //点击遮罩关闭
-            content: $('#delModel'),
+            content: '确定删除吗？',
+            area: ['150px', '180px'],
             offset: '100px',
             btn: ['确定', '取消'],
             yes: function(index, layero) {
                 delAjaxFun(index, param);
+
             },
             cancel: function () {
             },
@@ -380,92 +373,85 @@
     function openReadModel() {
         layer.open({
             type: 1,
-            title: '接口信息',
-            area: ['700px', '500px'],
+            title: '厂商信息',
+            area: ['75%', '75%'],
             shadeClose: false, //点击遮罩关闭
             content: $('#addModel'),
-            offset: '20px'
+            offset: '20px',
         });
     }
 
     function addAjaxFun(index, data) {
 
-        const project = $("#project").val();
-        const projectName = $("#projectName").val();
-        const projectStart = $("#projectStart").val();
-        const projectEnd = $("#projectEnd").val();
-        const director = $("#director").val();
-        const collaborator = $("#collaborator").val();
-        const projectManager = $("#projectManager").val();
-        const projectStatus = $("#projectStatus").val();
-        const developmentLanguage = $("#developmentLanguage").val();
-        const developmentArchitect = $("#developmentArchitect").val();
-        const functionPoint = $("#functionPoint").val();
+        const company = $("#company").val();
+        const companyName = $("#companyName").val();
+        const scene = $("#scene").val();
+        const testParam = $("#testParam").val();
+        const formalParam = $("#formalParam").val();
+        const contact = $("#contact").val();
+        const contactInformation = $("#contactInformation").val();
+        const localContact = $("#localContact").val();
+        const localContactInfo = $("#localContactInfo").val();
         const comments = $("#comments").val();
+        const serverUrl = $("#serverUrl").val();
+        const account = $("#account").val();
+        const username = $("#username").val();
+        const password = $("#password").val();
 
-        if(!project) {
-            layer.msg("工程不能为空！", { time :1000});
+        if(!company) {
+            layer.msg("厂商不能为空！", { time :1000});
             return;
         }
-        if(!projectName) {
-            layer.msg("工程名不能为空！", { time :1000});
+        if(!companyName) {
+            layer.msg("厂商名称不能为空！", { time :1000});
             return;
         }
-        if(!projectStart) {
-            layer.msg("开始时间不能为空！", { time :1000});
+        if(!scene) {
+            layer.msg("运用场景不能为空！", { time :1000});
             return;
         }
-        if(!director) {
-            layer.msg("开发者不能为空！", { time :1000});
+        if(!contact) {
+            layer.msg("联系人不能为空！", { time :1000});
             return;
         }
-        if(!projectStatus) {
-            layer.msg("项目状态不能为空！", { time :1000});
+        if(!localContact) {
+            layer.msg("本地联系人不能为空！", { time :1000});
             return;
         }
-        if(!developmentLanguage) {
-            layer.msg("开发工具不能为空！", { time :1000});
-            return;
-        }
-
-        if(!developmentArchitect) {
-            layer.msg("开发架构不能为空！", { time :1000});
-            return;
-        }
-        if(!functionPoint) {
-            layer.msg("功能描述不能为空！", { time :1000});
+        if(!localContactInfo) {
+            layer.msg("本地联系方式不能为空！", { time :1000});
             return;
         }
 
-        let projectId = "";
+
+        let uuid = "";
         let updateCount = "";
         if(data != null) {
-            projectId = data.projectId;
+            uuid = data.uuid;
             updateCount = data.updateCount;
         }
 
         const param = {
-            "projectId":projectId,
-            "project":project,
-            "projectName":projectName,
-            "projectStart":projectStart,
-            "projectEnd":projectEnd,
-            "director":director,
-            "collaborator":collaborator,
-            "projectManager":projectManager,
-            "projectStatus":projectStatus,
-            "developmentLanguage":developmentLanguage,
-            "developmentArchitect":developmentArchitect,
-            "functionPoint":functionPoint,
+            "uuid":uuid,
+            "company":company,
+            "companyName":companyName,
+            "scene":scene,
+            "testParam":testParam,
+            "formalParam":formalParam,
+            "contact":contact,
+            "contactInformation":contactInformation,
+            "localContact":localContact,
+            "localContactInfo":localContactInfo,
             "comments":comments,
+            "serverUrl":serverUrl,
+            "account":account,
+            "username":username,
+            "password":password,
             "updateCount":updateCount
         };
 
-        //连接后端进行数据插入
-        //ajaxPostNoData(basePath + "/interfaceAdd.json", param);
-
         $.ajax({
-            url     : basePath + "/interfaceAdd.json",
+            url     : basePath + "/thirdAdd.json",
             dataType:"json",
             type    :"post",
             async   : false,
@@ -497,7 +483,7 @@
     function delAjaxFun(index, param) {
 
         $.ajax({
-            url     : basePath + "/interfaceDel.json",
+            url     : basePath + "/thirdDel.json",
             dataType:"json",
             type    :"post",
             async   : false,
@@ -511,7 +497,7 @@
                     layer.msg("删除成功", { time :2000});
                     setTimeout(function() {
                         layer.close(index);
-                    }, 1000);
+                    }, 2000);
 
                 } else {
                     layer.msg(msg, { time :2000});

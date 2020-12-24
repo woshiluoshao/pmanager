@@ -269,16 +269,4 @@
       updateTime = #{updateTime,jdbcType=TIMESTAMP}
     where uuid = #{uuid,jdbcType=VARCHAR}
   </update>
-  <select id="countThirdPartList" parameterType="java.util.HashMap" resultType="java.lang.Integer">
-    select count(1)
-      from record_third_part
-  </select>
-  <select id="getThirdPartList" parameterType="java.util.HashMap" resultMap="ResultMapWithBLOBs">
-    select *
-    from record_third_part
-    order by updateTime desc
-    <if test="start != null and len != null">
-      limit #{start}, #{len}
-    </if>
-  </select>
 </mapper>

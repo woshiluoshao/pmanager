@@ -1,5 +1,6 @@
 package jp.controller.business;
 
+import jp.db.mybatis.model.RecordThirdPartWithBLOBs;
 import jp.service.IRecordService;
 import jp.utils.Layui;
 import jp.vo.ResultVo;
@@ -35,8 +36,19 @@ public class RecordController {
      */
     @RequestMapping(value = "/thirdAdd.json", produces = "application/json;charset=UTF-8", method = RequestMethod.POST)
     @ResponseBody
-    public ResultVo thirdAddMethod(HttpServletRequest request) {
-        return recordService.addThirdPart(request);
+    public ResultVo thirdAddMethod(RecordThirdPartWithBLOBs thirdPartWithBLOBs, HttpServletRequest request) {
+        return recordService.addThirdPart(thirdPartWithBLOBs, request);
+    }
+
+    /**
+     * 删除厂商
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/thirdDel.json", produces = "application/json;charset=UTF-8", method = RequestMethod.POST)
+    @ResponseBody
+    public ResultVo thirdDelMethod(HttpServletRequest request) {
+        return recordService.delThirdPart(request);
     }
 
 

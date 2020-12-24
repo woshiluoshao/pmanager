@@ -6,6 +6,9 @@ package jp.enums;
 public enum MessageEnum implements BaseEnumInterface{
 
     SUCCESS("0000","成功"),
+    ADD0000("0000","添加成功"),
+    DEL0000("0000","删除成功"),
+    UPDATE0000("0000","更新成功"),
     E001("E001","参数不完整,请输入{0}"),
     E002("E002","参数不完整,{0},{1}不为空"),
     E003("E003","{0}类型错误,请输入{1}"),
@@ -25,6 +28,7 @@ public enum MessageEnum implements BaseEnumInterface{
     W002("W002","账号已登录,请勿重复操作!"),
     W003("W003","{0}已存在,请确认!"),
     W004("W004","数据可能已被其他用户更新,请刷新数据后操作!"),
+    W005("W005","数据不存在,可能已被其他用户修改,请刷新后操作!"),
     ;
 
     private String code;

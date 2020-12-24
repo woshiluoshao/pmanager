@@ -34,6 +34,15 @@ public class ResultVoUtil {
         return new ResultVo(MessageEnum.SUCCESS.getCode(), msg, json);
     }
 
+    /**
+     * 成功返回值
+     * @param baseEnumInterface
+     * @return
+     */
+    public static ResultVo success(BaseEnumInterface baseEnumInterface) {
+        return new ResultVo(baseEnumInterface.getCode(), baseEnumInterface.getMsg());
+    }
+
     public static ResultVo error(String code, String msg) {
         return new ResultVo(code, msg);
     }
