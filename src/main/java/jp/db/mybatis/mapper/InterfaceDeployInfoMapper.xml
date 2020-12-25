@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.db.mybatis.dao.InterfaceDeployInfoMapper">
+  <resultMap id="BaseResultMap" type="jp.db.mybatis.model.InterfaceDeployInfo">
+    <id column="uuid" jdbcType="INTEGER" property="uuid" />
+    <result column="projectId" jdbcType="VARCHAR" property="projectId" />
+    <result column="environment" jdbcType="VARCHAR" property="environment" />
+    <result column="sender" jdbcType="VARCHAR" property="sender" />
+    <result column="receiver" jdbcType="VARCHAR" property="receiver" />
+    <result column="readMe" jdbcType="VARCHAR" property="readMe" />
+    <result column="fileType" jdbcType="VARCHAR" property="fileType" />
+    <result column="fileUrl" jdbcType="VARCHAR" property="fileUrl" />
+    <result column="deployIP" jdbcType="VARCHAR" property="deployIP" />
+    <result column="deployPort" jdbcType="VARCHAR" property="deployPort" />
+    <result column="projectCallAddress" jdbcType="VARCHAR" property="projectCallAddress" />
+    <result column="deployStatus" jdbcType="INTEGER" property="deployStatus" />
+    <result column="createTime" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="createAuthor" jdbcType="VARCHAR" property="createAuthor" />
+    <result column="updateCount" jdbcType="INTEGER" property="updateCount" />
+    <result column="updateTime" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="updateAuthor" jdbcType="VARCHAR" property="updateAuthor" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="jp.db.mybatis.model.InterfaceDeployInfo">
+    <result column="comments" jdbcType="LONGVARCHAR" property="comments" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    uuid, projectId, environment, sender, receiver, readMe, fileType, fileUrl, deployIP, 
+    deployPort, projectCallAddress, deployStatus, createTime, createAuthor, updateCount, 
+    updateTime, updateAuthor
+  </sql>
+  <sql id="Blob_Column_List">
+    comments
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from interface_deploy_info
+    where uuid = #{uuid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from interface_deploy_info
+    where uuid = #{uuid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="jp.db.mybatis.model.InterfaceDeployInfo">
+    insert into interface_deploy_info (uuid, projectId, environment, 
+      sender, receiver, readMe, 
+      fileType, fileUrl, deployIP, 
+      deployPort, projectCallAddress, deployStatus, 
+      createTime, createAuthor, updateCount, 
+      updateTime, updateAuthor, comments
+      )
+    values (#{uuid,jdbcType=INTEGER}, #{projectId,jdbcType=VARCHAR}, #{environment,jdbcType=VARCHAR}, 
+      #{sender,jdbcType=VARCHAR}, #{receiver,jdbcType=VARCHAR}, #{readMe,jdbcType=VARCHAR}, 
+      #{fileType,jdbcType=VARCHAR}, #{fileUrl,jdbcType=VARCHAR}, #{deployIP,jdbcType=VARCHAR}, 
+      #{deployPort,jdbcType=VARCHAR}, #{projectCallAddress,jdbcType=VARCHAR}, #{deployStatus,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createAuthor,jdbcType=VARCHAR}, #{updateCount,jdbcType=INTEGER}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updateAuthor,jdbcType=VARCHAR}, #{comments,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="jp.db.mybatis.model.InterfaceDeployInfo">
+    insert into interface_deploy_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="uuid != null">
+        uuid,
+      </if>
+      <if test="projectId != null">
+        projectId,
+      </if>
+      <if test="environment != null">
+        environment,
+      </if>
+      <if test="sender != null">
+        sender,
+      </if>
+      <if test="receiver != null">
+        receiver,
+      </if>
+      <if test="readMe != null">
+        readMe,
+      </if>
+      <if test="fileType != null">
+        fileType,
+      </if>
+      <if test="fileUrl != null">
+        fileUrl,
+      </if>
+      <if test="deployIP != null">
+        deployIP,
+      </if>
+      <if test="deployPort != null">
+        deployPort,
+      </if>
+      <if test="projectCallAddress != null">
+        projectCallAddress,
+      </if>
+      <if test="deployStatus != null">
+        deployStatus,
+      </if>
+      <if test="createTime != null">
+        createTime,
+      </if>
+      <if test="createAuthor != null">
+        createAuthor,
+      </if>
+      <if test="updateCount != null">
+        updateCount,
+      </if>
+      <if test="updateTime != null">
+        updateTime,
+      </if>
+      <if test="updateAuthor != null">
+        updateAuthor,
+      </if>
+      <if test="comments != null">
+        comments,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="uuid != null">
+        #{uuid,jdbcType=INTEGER},
+      </if>
+      <if test="projectId != null">
+        #{projectId,jdbcType=VARCHAR},
+      </if>
+      <if test="environment != null">
+        #{environment,jdbcType=VARCHAR},
+      </if>
+      <if test="sender != null">
+        #{sender,jdbcType=VARCHAR},
+      </if>
+      <if test="receiver != null">
+        #{receiver,jdbcType=VARCHAR},
+      </if>
+      <if test="readMe != null">
+        #{readMe,jdbcType=VARCHAR},
+      </if>
+      <if test="fileType != null">
+        #{fileType,jdbcType=VARCHAR},
+      </if>
+      <if test="fileUrl != null">
+        #{fileUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="deployIP != null">
+        #{deployIP,jdbcType=VARCHAR},
+      </if>
+      <if test="deployPort != null">
+        #{deployPort,jdbcType=VARCHAR},
+      </if>
+      <if test="projectCallAddress != null">
+        #{projectCallAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="deployStatus != null">
+        #{deployStatus,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createAuthor != null">
+        #{createAuthor,jdbcType=VARCHAR},
+      </if>
+      <if test="updateCount != null">
+        #{updateCount,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateAuthor != null">
+        #{updateAuthor,jdbcType=VARCHAR},
+      </if>
+      <if test="comments != null">
+        #{comments,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="jp.db.mybatis.model.InterfaceDeployInfo">
+    update interface_deploy_info
+    <set>
+      <if test="projectId != null">
+        projectId = #{projectId,jdbcType=VARCHAR},
+      </if>
+      <if test="environment != null">
+        environment = #{environment,jdbcType=VARCHAR},
+      </if>
+      <if test="sender != null">
+        sender = #{sender,jdbcType=VARCHAR},
+      </if>
+      <if test="receiver != null">
+        receiver = #{receiver,jdbcType=VARCHAR},
+      </if>
+      <if test="readMe != null">
+        readMe = #{readMe,jdbcType=VARCHAR},
+      </if>
+      <if test="fileType != null">
+        fileType = #{fileType,jdbcType=VARCHAR},
+      </if>
+      <if test="fileUrl != null">
+        fileUrl = #{fileUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="deployIP != null">
+        deployIP = #{deployIP,jdbcType=VARCHAR},
+      </if>
+      <if test="deployPort != null">
+        deployPort = #{deployPort,jdbcType=VARCHAR},
+      </if>
+      <if test="projectCallAddress != null">
+        projectCallAddress = #{projectCallAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="deployStatus != null">
+        deployStatus = #{deployStatus,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createAuthor != null">
+        createAuthor = #{createAuthor,jdbcType=VARCHAR},
+      </if>
+      <if test="updateCount != null">
+        updateCount = #{updateCount,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null">
+        updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateAuthor != null">
+        updateAuthor = #{updateAuthor,jdbcType=VARCHAR},
+      </if>
+      <if test="comments != null">
+        comments = #{comments,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where uuid = #{uuid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="jp.db.mybatis.model.InterfaceDeployInfo">
+    update interface_deploy_info
+    set projectId = #{projectId,jdbcType=VARCHAR},
+      environment = #{environment,jdbcType=VARCHAR},
+      sender = #{sender,jdbcType=VARCHAR},
+      receiver = #{receiver,jdbcType=VARCHAR},
+      readMe = #{readMe,jdbcType=VARCHAR},
+      fileType = #{fileType,jdbcType=VARCHAR},
+      fileUrl = #{fileUrl,jdbcType=VARCHAR},
+      deployIP = #{deployIP,jdbcType=VARCHAR},
+      deployPort = #{deployPort,jdbcType=VARCHAR},
+      projectCallAddress = #{projectCallAddress,jdbcType=VARCHAR},
+      deployStatus = #{deployStatus,jdbcType=INTEGER},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      createAuthor = #{createAuthor,jdbcType=VARCHAR},
+      updateCount = #{updateCount,jdbcType=INTEGER},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      updateAuthor = #{updateAuthor,jdbcType=VARCHAR},
+      comments = #{comments,jdbcType=LONGVARCHAR}
+    where uuid = #{uuid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="jp.db.mybatis.model.InterfaceDeployInfo">
+    update interface_deploy_info
+    set projectId = #{projectId,jdbcType=VARCHAR},
+      environment = #{environment,jdbcType=VARCHAR},
+      sender = #{sender,jdbcType=VARCHAR},
+      receiver = #{receiver,jdbcType=VARCHAR},
+      readMe = #{readMe,jdbcType=VARCHAR},
+      fileType = #{fileType,jdbcType=VARCHAR},
+      fileUrl = #{fileUrl,jdbcType=VARCHAR},
+      deployIP = #{deployIP,jdbcType=VARCHAR},
+      deployPort = #{deployPort,jdbcType=VARCHAR},
+      projectCallAddress = #{projectCallAddress,jdbcType=VARCHAR},
+      deployStatus = #{deployStatus,jdbcType=INTEGER},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      createAuthor = #{createAuthor,jdbcType=VARCHAR},
+      updateCount = #{updateCount,jdbcType=INTEGER},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      updateAuthor = #{updateAuthor,jdbcType=VARCHAR}
+    where uuid = #{uuid,jdbcType=INTEGER}
+  </update>
+</mapper>

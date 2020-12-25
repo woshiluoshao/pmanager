@@ -39,7 +39,7 @@
             <table>
                 <tr>
                     <td style="float: right;color: #aedcdd">账号:</td>
-                    <td style="color: #aedcdd"><input type="text" id="userId" size="30" placeholder="请输入账号" class="inp" value="test"></td>
+                    <td style="color: #aedcdd"><input type="text" id="account" size="30" placeholder="请输入账号" class="inp" value="test"></td>
                 </tr>
                 <tr >
                     <td style="float: right;color: #aedcdd ">密码:</td>
@@ -71,9 +71,9 @@
 
     function loginFun() {
 
-        const userId= $("#userId").val();
+        const account= $("#account").val();
         const password = $("#password").val();
-        if(!userId){
+        if(!account){
             $.shotTotal("请输入账号！", "error");
             return false;
         }
@@ -89,7 +89,7 @@
             dataType:"json",
             type    :"post",
             data    : {
-                'userId':userId,
+                'account':account,
                 'password':password
             },
             success:function (result) {

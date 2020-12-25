@@ -65,7 +65,7 @@ public class PageRestController {
     }
 
     @RequestMapping(value = "/infoInter")
-    public String interDetailPage(Model model) {
+    public String infoInterPage(Model model) {
 
         Map<String, Object> param = new HashMap<String, Object>();
         param.put("paramKey", "developmentLanguage");
@@ -86,7 +86,12 @@ public class PageRestController {
     }
 
     @RequestMapping(value = "/infoThird")
-    public String thirdDetailPage() {
+    public String infoThirdPage() {
         return "infoThird";
+    }
+
+    @RequestMapping(value = "/infoDeploy")
+    public String infoDeployPage() {
+        return "infoDeploy";
     }
 }

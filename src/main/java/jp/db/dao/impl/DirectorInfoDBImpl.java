@@ -26,15 +26,15 @@ public class DirectorInfoDBImpl implements IDirectorInfoDB {
     IJPAImpl jpaDao;
 
     @Override
-    public DirectorInfoEntity selectUserInfoById(String userId) {
+    public DirectorInfoEntity selectUserInfoById(String account) {
 
         DirectorInfoEntity model = null;
 
         try {
             String sql = "";
-            sql += " select * from director_info where userId = :userId ";
+            sql += " select * from director_info where account = :account ";
             Map<String, Object> param = new HashMap<String, Object>();
-            param.put("userId"   , CommonUtils.objectToStr(userId));
+            param.put("account"   , CommonUtils.objectToStr(account));
 
             List<DirectorInfoEntity> modelList = jpaDao.queryListByParam(sql, DirectorInfoEntity.class, param);
             if(modelList.size() > 0) {
@@ -52,14 +52,14 @@ public class DirectorInfoDBImpl implements IDirectorInfoDB {
         int cnt = -1;
         try {
             String sql = "";
-            sql += " insert into director_info(userId, password, createTime) " +
-                    "       values (:userId  "   +
+            sql += " insert into director_info(account, password, createTime) " +
+                    "       values (:account  "   +
                     "              ,:password" +
                     "              ,:createTime)";
 
             Map<String, Object> param = new HashMap<String, Object>();
-            param.put("userId"   , CommonUtils.objectToStr(loginDto .getUserId()));
-            param.put("password"   , CommonUtils.objectToStr(loginDto .getPassword()));
+            param.put("account"   , CommonUtils.objectToStr(loginDto.getAccount()));
+            param.put("password"   , CommonUtils.objectToStr(loginDto.getPassword()));
             param.put("createTime"   , DateUtils.getCurrentTime());
 
             cnt = jpaDao.commonQueryByParam(sql, param);
@@ -162,16 +162,16 @@ public class DirectorInfoDBImpl implements IDirectorInfoDB {
     }
 
     @Override
-    public List<DirectorInfoEntity> selectUserList(String userId) {
+    public List<DirectorInfoEntity> selectUserList(String account) {
 
         String sql = "";
         sql += " select *                 ";
         sql += "   from director_info         ";
-        sql += "  where userId != :userId " +
+        sql += "  where account != :account " +
                 " order by createTime     ";
 
         Map<String, Object> paramSql = new HashMap<String, Object>();
-        paramSql.put("userId"   , CommonUtils.objectToStr(userId));
+        paramSql.put("account"   , CommonUtils.objectToStr(account));
         List<DirectorInfoEntity> userList = jpaDao.queryListByParam(sql, DirectorInfoEntity.class, paramSql);
 
         return userList;

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <script type="text/javascript"  th:src="@{/jquery-3.4.0/jquery-3.4.0.min.js}"></script>
+    <link th:href="@{/bootstrap/bootstrap-3.3.7/css/bootstrap.min.css}" rel="stylesheet" type="text/css" >
+
+    <script type="text/javascript"  th:src="@{/bootstrap/bootstrap-3.3.7/js/bootstrap.min.js}"></script>
+    <link th:href="@{/layui/css/layui.css}" rel="stylesheet">
+
+    <style th:inline="text">
+        table{border-spacing: 10px 30px;}
+        tr {
+            display: block;
+            /*将tr设置为块体元素*/
+            margin: 3px 0;
+            /*设置tr间距为2px*/
+        }
+
+        td {
+            text-align: right;
+        }
+
+        .layui-tab-content {
+            height: 200vh;
+        }
+
+    </style>
+</head>
+<body>
+<div style="margin-top:3%;margin-left:1%;margin-right:2%;">
+    <table class="layui-hide" id="test" lay-filter="table"></table>
+</div>
+
+<div id="addModel" style="display: none;">
+    <div style="margin-left: 2%; margin-top: 1%">
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="width: 100px">发送人</label>
+            <div class="layui-input-block">
+                <input type="text" name="sender" id="sender" style="width:500px;" lay-verify="title" autocomplete="off" placeholder="请输入发送人" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="width: 100px">接收人</label>
+            <div class="layui-input-block">
+                <input type="text" size="60" name="receiver" id="receiver" style="width:500px;" lay-verify="required" placeholder="请输入接收人" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="width: 100px">文件</label>
+            <div class="layui-input-block">
+                <div class="layui-upload">
+                    <button type="button" class="layui-btn layui-btn-normal" id="testList">选择文件</button>
+                    <div class="layui-upload-list" style="width:500px;">
+                        <table class="layui-table">
+                            <!--<thead>
+                            <tr><th>文件名</th>
+                                <th>大小</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr></thead>-->
+                            <tbody id="demoList"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="width: 100px">发布环境</label>
+            <div class="layui-input-block">
+                <input type="text" size="60" name="environment" id="environment" style="width:500px;" lay-verify="required" placeholder="请输入部署的环境" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="width: 100px">readme</label>
+            <div class="layui-input-block">
+                <textarea  type="text" style="width:500px;" rows="7" name="readme" id="readme"></textarea>
+            </div>
+        </div>
+    </div>
+    <div style="float: right; margin-right:3%">
+        <button type="button" class="layui-btn layui-btn-sm" id="testListAction">开始上传</button>
+    </div>
+</div>
+
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="addDeploy">添加发布</button>
+    </div>
+</script>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="details">详情</a>
+    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="recall">撤回</a>
+</script>
+<script type="text/javascript"  th:src="@{/common/common.js}"></script>
+<script th:src="@{/layui/layui.js}"></script>
+<script>
+
+    const basePath = '[[${#httpServletRequest.getScheme() + "://" + #httpServletRequest.getServerName() + ":" + #httpServletRequest.getServerPort() + #httpServletRequest.getContextPath()}]]';
+
+    $(function () {
+        search();
+    });
+
+    function search() {
+
+        layui.use('table', function(){
+            const table = layui.table;
+
+            table.render({
+                elem: '#test'
+                ,url: basePath +'/deploySelect.json'
+                ,toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+                ,cols: [
+                    [
+                        // {type: 'checkbox', fixed: 'left'}
+                        {field:'sender', title: '厂商', align: 'center'}
+                        ,{field:'receiver', title: '厂商名称', align: 'center'}
+                        ,{field:'scene', title: '使用场景', align: 'center'}
+                        ,{field:'contact', title: '联系人', align: 'center', }
+                        ,{field:'contactInformation', title: '联系方式', align: 'center', }
+                        ,{field:'localContact', title: '对接人', align: 'center', }
+                        ,{field:'localContactInfo', title: '对接人联系方式', align: 'center'}
+                        ,{field:'updateCount', title: '更新数', hide: true, align: 'center'}
+                        ,{fixed: 'right', title:'操作', align: 'center', toolbar: '#barDemo'}
+                    ]
+                ]
+                ,page: true   //开启分页
+                ,limit:10   //默认十条数据一页
+                ,limits:[10,20]  //数据分页条
+            });
+
+            table.on('tool(table)', function(obj){
+                const data = obj.data;
+                if(obj.event === 'details'){
+                    //赋值
+                    assignData(data);
+                    controlDisable();
+                    openReadModel();
+                } else if(obj.event === 'recall') {
+                    //删除
+                    openDelModel(data);
+                }
+            });
+
+            //头工具栏事件
+            table.on('toolbar(table)', function(obj){
+                const checkStatus = table.checkStatus(obj.config.id);
+                if(obj.event === "addDeploy") {
+                    //弹出模态框
+                    initModel();
+                    controlEnable();
+                    openAddModel();
+                }
+            });
+
+        });
+    }
+
+    //弹出模态库
+    function openAddModel(data) {
+
+        layer.open({
+            type: 1,
+            title: '部署发布',
+            area: ['55%', '70%'],
+            shadeClose: false, //点击遮罩关闭
+            content: $('#addModel'),
+            offset: '20px',
+            //btn: ['确定', '取消'],
+            yes: function(index, layero) {
+            },
+            cancel: function () {
+                return;
+            },
+            end: function () {
+                $('#addModel').css("display", "none");
+                //location.reload();
+            }
+        });
+    }
+
+    function addAjaxFun(index, data) {
+
+        const sender = $("#sender").val();
+        const receiver = $("#receiver").val();
+        const scene = $("#scene").val();
+        const testParam = $("#testParam").val();
+        const formalParam = $("#formalParam").val();
+        const contact = $("#contact").val();
+        const contactInformation = $("#contactInformation").val();
+        const localContact = $("#localContact").val();
+        const localContactInfo = $("#localContactInfo").val();
+        const comments = $("#comments").val();
+        const serverUrl = $("#serverUrl").val();
+        const account = $("#account").val();
+        const username = $("#username").val();
+        const password = $("#password").val();
+
+        if(!sender) {
+            layer.msg("厂商不能为空！", { time :1000});
+            return;
+        }
+        if(!receiver) {
+            layer.msg("厂商名称不能为空！", { time :1000});
+            return;
+        }
+        if(!scene) {
+            layer.msg("运用场景不能为空！", { time :1000});
+            return;
+        }
+        if(!contact) {
+            layer.msg("联系人不能为空！", { time :1000});
+            return;
+        }
+        if(!localContact) {
+            layer.msg("本地联系人不能为空！", { time :1000});
+            return;
+        }
+        if(!localContactInfo) {
+            layer.msg("本地联系方式不能为空！", { time :1000});
+            return;
+        }
+
+
+        let uuid = "";
+        let updateCount = "";
+        if(data != null) {
+            uuid = data.uuid;
+            updateCount = data.updateCount;
+        }
+
+        const param = {
+            "uuid":uuid,
+            "sender":sender,
+            "receiver":receiver,
+            "scene":scene,
+            "testParam":testParam,
+            "formalParam":formalParam,
+            "contact":contact,
+            "contactInformation":contactInformation,
+            "localContact":localContact,
+            "localContactInfo":localContactInfo,
+            "comments":comments,
+            "serverUrl":serverUrl,
+            "account":account,
+            "username":username,
+            "password":password,
+            "updateCount":updateCount
+        };
+
+        $.ajax({
+            url     : basePath + "/thirdAdd.json",
+            dataType:"json",
+            type    :"post",
+            async   : false,
+            data    : param,
+            success:function (result) {
+                $.closeProgressBar();
+                const code = result.code;
+                const msg = result.msg;
+
+                if(code === "0000") {
+                    layer.msg(msg, { time :2000});
+                    setTimeout(function() {
+                        //成功之后将模态库去除，然后刷新界面
+                        $('#addModel').css("display", "none");
+                        layer.close(index);
+                    }, 1000);
+
+                } else {
+                    layer.msg(msg, { time :2000});
+                }
+            },
+            error:function (result) {
+                $.shotTotal(result, "error");
+            }
+
+        })
+    }
+
+    layui.use('upload', function(){
+        const $ = layui.jquery
+            , upload = layui.upload;
+        //多文件列表示例
+        //多文件列表示例
+        var demoListView = $('#demoList')
+            ,uploadListIns = upload.render({
+            elem: '#testList'
+            ,url: basePath + "/addDeploy.json" //改成您自己的上传接口
+            ,accept: 'file'
+            ,multiple: true
+            ,auto: false
+            ,bindAction: '#testListAction'
+            ,choose: function(obj){
+                const files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
+                //读取本地文件
+                obj.preview(function(index, file, result){
+                    const tr = $(['<tr id="upload-' + index + '">'
+                        , '<td>' + file.name + '</td>'
+                        , '<td>' + (file.size / 1024).toFixed(1) + 'kb</td>'
+                        , '<td>等待上传</td>'
+                        , '<td>'
+                        , '<button class="layui-btn layui-btn-xs demo-reload layui-hide">重传</button>'
+                        , '<button class="layui-btn layui-btn-xs layui-btn-danger demo-delete">删除</button>'
+                        , '</td>'
+                        , '</tr>'].join(''));
+
+                    //单个重传
+                    tr.find('.demo-reload').on('click', function(){
+                        obj.upload(index, file);
+                    });
+
+                    //删除
+                    tr.find('.demo-delete').on('click', function(){
+                        delete files[index]; //删除对应的文件
+                        tr.remove();
+                        uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
+                    });
+
+                    demoListView.append(tr);
+                });
+            }
+            ,done: function(res, index, upload){
+                if(res.code === "0000"){ //上传成功
+                    const tr = demoListView.find('tr#upload-' + index)
+                        , tds = tr.children();
+                    tds.eq(2).html('<span style="color: #5FB878;">上传成功</span>');
+                    tds.eq(3).html(''); //清空操作
+                    return delete this.files[index]; //删除文件队列已经上传成功的文件
+                }
+                this.error(index, upload);
+            }
+            ,error: function(index, upload){
+                var tr = demoListView.find('tr#upload-'+ index)
+                    ,tds = tr.children();
+                tds.eq(2).html('<span style="color: #FF5722;">上传失败</span>');
+                tds.eq(3).find('.demo-reload').removeClass('layui-hide'); //显示重传
+            }
+        });
+
+    });
+
+</script>
+</body>
+</html>

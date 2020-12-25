@@ -2,6 +2,7 @@ package jp.controller.business;
 
 import jp.service.IInterfaceService;
 import jp.utils.Layui;
+import jp.utils.ResultVoUtil;
 import jp.vo.ResultVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -50,6 +51,16 @@ public class InterfaceController {
     @ResponseBody
     public ResultVo interfaceDelMethod(HttpServletRequest request) {
         return interfaceService.delPerResInterface(request);
+    }
+
+    //endregion
+
+    //region部署接口操作
+
+    @RequestMapping(value = "/addDeploy.json", method = RequestMethod.POST)
+    @ResponseBody
+    public ResultVo addDeployMethod(HttpServletRequest request) {
+        return ResultVoUtil.success();
     }
 
     //endregion

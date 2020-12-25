@@ -33,7 +33,7 @@
             <table>
                 <tr>
                     <td style="float: right;color: #aedcdd">用户账号:</td>
-                    <td style="color: #aedcdd"><input type="text" value="test" id="userId" size="30" placeholder="请输入账号" class="inp"></td>
+                    <td style="color: #aedcdd"><input type="text" value="test" id="account" size="30" placeholder="请输入账号" class="inp"></td>
                 </tr>
                 <tr >
                     <td style="float: right;color: #aedcdd ">用户密码:</td>
@@ -88,11 +88,11 @@
 
     function registerFun() {
 
-        const userId= $("#userId").val();
+        const account= $("#account").val();
         const password = $("#password").val();
         const rePassword = $("#rePassword").val();
         const random = $("#random").val();
-        if(!userId){
+        if(!account){
             $.shotTotal("请输入账号！", "error");
             return false;
         }
@@ -128,7 +128,7 @@
             dataType:"json",
             type    :"post",
             data    : {
-                'userId':userId,
+                'account':account,
                 'password':password
             },
             success:function (result) {

@@ -35,19 +35,19 @@ public class UserServiceImpl implements IUserService {
     @Override
     public ResultVo loginExe(LoginDto loginDto, HttpServletRequest request) {
 
-        if(loginDto == null || StringUtils.isEmpty(loginDto.getUserId()) || StringUtils.isEmpty(loginDto.getPassword())) {
+        if(loginDto == null || StringUtils.isEmpty(loginDto.getAccount()) || StringUtils.isEmpty(loginDto.getPassword())) {
             System.out.println("参数不完整");
             return ResultVoUtil.error(MessageEnum.E002, null, "账号", "密码");
         }
 
-        DirectorInfoEntity model = directorInfoDB.selectUserInfoById(loginDto.getUserId());
+        DirectorInfoEntity model = directorInfoDB.selectUserInfoById(loginDto.getAccount());
         if(model == null)  return ResultVoUtil.error(MessageEnum.E011);
 
         if(!model.getPassword().equals(loginDto.getPassword())) return ResultVoUtil.error(MessageEnum.E012);
 
         //将账号计入缓存中
         HttpSession session = request.getSession();
-        session.setAttribute("userId", loginDto.getUserId());
+        session.setAttribute("userId", loginDto.getAccount());
 
         redisUtil.set("userInfo", JSON.toJSON(loginDto), 1800);
 
@@ -60,7 +60,7 @@ public class UserServiceImpl implements IUserService {
 
         //判断库表是否存在;
         //存在则返回说账号已存在
-        DirectorInfoEntity model = directorInfoDB.selectUserInfoById(loginDto.getUserId());
+        DirectorInfoEntity model = directorInfoDB.selectUserInfoById(loginDto.getAccount());
         if(model != null)  return ResultVoUtil.error(MessageEnum.E014);
 
         //入库
