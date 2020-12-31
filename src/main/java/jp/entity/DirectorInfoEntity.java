@@ -12,7 +12,7 @@ public class DirectorInfoEntity {
     private String password;
     private Date createTime;
     private String author;
-    private String level;
+    private Integer level;
     private String updateAuthor;
 
 }

@@ -1,8 +1,8 @@
 package jp.controller.business;
 
+import jp.service.IDeployService;
 import jp.service.IInterfaceService;
 import jp.utils.Layui;
-import jp.utils.ResultVoUtil;
 import jp.vo.ResultVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +17,9 @@ public class InterfaceController {
 
     @Autowired
     IInterfaceService interfaceService;
+
+    @Autowired
+    IDeployService deployService;
 
     //region 接口信息操作
 
@@ -57,10 +60,27 @@ public class InterfaceController {
 
     //region部署接口操作
 
+    /**
+     * 发布部署
+     * @param request
+     * @return
+     */
     @RequestMapping(value = "/addDeploy.json", method = RequestMethod.POST)
     @ResponseBody
     public ResultVo addDeployMethod(HttpServletRequest request) {
-        return ResultVoUtil.success();
+
+        return deployService.addDeploy(request);
+    }
+
+    /**
+     * 获取我发布的部署
+     * @param request
+     */
+    @RequestMapping(value = "/getDeploy.json", produces = "application/json;charset=UTF-8", method = RequestMethod.GET)
+    @ResponseBody
+    public Layui getDeployMethod(HttpServletRequest request) {
+
+         return deployService.getMyDeploy(request);
     }
 
     //endregion

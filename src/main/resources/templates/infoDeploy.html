@@ -38,7 +38,7 @@
         <div class="layui-form-item">
             <label class="layui-form-label" style="width: 100px">发送人</label>
             <div class="layui-input-block">
-                <input type="text" name="sender" id="sender" style="width:500px;" lay-verify="title" autocomplete="off" placeholder="请输入发送人" class="layui-input">
+                <input type="text" name="sender" id="sender" style="width:500px;" lay-verify="title" autocomplete="off" readonly="readonly" th:value="${session.userId}" placeholder="请输入发送人" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
@@ -106,30 +106,33 @@
 
     function search() {
 
+        const sender = $("#sender").val();
+        const param = "userName="+sender;
+
         layui.use('table', function(){
             const table = layui.table;
 
             table.render({
                 elem: '#test'
-                ,url: basePath +'/deploySelect.json'
+                ,url: basePath +'/getDeploy.json?' + param
                 ,toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
                 ,cols: [
                     [
-                        // {type: 'checkbox', fixed: 'left'}
-                        {field:'sender', title: '厂商', align: 'center'}
-                        ,{field:'receiver', title: '厂商名称', align: 'center'}
-                        ,{field:'scene', title: '使用场景', align: 'center'}
-                        ,{field:'contact', title: '联系人', align: 'center', }
-                        ,{field:'contactInformation', title: '联系方式', align: 'center', }
-                        ,{field:'localContact', title: '对接人', align: 'center', }
-                        ,{field:'localContactInfo', title: '对接人联系方式', align: 'center'}
-                        ,{field:'updateCount', title: '更新数', hide: true, align: 'center'}
+                        {field:'sender', title: '申请人', align: 'center'}
+                        ,{field:'reason', title: '理由', hide: true, align: 'center'}
+                        ,{field:'applyTime', title: '申请时间', align: 'center', }
+                        ,{field:'applyStatus', title: '申请状态', align: 'center', }
+                        ,{field:'environment', title: '部署环境', hide: true, align: 'center', }
+                        ,{field:'readme', title: '备注', hide: true, align: 'center', }
+                        ,{field:'auditor', title: '受理人', align: 'center', }
+                        ,{field:'result', title: '受理结果', hide: true, align: 'center', }
+                        ,{field:'receiveTime', title: '受理时间', hide: true, align: 'center', }
                         ,{fixed: 'right', title:'操作', align: 'center', toolbar: '#barDemo'}
                     ]
                 ]
-                ,page: true   //开启分页
+                ,page: false   //开启分页
                 ,limit:10   //默认十条数据一页
-                ,limits:[10,20]  //数据分页条
+                ,limits:[10]  //数据分页条
             });
 
             table.on('tool(table)', function(obj){
@@ -150,8 +153,8 @@
                 const checkStatus = table.checkStatus(obj.config.id);
                 if(obj.event === "addDeploy") {
                     //弹出模态框
-                    initModel();
-                    controlEnable();
+                    //initModel();
+                    //controlEnable();
                     openAddModel();
                 }
             });
@@ -165,7 +168,7 @@
         layer.open({
             type: 1,
             title: '部署发布',
-            area: ['55%', '70%'],
+            area: ['75%', 'auto'],
             shadeClose: false, //点击遮罩关闭
             content: $('#addModel'),
             offset: '20px',
@@ -181,106 +184,6 @@
             }
         });
     }
-
-    function addAjaxFun(index, data) {
-
-        const sender = $("#sender").val();
-        const receiver = $("#receiver").val();
-        const scene = $("#scene").val();
-        const testParam = $("#testParam").val();
-        const formalParam = $("#formalParam").val();
-        const contact = $("#contact").val();
-        const contactInformation = $("#contactInformation").val();
-        const localContact = $("#localContact").val();
-        const localContactInfo = $("#localContactInfo").val();
-        const comments = $("#comments").val();
-        const serverUrl = $("#serverUrl").val();
-        const account = $("#account").val();
-        const username = $("#username").val();
-        const password = $("#password").val();
-
-        if(!sender) {
-            layer.msg("厂商不能为空！", { time :1000});
-            return;
-        }
-        if(!receiver) {
-            layer.msg("厂商名称不能为空！", { time :1000});
-            return;
-        }
-        if(!scene) {
-            layer.msg("运用场景不能为空！", { time :1000});
-            return;
-        }
-        if(!contact) {
-            layer.msg("联系人不能为空！", { time :1000});
-            return;
-        }
-        if(!localContact) {
-            layer.msg("本地联系人不能为空！", { time :1000});
-            return;
-        }
-        if(!localContactInfo) {
-            layer.msg("本地联系方式不能为空！", { time :1000});
-            return;
-        }
-
-
-        let uuid = "";
-        let updateCount = "";
-        if(data != null) {
-            uuid = data.uuid;
-            updateCount = data.updateCount;
-        }
-
-        const param = {
-            "uuid":uuid,
-            "sender":sender,
-            "receiver":receiver,
-            "scene":scene,
-            "testParam":testParam,
-            "formalParam":formalParam,
-            "contact":contact,
-            "contactInformation":contactInformation,
-            "localContact":localContact,
-            "localContactInfo":localContactInfo,
-            "comments":comments,
-            "serverUrl":serverUrl,
-            "account":account,
-            "username":username,
-            "password":password,
-            "updateCount":updateCount
-        };
-
-        $.ajax({
-            url     : basePath + "/thirdAdd.json",
-            dataType:"json",
-            type    :"post",
-            async   : false,
-            data    : param,
-            success:function (result) {
-                $.closeProgressBar();
-                const code = result.code;
-                const msg = result.msg;
-
-                if(code === "0000") {
-                    layer.msg(msg, { time :2000});
-                    setTimeout(function() {
-                        //成功之后将模态库去除，然后刷新界面
-                        $('#addModel').css("display", "none");
-                        layer.close(index);
-                    }, 1000);
-
-                } else {
-                    layer.msg(msg, { time :2000});
-                }
-            },
-            error:function (result) {
-                $.shotTotal(result, "error");
-            }
-
-        })
-    }
-
     layui.use('upload', function(){
         const $ = layui.jquery
             , upload = layui.upload;
@@ -323,15 +226,33 @@
                     demoListView.append(tr);
                 });
             }
+            ,before: function (input) {
+
+                const sender = $("#sender").val();
+                const receiver = $("#receiver").val();
+                const environment = $("#environment").val();
+                const readme = $("#readme").val();
+
+                const param = {
+                    "sender":sender,
+                    "receiver":receiver,
+                    "environment":environment,
+                    "readme":readme
+                };
+
+                this.data = param;
+            }
             ,done: function(res, index, upload){
                 if(res.code === "0000"){ //上传成功
                     const tr = demoListView.find('tr#upload-' + index)
                         , tds = tr.children();
                     tds.eq(2).html('<span style="color: #5FB878;">上传成功</span>');
                     tds.eq(3).html(''); //清空操作
-                    return delete this.files[index]; //删除文件队列已经上传成功的文件
+                    delete this.files[index]; //删除文件队列已经上传成功的文件
+                    location.reload();
+                } else {
+                    this.error(index, upload);
                 }
-                this.error(index, upload);
             }
             ,error: function(index, upload){
                 var tr = demoListView.find('tr#upload-'+ index)

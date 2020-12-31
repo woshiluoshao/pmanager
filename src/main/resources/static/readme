@@ -1,3 +1,14 @@
+工作流
+（1）引入jar包
+        <!--工作流-->
+        <dependency>
+            <groupId>org.activiti</groupId>
+            <artifactId>activiti-spring-boot-starter-basic</artifactId>
+            <version>6.0.0</version>
+        </dependency>
+（2）自定义文件
+
+
 1.前端使用的thymeleaf, 主要用layutil外框架
 
 (1)访问登录注册以外的链接:

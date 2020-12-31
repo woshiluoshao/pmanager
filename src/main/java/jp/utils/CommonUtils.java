@@ -1,8 +1,12 @@
 package jp.utils;
 
+import org.activiti.engine.history.HistoricVariableInstance;
+
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.List;
 import java.util.UUID;
 
 public class CommonUtils {
@@ -131,5 +135,26 @@ public class CommonUtils {
         }
 
         return uuid;
+    }
+
+    /**
+     * 将历史参数列表设置到实体中去
+     * @param entity 实体
+     * @param varInstanceList 历史参数列表
+     */
+    public static <T> void setVars(T entity, List<HistoricVariableInstance> varInstanceList) {
+        Class<?> tClass = entity.getClass();
+        try {
+            for (HistoricVariableInstance varInstance : varInstanceList) {
+                Field field = tClass.getDeclaredField(varInstance.getVariableName());
+                if (field == null) {
+                    continue;
+                }
+                field.setAccessible(true);
+                field.set(entity, varInstance.getValue());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
