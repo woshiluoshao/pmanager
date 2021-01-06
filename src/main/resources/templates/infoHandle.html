@@ -33,9 +33,17 @@
 <div style="margin-top:3%;margin-left:1%;margin-right:2%;">
     <table class="layui-hide" id="test" lay-filter="table"></table>
 </div>
-
+<div style="height: 250px;">
+    <div>审核记录</div>
+    <div>
+        <table class="layui-hide" id="checkRecord" lay-filter="table"></table>
+    </div>
+</div>
+<div id="reasonModel" style="display: none;">
+    <textarea  type="text" style="width:300px;border: #e4b9c0" rows="5" name="functionPoint" id="reasonResult"></textarea>
+</div>
 <script type="text/html" id="barDemo">
-    <a class="layui-btn layui-btn-xs" lay-event="details">同意</a>
+    <a class="layui-btn layui-btn-xs" lay-event="agree">同意</a>
     <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="recall">拒绝</a>
 </script>
 <script type="text/javascript"  th:src="@{/common/common.js}"></script>
@@ -46,6 +54,7 @@
 
     $(function () {
         search();
+        getHandleRecord();
     });
 
     function search() {
@@ -79,53 +88,17 @@
 
             table.on('tool(table)', function(obj){
                 const data = obj.data;
-                if(obj.event === 'details'){
+                if(obj.event === 'agree'){
                     //赋值
-                    assignData(data);
-                    controlDisable();
-                    openReadModel();
+                    openAgreeModel(data);
                 } else if(obj.event === 'recall') {
-                    //删除
-                    openDelModel(data);
+
+
                 }
             });
-
-            //头工具栏事件
-            table.on('toolbar(table)', function(obj){
-                const checkStatus = table.checkStatus(obj.config.id);
-                if(obj.event === "addDeploy") {
-                    //弹出模态框
-                    //initModel();
-                    //controlEnable();
-                    openAddModel();
-                }
-            });
-
         });
     }
 
-    //弹出模态库
-    function openAddModel(data) {
-
-        layer.open({
-            type: 1,
-            title: '部署发布',
-            area: ['75%', 'auto'],
-            shadeClose: false, //点击遮罩关闭
-            content: $('#addModel'),
-            offset: '20px',
-            //btn: ['确定', '取消'],
-            yes: function(index, layero) {
-            },
-            cancel: function () {
-                return;
-            },
-            end: function () {
-                $('#addModel').css("display", "none");
-                //location.reload();
-            }
-        });
-    }
     layui.use('upload', function(){
         const $ = layui.jquery
             , upload = layui.upload;
@@ -205,6 +178,105 @@
         });
 
     });
+
+    function openAgreeModel(data) {
+        layer.open({
+            type: 1,
+            title: '同意审批(理由)',
+            area: ['300px', '200px'],
+            shadeClose: false, //点击遮罩关闭
+            content: $('#reasonModel'),
+            offset: '100px',
+            btn: ['确定', '取消'],
+            yes: function(index, layero) {
+
+                agreeFun(data, index);
+            },
+            cancel: function () {
+            },
+            end: function () {
+                location.reload();
+            }
+        });
+    }
+
+    function agreeFun(data,index) {
+
+        const param = {
+            "userName":data.vac.checker,
+            "taskId":data.id,
+            "result":$("#reasonResult").val()
+        };
+
+        $.ajax({
+            url     : basePath + "/handleAudit.json",
+            dataType:"json",
+            type    :"post",
+            async   : false,
+            data    : param,
+            success:function (result) {
+                $.closeProgressBar();
+                const code = result.code;
+                const msg = result.msg;
+
+                if(code === "0000") {
+                    layer.msg(msg, { time :2000});
+                    setTimeout(function() {
+                        //成功之后将模态库去除，然后刷新界面
+                        $('#reasonModel').css("display", "none");
+                        layer.close(index);
+                    }, 1000);
+
+                } else {
+                    layer.msg(msg, { time :2000});
+                }
+            },
+            error:function (result) {
+                $.shotTotal(result, "error");
+            }
+        })
+    }
+
+    function getHandleRecord() {
+
+        const sender = $("#sender").val();
+        const param = "userName="+sender;
+
+        layui.use('table', function(){
+            const table = layui.table;
+
+            table.render({
+                elem: '#checkRecord'
+                ,url: basePath +'/checkRecord.json?' + param
+                ,toolbar: '#toolbarDemo2' //开启头部工具栏，并为其绑定左侧模板
+                ,cols: [
+                    [
+                         {field:'checker', title: '审核人', align: 'center', }
+                        ,{field:'applyStatus', title: '审核结果', align: 'center', }
+                        ,{field:'receiveTime', title: '审核时间', align: 'center', }
+                        ,{field:'result', title: '备注', align: 'center', }
+                        ,{field:'sender', title: '申请人', align: 'center', }
+                        ,{field:'reason', title: '理由', align: 'center', }
+                        ,{field:'applyTime', title: '申请时间', align: 'center', }
+                    ]
+                ]
+                ,page: false   //开启分页
+                ,limit:10   //默认十条数据一页
+                ,limits:[10]  //数据分页条
+            });
+
+            table.on('tool(table)', function(obj){
+                const data = obj.data;
+                if(obj.event === 'agree'){
+                    //赋值
+                    openAgreeModel(data);
+                } else if(obj.event === 'recall') {
+
+
+                }
+            });
+        });
+    }
 
 </script>
 </body>

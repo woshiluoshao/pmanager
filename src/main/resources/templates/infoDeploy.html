@@ -29,8 +29,14 @@
     </style>
 </head>
 <body>
-<div style="margin-top:3%;margin-left:1%;margin-right:2%;">
+<div style="margin-top:3%;margin-left:1%;margin-right:2%;height: 250px;">
     <table class="layui-hide" id="test" lay-filter="table"></table>
+</div>
+<div style="height: 250px;">
+    <div>申请记录</div>
+    <div>
+        <table class="layui-hide" id="sendRecord" lay-filter="table"></table>
+    </div>
 </div>
 
 <div id="addModel" style="display: none;">
@@ -102,6 +108,7 @@
 
     $(function () {
         search();
+        record();
     });
 
     function search() {
@@ -184,6 +191,7 @@
             }
         });
     }
+
     layui.use('upload', function(){
         const $ = layui.jquery
             , upload = layui.upload;
@@ -264,6 +272,51 @@
 
     });
 
+
+    function record() {
+
+        const sender = $("#sender").val();
+        const param = "userName="+sender;
+
+        layui.use('table', function(){
+            const table = layui.table;
+
+            table.render({
+                elem: '#sendRecord'
+                ,url: basePath +'/sendRecord.json?' + param
+                ,toolbar: '#toolbarDemo2' //开启头部工具栏，并为其绑定左侧模板
+                ,cols: [
+                    [
+                        {field:'sender', title: '申请人', align: 'center'}
+                        ,{field:'applyTime', title: '申请时间', align: 'center', }
+                        ,{field:'reason', title: '理由', align: 'center'}
+                        ,{field:'readme', title: '备注', hide: true, align: 'center', }
+                        ,{field:'applyStatus', title: '申请状态', align: 'center', }
+                        ,{field:'checker', title: '受理人', align: 'center', }
+                        ,{field:'result', title: '受理结果', align: 'center', }
+                        ,{field:'receiveTime', title: '受理时间', align: 'center', }
+                    ]
+                ]
+                ,page: false   //开启分页
+                ,limit:10   //默认十条数据一页
+                ,limits:[10]  //数据分页条
+            });
+
+            table.on('tool(table)', function(obj){
+                const data = obj.data;
+                if(obj.event === 'details'){
+                    //赋值
+                    assignData(data);
+                    controlDisable();
+                    openReadModel();
+                } else if(obj.event === 'recall') {
+                    //删除
+                    openDelModel(data);
+                }
+            });
+
+        });
+    }
 </script>
 </body>
 </html>

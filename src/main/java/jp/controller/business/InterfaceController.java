@@ -94,5 +94,38 @@ public class InterfaceController {
         return deployService.getMyAudit(request);
     }
 
+    /**
+     * 处理任务
+     * @param request
+     */
+    @RequestMapping(value = "/handleAudit.json", produces = "application/json;charset=UTF-8", method = RequestMethod.POST)
+    @ResponseBody
+    public ResultVo handleAuditMethod(HttpServletRequest request) {
+
+        return deployService.handleAudit(request);
+    }
+
+    /**
+     * 获取申请记录
+     * @param request
+     */
+    @RequestMapping(value = "/sendRecord.json", produces = "application/json;charset=UTF-8", method = RequestMethod.GET)
+    @ResponseBody
+    public Layui sendRecordMethod(HttpServletRequest request) {
+
+        return deployService.getSendRecord(request);
+    }
+
+    /**
+     * 获取审核记录
+     * @param request
+     */
+    @RequestMapping(value = "/checkRecord.json", produces = "application/json;charset=UTF-8", method = RequestMethod.GET)
+    @ResponseBody
+    public Layui checkRecordMethod(HttpServletRequest request) {
+
+        return deployService.getHandleRecord(request);
+    }
+
     //endregion
 }

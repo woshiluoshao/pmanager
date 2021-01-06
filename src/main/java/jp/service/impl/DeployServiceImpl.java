@@ -34,12 +34,9 @@ public class DeployServiceImpl implements IDeployService {
     @Resource
     private IdentityService identityService;
     @Resource
-    private TaskService taskService;
-    @Resource
     private HistoryService historyService;
 
     private static final String PROCESS_DEFINE_KEY = "deployProc";
-
 
     @Override
     public ResultVo addDeploy(HttpServletRequest request) {
@@ -181,6 +178,113 @@ public class DeployServiceImpl implements IDeployService {
         return Layui.data(0, null);
     }
 
+    /**
+     * 处理任务
+     * @param request
+     * @return
+     */
+    @Override
+    public ResultVo handleAudit(HttpServletRequest request) {
+
+        try {
+            String userName = request.getParameter("userName");
+            String taskId = request.getParameter("taskId");
+            String result = request.getParameter("result");
+
+
+            ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
+            //2.获取taskService
+            TaskService taskService = processEngine.getTaskService();
+
+            Map<String, Object> vars = new HashMap<>();
+            vars.put("result", result);
+            vars.put("checker", userName);
+            vars.put("receiveTime", new Date());
+
+            taskService.complete(taskId, vars);
+
+            return ResultVoUtil.success();
+        } catch (Exception e) {
+            return ResultVoUtil.error("0001","审批异常");
+        }
+    }
+
+    @Override
+    public Layui getSendRecord(HttpServletRequest request) {
+
+        String userName = request.getParameter("userName");
+
+        List<HistoricProcessInstance> hisProInstance = historyService.createHistoricProcessInstanceQuery()
+                .processDefinitionKey(PROCESS_DEFINE_KEY).startedBy(userName).finished()
+                .orderByProcessInstanceEndTime().desc().list();
+
+        List<DeployEntity> vacList = new ArrayList<>();
+
+        for (HistoricProcessInstance hisInstance : hisProInstance) {
+            DeployEntity vacation = new DeployEntity();
+            vacation.setSender(hisInstance.getStartUserId());
+            vacation.setApplyTime(hisInstance.getStartTime());
+            vacation.setApplyStatus("申请结束");
+            List<HistoricVariableInstance> varInstanceList = historyService.createHistoricVariableInstanceQuery()
+                    .processInstanceId(hisInstance.getId()).list();
+            CommonUtils.setVars(vacation, varInstanceList);
+            vacList.add(vacation);
+        }
+
+        if(vacList.size() > 0) {
+            PageUtils pageUtil = new PageUtils(vacList, vacList.size(), 10,1);
+            return Layui.data(pageUtil.getTotalCount(), pageUtil.getList());
+        }
+
+        return Layui.data(0, null);
+    }
+
+    @Override
+    public Layui getHandleRecord(HttpServletRequest request) {
+
+        String userName = request.getParameter("userName");
+
+        List<HistoricProcessInstance> hisProInstance = historyService.createHistoricProcessInstanceQuery()
+                .processDefinitionKey(PROCESS_DEFINE_KEY).involvedUser(userName).finished()
+                .orderByProcessInstanceEndTime().desc().list();
+
+        List<String> auditTaskNameList = new ArrayList<>();
+        auditTaskNameList.add("经理审批");
+        auditTaskNameList.add("总监审批");
+        List<DeployEntity> vacList = new ArrayList<>();
+        for (HistoricProcessInstance hisInstance : hisProInstance) {
+            List<HistoricTaskInstance> hisTaskInstanceList = historyService.createHistoricTaskInstanceQuery()
+                    .processInstanceId(hisInstance.getId()).processFinished()
+                    .taskAssignee(userName)
+                    //.taskNameIn(auditTaskNameList)
+                    .orderByHistoricTaskInstanceEndTime().desc().list();
+            boolean isMyAudit = false;
+            for (HistoricTaskInstance taskInstance : hisTaskInstanceList) {
+                if (taskInstance.getAssignee().equals(userName)) {
+                    isMyAudit = true;
+                }
+            }
+            if (!isMyAudit) {
+                continue;
+            }
+            DeployEntity vacation = new DeployEntity();
+            vacation.setSender(hisInstance.getStartUserId());
+            vacation.setApplyStatus("审核通过");
+            vacation.setApplyTime(hisInstance.getStartTime());
+            List<HistoricVariableInstance> varInstanceList = historyService.createHistoricVariableInstanceQuery()
+                    .processInstanceId(hisInstance.getId()).list();
+            CommonUtils.setVars(vacation, varInstanceList);
+            vacList.add(vacation);
+        }
+
+        if(vacList.size() > 0) {
+            PageUtils pageUtil = new PageUtils(vacList, vacList.size(), 10,1);
+            return Layui.data(pageUtil.getTotalCount(), pageUtil.getList());
+        }
+
+        return Layui.data(0, null);
+    }
+
     private List<DeployTask> getMyAudit(String userName) {
 
         ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
@@ -208,23 +312,6 @@ public class DeployServiceImpl implements IDeployService {
         }
 
         return  vacTaskList;
-    }
-
-    public Object passAudit(String userName, DeployTask vacTask) {
-
-        ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
-        //2.获取taskService
-        TaskService taskService = processEngine.getTaskService();
-
-        String taskId = vacTask.getId();
-        String result = vacTask.getVac().getResult();
-        Map<String, Object> vars = new HashMap<>();
-        vars.put("result", result);
-        vars.put("auditor", userName);
-        vars.put("auditTime", new Date());
-
-        taskService.complete(taskId, vars);
-        return true;
     }
 
     public Object myVacRecord(String userName) {
