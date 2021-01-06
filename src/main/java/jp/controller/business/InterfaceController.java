@@ -83,5 +83,16 @@ public class InterfaceController {
          return deployService.getMyDeploy(request);
     }
 
+    /**
+     * 获取我待处理任务
+     * @param request
+     */
+    @RequestMapping(value = "/getAudit.json", produces = "application/json;charset=UTF-8", method = RequestMethod.GET)
+    @ResponseBody
+    public Layui getMyAuditMethod(HttpServletRequest request) {
+
+        return deployService.getMyAudit(request);
+    }
+
     //endregion
 }

@@ -1,8 +1,5 @@
 package jp.service.impl;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import jp.dto.DeployDto;
 import jp.entity.DeployEntity;
 import jp.entity.DeployTask;
 import jp.enums.MessageEnum;
@@ -18,7 +15,6 @@ import org.activiti.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -42,7 +38,8 @@ public class DeployServiceImpl implements IDeployService {
     @Resource
     private HistoryService historyService;
 
-    private static final String PROCESS_DEFINE_KEY = "myProcess_1";
+    private static final String PROCESS_DEFINE_KEY = "deployProc";
+
 
     @Override
     public ResultVo addDeploy(HttpServletRequest request) {
@@ -53,8 +50,6 @@ public class DeployServiceImpl implements IDeployService {
             String receiver = request.getParameter("receiver");
             String environment = request.getParameter("environment");
             String readme = request.getParameter("readme");
-
-
 
             String fileSavePath = env.getProperty("manager.save-path");
 
@@ -87,42 +82,32 @@ public class DeployServiceImpl implements IDeployService {
      */
     public void startDeploy(String sender, String receiver, String environment, String readme) {
 
+        //设置开始人
         identityService.setAuthenticatedUserId(sender);
 
-        Map<String, Object> variables = new HashMap<String, Object>();
-        variables.put("accepter", receiver);
+        //设置指定负责人
+        Map<String, Object> sendVar = new HashMap<>(4);
+        sendVar.put("sender", sender);
 
-        // 开始流程
-        ProcessInstance vacationInstance = runtimeService.startProcessInstanceByKey(PROCESS_DEFINE_KEY, variables);
+        //创建进程
+        ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
+        RuntimeService runtimeService = processEngine.getRuntimeService();
 
-        // 查询当前任务
-        Task currentTask = taskService.createTaskQuery().processInstanceId(vacationInstance.getId()).singleResult();
+        ProcessInstance instance = runtimeService.startProcessInstanceByKey(PROCESS_DEFINE_KEY, sendVar);
 
-        // 申明任务
-        //taskService.claim(currentTask.getId(), receiver);
+        //查询当前任务
+        TaskService taskService = processEngine.getTaskService();
+        Task currentTask = taskService.createTaskQuery().processInstanceId(instance.getId()).singleResult();
 
         Map<String, Object> vars = new HashMap<>(4);
         vars.put("sender", sender);
-        vars.put("auditor", receiver);
+        vars.put("checker", receiver);
         vars.put("environment", environment);
         vars.put("readme", readme);
         vars.put("reason", "需要紧急部署");
 
+        //完成任务
         taskService.complete(currentTask.getId(), vars);
-
-        //任务发布完成（返回成功标志）
-
-        //myDeploy(sender);
-
-        //myVacRecord(sender);
-
-//        List<DeployTask> taskList= myAudit(receiver);
-//        for (DeployTask  task : taskList) {
-//            passAudit(receiver, task);
-//        }
-
-        //myAuditRecord(receiver);
-
     }
 
     /**
@@ -135,6 +120,7 @@ public class DeployServiceImpl implements IDeployService {
         String userName = request.getParameter("userName");
 
         List<ProcessInstance> instanceList = runtimeService.createProcessInstanceQuery().startedBy(userName).list();
+
         List<DeployEntity> vacList = new ArrayList<>();
         for (ProcessInstance instance : instanceList) {
             DeployEntity vac = getDeploy(instance);
@@ -156,7 +142,7 @@ public class DeployServiceImpl implements IDeployService {
      */
     private DeployEntity getDeploy(ProcessInstance instance) {
 
-        String auditor = runtimeService.getVariable(instance.getId(), "auditor", String.class);
+        String checker = runtimeService.getVariable(instance.getId(), "checker", String.class);
         String environment = runtimeService.getVariable(instance.getId(), "environment", String.class);
         String reason = runtimeService.getVariable(instance.getId(), "reason", String.class);
         String readme = runtimeService.getVariable(instance.getId(), "readme", String.class);
@@ -170,9 +156,9 @@ public class DeployServiceImpl implements IDeployService {
         vac.setApplyStatus(instance.isEnded() ? "申请结束" : "等待审批");
         vac.setEnvironment(environment);
         vac.setReadme(CommonUtils.objectToStr(readme));
-        vac.setAuditor(auditor);
-//        vac.setResult("");
-//        vac.setReceiveTime(DateUtils.getCurrentTime());
+        vac.setChecker(checker);
+        vac.setResult("");
+        vac.setReceiveTime(DateUtils.getCurrentTime());
         return vac;
     }
 
@@ -185,15 +171,29 @@ public class DeployServiceImpl implements IDeployService {
 
         String userName = request.getParameter("userName");
 
-        //1.得到ProcessEngine对象
+        List<DeployTask> vacTaskList = getMyAudit(userName);
+
+        if(vacTaskList.size() > 0) {
+            PageUtils pageUtil = new PageUtils(vacTaskList, vacTaskList.size(), 10,1);
+            return Layui.data(pageUtil.getTotalCount(), pageUtil.getList());
+        }
+
+        return Layui.data(0, null);
+    }
+
+    private List<DeployTask> getMyAudit(String userName) {
+
         ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
-
-        //2.得到TaskService对象
+        //2.获取taskService
         TaskService taskService = processEngine.getTaskService();
-
-        List<Task> taskList = taskService.createTaskQuery().taskAssignee(userName).orderByTaskCreateTime().desc().list();
+        //3.根据流程key和任务负责人查询任务
+        List<Task> taskList =  taskService.createTaskQuery()
+                .processDefinitionKey(PROCESS_DEFINE_KEY)
+                .taskAssignee(userName)
+                .list();
 
         List<DeployTask> vacTaskList = new ArrayList<>();
+
         for (Task task : taskList) {
             DeployTask vacTask = new DeployTask();
             vacTask.setId(task.getId());
@@ -207,22 +207,22 @@ public class DeployServiceImpl implements IDeployService {
             vacTaskList.add(vacTask);
         }
 
-        if(vacTaskList.size() > 0) {
-            PageUtils pageUtil = new PageUtils(vacTaskList, vacTaskList.size(), 10,1);
-            return Layui.data(pageUtil.getTotalCount(), pageUtil.getList());
-        }
-
-        return Layui.data(0, null);
+        return  vacTaskList;
     }
 
     public Object passAudit(String userName, DeployTask vacTask) {
+
+        ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
+        //2.获取taskService
+        TaskService taskService = processEngine.getTaskService();
+
         String taskId = vacTask.getId();
         String result = vacTask.getVac().getResult();
         Map<String, Object> vars = new HashMap<>();
         vars.put("result", result);
         vars.put("auditor", userName);
         vars.put("auditTime", new Date());
-        taskService.claim(taskId, userName);
+
         taskService.complete(taskId, vars);
         return true;
     }
@@ -282,66 +282,4 @@ public class DeployServiceImpl implements IDeployService {
         return vacList;
     }
 
-
-    /**
-     * 启动流程
-     * @param sender
-     * @param receiver
-     * @param environment
-     * @param readme
-     */
-    private void startDeployActivity(String sender, String receiver, String environment, String readme) {
-
-        Map<String, Object> vars = new HashMap<>();
-        DeployDto deployDto = new DeployDto();
-        deployDto.setSender(sender);
-
-        vars.put("deployParam", JSON.toJSON(deployDto));
-        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("deployProc", vars);
-
-        deployDto.setReceiver(receiver);
-        deployDto.setEnvironment(environment);
-        deployDto.setReadme(readme);
-
-        String processId = processInstance.getId();
-        System.out.println("processId:"+processId);
-        sendDeploy(deployDto, processId);
-    }
-
-    private void sendDeploy(DeployDto deployDto, String processId) {
-
-        Task task = taskService.createTaskQuery().processInstanceId(processId).singleResult();
-        String taskId = task.getId();
-        System.out.println("taskId:"+taskId);
-        Map<String, Object> vars = new HashMap<>();
-        JSONObject jsonObject = (JSONObject)taskService.getVariable(taskId, "deployParam");
-
-        DeployDto origin = new DeployDto();
-        origin.setSender(jsonObject.getString("sender"));
-        origin.setReceiver(deployDto.getReceiver());
-        origin.setEnvironment(deployDto.getEnvironment());
-        origin.setReadme(deployDto.getReadme());
-
-        vars.put("deployParam", JSON.toJSON(deployDto));
-        taskService.complete(taskId, vars);
-
-        findProc(deployDto, processId, taskId);
-
-
-        processId = "";
-    }
-
-    private void findProc(DeployDto deployDto, String processId, String taskId) {
-        List<Task> taskList = taskService.createTaskQuery().processInstanceId(processId).list();
-        if(!CollectionUtils.isEmpty(taskList)){
-            for(Task task : taskList){
-                JSONObject jsonObject = (JSONObject)taskService.getVariable(task.getId(),"deployParam");
-                System.out.println(jsonObject.toJSONString());
-                //resultList.add(jsonObject.toJSONString());
-                String result = "";
-            }
-        }
-
-        String result = "";
-    }
 }

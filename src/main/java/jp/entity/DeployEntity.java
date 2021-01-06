@@ -22,7 +22,7 @@ public class DeployEntity {
     /**
      * 审核人
      */
-    private String auditor;
+    private String checker;
     private String result;
     @JsonFormat(shape=JsonFormat.Shape.STRING,pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date receiveTime;

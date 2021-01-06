@@ -94,4 +94,9 @@ public class PageRestController {
     public String infoDeployPage() {
         return "infoDeploy";
     }
+
+    @RequestMapping(value = "/infoHandle")
+    public String infoHandlePage() {
+        return "infoHandle";
+    }
 }
