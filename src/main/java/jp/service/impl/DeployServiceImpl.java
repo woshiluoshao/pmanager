@@ -15,6 +15,7 @@ import org.activiti.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -47,6 +48,19 @@ public class DeployServiceImpl implements IDeployService {
             String receiver = request.getParameter("receiver");
             String environment = request.getParameter("environment");
             String readme = request.getParameter("readme");
+
+            if(StringUtils.isEmpty(CommonUtils.objectToStr(sender))) {
+                return ResultVoUtil.error(MessageEnum.E001, null, "发送人");
+            }
+            if(StringUtils.isEmpty(CommonUtils.objectToStr(receiver))) {
+                return ResultVoUtil.error(MessageEnum.E001, null, "接收人");
+            }
+            if(StringUtils.isEmpty(CommonUtils.objectToStr(environment))) {
+                return ResultVoUtil.error(MessageEnum.E001, null, "发布环境");
+            }
+            if(StringUtils.isEmpty(CommonUtils.objectToStr(readme))) {
+                return ResultVoUtil.error(MessageEnum.E001, null, "readme");
+            }
 
             String fileSavePath = env.getProperty("manager.save-path");
 
@@ -90,6 +104,7 @@ public class DeployServiceImpl implements IDeployService {
         ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
         RuntimeService runtimeService = processEngine.getRuntimeService();
 
+        //启动进程并将负责人作为参数传入
         ProcessInstance instance = runtimeService.startProcessInstanceByKey(PROCESS_DEFINE_KEY, sendVar);
 
         //查询当前任务
@@ -209,6 +224,11 @@ public class DeployServiceImpl implements IDeployService {
         }
     }
 
+    /**
+     * 获取发送者发送的任务
+     * @param request
+     * @return
+     */
     @Override
     public Layui getSendRecord(HttpServletRequest request) {
 
@@ -239,6 +259,11 @@ public class DeployServiceImpl implements IDeployService {
         return Layui.data(0, null);
     }
 
+    /**
+     * 获取自己处理的任务记录
+     * @param request
+     * @return
+     */
     @Override
     public Layui getHandleRecord(HttpServletRequest request) {
 
@@ -313,60 +338,4 @@ public class DeployServiceImpl implements IDeployService {
 
         return  vacTaskList;
     }
-
-    public Object myVacRecord(String userName) {
-        List<HistoricProcessInstance> hisProInstance = historyService.createHistoricProcessInstanceQuery()
-                .processDefinitionKey(PROCESS_DEFINE_KEY).startedBy(userName).finished()
-                .orderByProcessInstanceEndTime().desc().list();
-
-        List<DeployEntity> vacList = new ArrayList<>();
-        for (HistoricProcessInstance hisInstance : hisProInstance) {
-            DeployEntity vacation = new DeployEntity();
-            vacation.setSender(hisInstance.getStartUserId());
-            vacation.setApplyTime(hisInstance.getStartTime());
-            vacation.setApplyStatus("申请结束");
-            List<HistoricVariableInstance> varInstanceList = historyService.createHistoricVariableInstanceQuery()
-                    .processInstanceId(hisInstance.getId()).list();
-            CommonUtils.setVars(vacation, varInstanceList);
-            vacList.add(vacation);
-        }
-        return vacList;
-    }
-
-    public Object myAuditRecord(String userName) {
-        List<HistoricProcessInstance> hisProInstance = historyService.createHistoricProcessInstanceQuery()
-                .processDefinitionKey(PROCESS_DEFINE_KEY).involvedUser(userName).finished()
-                .orderByProcessInstanceEndTime().desc().list();
-
-        List<String> auditTaskNameList = new ArrayList<>();
-        auditTaskNameList.add("经理审批");
-        auditTaskNameList.add("总监审批");
-        List<DeployEntity> vacList = new ArrayList<>();
-        for (HistoricProcessInstance hisInstance : hisProInstance) {
-            List<HistoricTaskInstance> hisTaskInstanceList = historyService.createHistoricTaskInstanceQuery()
-                    .processInstanceId(hisInstance.getId()).processFinished()
-                    .taskAssignee(userName)
-                    .taskNameIn(auditTaskNameList)
-                    .orderByHistoricTaskInstanceEndTime().desc().list();
-            boolean isMyAudit = false;
-            for (HistoricTaskInstance taskInstance : hisTaskInstanceList) {
-                if (taskInstance.getAssignee().equals(userName)) {
-                    isMyAudit = true;
-                }
-            }
-            if (!isMyAudit) {
-                continue;
-            }
-            DeployEntity vacation = new DeployEntity();
-            vacation.setSender(hisInstance.getStartUserId());
-            vacation.setApplyStatus("申请结束");
-            vacation.setApplyTime(hisInstance.getStartTime());
-            List<HistoricVariableInstance> varInstanceList = historyService.createHistoricVariableInstanceQuery()
-                    .processInstanceId(hisInstance.getId()).list();
-            CommonUtils.setVars(vacation, varInstanceList);
-            vacList.add(vacation);
-        }
-        return vacList;
-    }
-
 }

@@ -79,7 +79,7 @@
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label" style="width: 100px">readme</label>
+            <label class="layui-form-label" style="width: 100px">备注</label>
             <div class="layui-input-block">
                 <textarea  type="text" style="width:500px;" rows="7" name="readme" id="readme"></textarea>
             </div>
@@ -175,7 +175,7 @@
         layer.open({
             type: 1,
             title: '部署发布',
-            area: ['75%', 'auto'],
+            area: ['75%', '85%'],
             shadeClose: false, //点击遮罩关闭
             content: $('#addModel'),
             offset: '20px',
@@ -206,6 +206,7 @@
             ,auto: false
             ,bindAction: '#testListAction'
             ,choose: function(obj){
+                //$("#testList").remove();
                 const files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
                 //读取本地文件
                 obj.preview(function(index, file, result){
@@ -260,6 +261,7 @@
                     location.reload();
                 } else {
                     this.error(index, upload);
+                    layer.msg(res.msg, { time :800});
                 }
             }
             ,error: function(index, upload){

@@ -1,7 +1,6 @@
 package jp.controller.page;
 
 import jp.db.dao.IDynamicParamDB;
-import jp.db.jpa.IJPAImpl;
 import jp.entity.DynamicParamEntity;
 import jp.utils.CommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;

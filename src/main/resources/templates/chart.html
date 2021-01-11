@@ -33,11 +33,11 @@
             <div style="width: 100%; float: right; border-bottom: #808080 solid 1px;">
                 <button style="float: right;" id="send" class="btn btn-info">发送消息</button>
                 <button style="float: right;" id="send_all" class="btn btn-info">群发消息</button>
-<!--                <button style="float: right;" id="user_exit" class="btn btn-warning">退出</button>-->
+                <button style="float: right;" id="user_exit" class="btn btn-warning">退出</button>
             </div>
         </div>
     </div>
-
+    <script th:src="@{/layui/layui.all.js}"></script>
 <script>
 
     const basePath = '[[${#httpServletRequest.getScheme() + "://" + #httpServletRequest.getServerName() + ":" + #httpServletRequest.getServerPort() + #httpServletRequest.getContextPath()}]]';
@@ -95,7 +95,7 @@
             if (ws) {
                 ws.close();
             }
-            window.location.href = "/chat/login";
+            parent.tabDel("21");
         });
         // 用户下拉列表点击事件
         $("#user_list").on("change", function() {

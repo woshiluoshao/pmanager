@@ -29,6 +29,7 @@
         <div></div>
     </div>
 
+    <!--左侧栏-->
     <div class="layui-side layui-bg-black" >
         <div class="layui-side-scroll">
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
@@ -45,7 +46,7 @@
                 <li class="layui-nav-item">
                     <a href="#" data-url="chart" data-title="聊天"  data-id="21" class="site-demo-active" data-type="tabAdd">聊天</a>
                 </li>
-                <li class="layui-nav-item layui-nav-itemed">
+                <li class="layui-nav-item">
                     <a class="" href="javascript:;"><strong>日志一览</strong></a>
                     <dl class="layui-nav-child">
                         <dd><a href="#" data-url="userLog" data-title="内部账号日志"  data-id="31" class="site-demo-active" data-type="tabAdd">用户操作日志</a></dd>
@@ -57,17 +58,44 @@
         </div>
     </div>
 
-    <div class="layui-tab" lay-filter="demo" lay-allowclose="true" style="margin-left: 200px;">
-        <ul class="layui-tab-title">
-        </ul>
-        <ul class="rightmenu" style="display: none;position: absolute;">
-            <li data-type="closethis">关闭当前</li>
-            <li data-type="closeall">关闭所有</li>
-        </ul>
-        <div class="layui-tab-content">
+    <div class="layui-body">
+
+        <div>
+            该程序主要是运维、研发使用,致力于一站式解决两者沟通交流问题(以上是我胡编乱造的哈)
+            <div id="colcse" class="layui-tab" lay-filter="demo" lay-allowclose="true" >
+                <ul class="layui-tab-title">
+                    <!--
+                        作者：LUO SHAO
+                        时间：2020-11-11
+                        描述：存放tab
+                    -->
+                </ul>
+                <!--
+                    作者：1669056669@qq.com
+                    时间：2018-12-24
+                    描述：tab右键功能
+                -->
+                <ul class="rightmenu" style=" display: none;position: absolute;background: #6E6C79;font-family: '微软雅黑';">
+                    <li id="yue" style="color: red;cursor:pointer;" data-id="" data-type="closethis">
+                        <a href="#" id="colcseNow" style="color: white;cursor:pointer;"  data-type="closethis"  >     关闭当前  </a>
+                    </li>
+
+                    <li data-type="closeall">
+                        <a href="#" id="colcseAll" style="color: white;cursor:pointer;" data-id=""  data-type="closeall">  关闭所有  </a>
+                    </li>
+
+                    <li data-type="closeothe">
+                        <a href="#" id="colcseOther" style="color: white;cursor:pointer;" data-id=""  data-type="closeothe">  关闭其它  </a>
+                    </li>
+                </ul>
+                <div class="layui-tab-content">
+                </div>
+            </div>
+
         </div>
     </div>
 
+    <!--底部-->
     <div class="layui-footer">
         Copyright © 2020&nbsp;罗少信息科技有限公司版权所有&nbsp;闽ICP备000000000号
     </div>
@@ -129,9 +157,15 @@
                 element.tabDelete("demo", id);//删除
             }
         };
+
         function FrameWH() {
             var h = $(window).height();
             $("iframe").css("height",h+"px");
+        }
+
+        window.tabDel=function(data_id)
+        {
+            element.tabDelete('demo', data_id);
         }
     });
 </script>
