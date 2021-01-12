@@ -27,4 +27,9 @@ public class DeployEntity {
     @JsonFormat(shape=JsonFormat.Shape.STRING,pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date receiveTime;
 
+    /**
+     * 任务执行后的ID
+     */
+    private String processInstanceId;
+
 }

@@ -125,7 +125,8 @@
                 ,toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
                 ,cols: [
                     [
-                        {field:'sender', title: '申请人', align: 'center'}
+                        {field:'processInstanceId', title: '任务ID',  align: 'center', }
+                        ,{field:'sender', title: '申请人', align: 'center'}
                         ,{field:'reason', title: '理由', hide: true, align: 'center'}
                         ,{field:'applyTime', title: '申请时间', align: 'center', }
                         ,{field:'applyStatus', title: '申请状态', align: 'center', }
@@ -150,8 +151,8 @@
                     controlDisable();
                     openReadModel();
                 } else if(obj.event === 'recall') {
-                    //删除
-                    openDelModel(data);
+                    //撤回任务
+                    openRecallModel(data);
                 }
             });
 
@@ -274,7 +275,6 @@
 
     });
 
-
     function record() {
 
         const sender = $("#sender").val();
@@ -293,7 +293,7 @@
                         ,{field:'applyTime', title: '申请时间', align: 'center', }
                         ,{field:'reason', title: '理由', align: 'center'}
                         ,{field:'readme', title: '备注', hide: true, align: 'center', }
-                        ,{field:'applyStatus', title: '申请状态', align: 'center', }
+                        ,{field:'applyStatus', title: '状态', align: 'center', }
                         ,{field:'checker', title: '受理人', align: 'center', }
                         ,{field:'result', title: '受理结果', align: 'center', }
                         ,{field:'receiveTime', title: '受理时间', align: 'center', }
@@ -303,22 +303,64 @@
                 ,limit:10   //默认十条数据一页
                 ,limits:[10]  //数据分页条
             });
-
-            table.on('tool(table)', function(obj){
-                const data = obj.data;
-                if(obj.event === 'details'){
-                    //赋值
-                    assignData(data);
-                    controlDisable();
-                    openReadModel();
-                } else if(obj.event === 'recall') {
-                    //删除
-                    openDelModel(data);
-                }
-            });
-
         });
     }
+
+    function openRecallModel(data) {
+        layer.open({
+            type: 1,
+            title: '确定撤回？',
+            area: ['200px', '150px'],
+            shadeClose: false, //点击遮罩关闭
+            offset: '100px',
+            btn: ['确定', '取消'],
+            yes: function(index, layero) {
+
+                recallFun(data, index);
+            },
+            cancel: function () {
+            },
+            end: function () {
+                location.reload();
+            }
+        });
+    }
+
+    //撤回申请
+    function recallFun(data, index) {
+
+        const param = {
+            "userName":data.sender,
+            "processInstanceId":data.processInstanceId
+        };
+
+        $.ajax({
+            url     : basePath + "/recall.json",
+            dataType:"json",
+            type    :"post",
+            async   : false,
+            data    : param,
+            success:function (result) {
+                const code = result.code;
+                const msg = result.msg;
+
+                if(code === "0000") {
+                    layer.msg("撤回成功", { time :2000});
+                    setTimeout(function() {
+                        //成功之后将模态库去除，然后刷新界面
+                        layer.close(index);
+                    }, 1000);
+
+                } else {
+                    layer.msg(msg, { time :2000});
+                }
+            },
+            error:function (result) {
+                $.shotTotal(result, "error");
+            }
+        })
+    }
+
 </script>
 </body>
 </html>

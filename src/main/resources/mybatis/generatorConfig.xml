@@ -37,7 +37,7 @@
         </javaClientGenerator>
         
         
-        <table tableName="interface_deploy_info"
+        <table tableName="record_third_part"
          enableCountByExample="false" 
          enableUpdateByExample="false" 
          enableDeleteByExample="false"

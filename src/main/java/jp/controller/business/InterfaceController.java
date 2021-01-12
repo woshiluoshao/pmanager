@@ -127,5 +127,16 @@ public class InterfaceController {
         return deployService.getHandleRecord(request);
     }
 
+    /**
+     * 撤回任务
+     * @param request
+     */
+    @RequestMapping(value = "/recall.json", produces = "application/json;charset=UTF-8", method = RequestMethod.POST)
+    @ResponseBody
+    public ResultVo recallMethod(HttpServletRequest request) {
+
+        return deployService.recallDeploy(request);
+    }
+
     //endregion
 }

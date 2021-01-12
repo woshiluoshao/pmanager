@@ -6,12 +6,20 @@ import jp.enums.MessageEnum;
 import jp.service.IDeployService;
 import jp.utils.*;
 import jp.vo.ResultVo;
+import org.activiti.bpmn.model.BpmnModel;
+import org.activiti.bpmn.model.FlowNode;
+import org.activiti.bpmn.model.SequenceFlow;
 import org.activiti.engine.*;
+import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.history.HistoricVariableInstance;
+import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
+import org.activiti.engine.repository.Deployment;
+import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -36,6 +44,8 @@ public class DeployServiceImpl implements IDeployService {
     private IdentityService identityService;
     @Resource
     private HistoryService historyService;
+    @Autowired
+    private RepositoryService repositoryService;
 
     private static final String PROCESS_DEFINE_KEY = "deployProc";
 
@@ -85,6 +95,22 @@ public class DeployServiceImpl implements IDeployService {
     }
 
     /**
+     * 流程定义
+     * @param sender
+     */
+    public void processDefinition(String sender) {
+        ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
+        Deployment deployment = processEngine.getRepositoryService()
+                .createDeployment()
+                .name(sender + "的申请"+ DateUtils.getTimeStamp())
+                .addClasspathResource("processes/deployProc.bpmn20.xml")
+                .deploy();
+
+        System.out.println("定义ID" + deployment.getId());
+        System.out.println("定义名" + deployment.getName());
+    }
+
+    /**
      * 开始发布流程
      * @param sender
      * @param receiver
@@ -92,6 +118,8 @@ public class DeployServiceImpl implements IDeployService {
      * @param readme
      */
     public void startDeploy(String sender, String receiver, String environment, String readme) {
+
+        processDefinition(sender);
 
         //设置开始人
         identityService.setAuthenticatedUserId(sender);
@@ -171,6 +199,7 @@ public class DeployServiceImpl implements IDeployService {
         vac.setChecker(checker);
         vac.setResult("");
         vac.setReceiveTime(DateUtils.getCurrentTime());
+        vac.setProcessInstanceId(instance.getProcessInstanceId());
         return vac;
     }
 
@@ -244,7 +273,8 @@ public class DeployServiceImpl implements IDeployService {
             DeployEntity vacation = new DeployEntity();
             vacation.setSender(hisInstance.getStartUserId());
             vacation.setApplyTime(hisInstance.getStartTime());
-            vacation.setApplyStatus("申请结束");
+            String deleteReason = hisInstance.getDeleteReason();
+            vacation.setApplyStatus(StringUtils.isEmpty(CommonUtils.objectToStr(deleteReason)) ? "审批结束" : "已撤回");
             List<HistoricVariableInstance> varInstanceList = historyService.createHistoricVariableInstanceQuery()
                     .processInstanceId(hisInstance.getId()).list();
             CommonUtils.setVars(vacation, varInstanceList);
@@ -273,28 +303,38 @@ public class DeployServiceImpl implements IDeployService {
                 .processDefinitionKey(PROCESS_DEFINE_KEY).involvedUser(userName).finished()
                 .orderByProcessInstanceEndTime().desc().list();
 
-        List<String> auditTaskNameList = new ArrayList<>();
-        auditTaskNameList.add("经理审批");
-        auditTaskNameList.add("总监审批");
         List<DeployEntity> vacList = new ArrayList<>();
+
+        String deleteReason = "";
+
         for (HistoricProcessInstance hisInstance : hisProInstance) {
+
             List<HistoricTaskInstance> hisTaskInstanceList = historyService.createHistoricTaskInstanceQuery()
                     .processInstanceId(hisInstance.getId()).processFinished()
                     .taskAssignee(userName)
-                    //.taskNameIn(auditTaskNameList)
                     .orderByHistoricTaskInstanceEndTime().desc().list();
             boolean isMyAudit = false;
             for (HistoricTaskInstance taskInstance : hisTaskInstanceList) {
-                if (taskInstance.getAssignee().equals(userName)) {
+
+                //此处写法是过滤发送者撤回的记录
+                deleteReason = taskInstance.getDeleteReason();
+                if(!StringUtils.isEmpty(deleteReason)) continue;
+                //此处写法是过滤发送者撤回的记录
+
+                //taskInstance.getName().equals("receiveTask")是为了精确查找到审批的人，实际业务肯定有修改
+                if (taskInstance.getAssignee().equals(userName) && taskInstance.getName().equals("receiveTask")) {
                     isMyAudit = true;
                 }
             }
             if (!isMyAudit) {
                 continue;
             }
+
+            String msg = StringUtils.isEmpty(CommonUtils.objectToStr(deleteReason)) ? "已审核通过" : "已撤回";
+
             DeployEntity vacation = new DeployEntity();
             vacation.setSender(hisInstance.getStartUserId());
-            vacation.setApplyStatus("审核通过");
+            vacation.setApplyStatus(msg);
             vacation.setApplyTime(hisInstance.getStartTime());
             List<HistoricVariableInstance> varInstanceList = historyService.createHistoricVariableInstanceQuery()
                     .processInstanceId(hisInstance.getId()).list();
@@ -308,6 +348,97 @@ public class DeployServiceImpl implements IDeployService {
         }
 
         return Layui.data(0, null);
+    }
+
+    /**
+     * 撤回任务
+     * @param request
+     * @return
+     */
+    @Override
+    public ResultVo recallDeploy(HttpServletRequest request) {
+
+        String userName = request.getParameter("userName");
+        String processInstanceId = request.getParameter("processInstanceId");
+        String taskId = request.getParameter("taskId");
+
+        ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
+        TaskService taskService = processEngine.getTaskService();
+
+        Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).singleResult();
+        if(task==null) {
+            throw new ServiceException("流程未启动或已执行完成，无法撤回");
+        }
+
+        List<HistoricTaskInstance> htiList = historyService.createHistoricTaskInstanceQuery()
+                .processInstanceId(processInstanceId)
+                .orderByTaskCreateTime()
+                .asc()
+                .list();
+        String myTaskId = null;
+        HistoricTaskInstance myTask = null;
+        for(HistoricTaskInstance hti : htiList) {
+            if(userName.equals(hti.getAssignee())) {
+                myTaskId = hti.getId();
+                myTask = hti;
+                break;
+            }
+        }
+        if(null==myTaskId) {
+            throw new ServiceException("该任务非当前用户提交，无法撤回");
+        }
+
+        String processDefinitionId = myTask.getProcessDefinitionId();
+        ProcessDefinitionEntity processDefinitionEntity = (ProcessDefinitionEntity) repositoryService.createProcessDefinitionQuery().processDefinitionId(processDefinitionId).singleResult();
+        BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinitionId);
+
+        //变量
+//		Map<String, VariableInstance> variables = runtimeService.getVariableInstances(currentTask.getExecutionId());
+        String myActivityId = null;
+        List<HistoricActivityInstance> haiList = historyService.createHistoricActivityInstanceQuery()
+                .executionId(myTask.getExecutionId()).finished().list();
+        for(HistoricActivityInstance hai : haiList) {
+            if(myTaskId.equals(hai.getTaskId())) {
+                myActivityId = hai.getActivityId();
+                break;
+            }
+        }
+        FlowNode myFlowNode = (FlowNode) bpmnModel.getMainProcess().getFlowElement(myActivityId);
+
+
+        Execution execution = runtimeService.createExecutionQuery().executionId(task.getExecutionId()).singleResult();
+        String activityId = execution.getActivityId();
+        FlowNode flowNode = (FlowNode) bpmnModel.getMainProcess().getFlowElement(activityId);
+
+        //记录原活动方向
+        List<SequenceFlow> oriSequenceFlows = new ArrayList<SequenceFlow>();
+        oriSequenceFlows.addAll(flowNode.getOutgoingFlows());
+
+        //清理活动方向
+        flowNode.getOutgoingFlows().clear();
+
+        runtimeService.deleteProcessInstance(processInstanceId, "写错了，删除下");
+//        //建立新方向
+//        List<SequenceFlow> newSequenceFlowList = new ArrayList<SequenceFlow>();
+//        SequenceFlow newSequenceFlow = new SequenceFlow();
+//        newSequenceFlow.setId("newSequenceFlowId");
+//        newSequenceFlow.setSourceFlowElement(flowNode);
+//        newSequenceFlow.setTargetFlowElement(myFlowNode);
+//        newSequenceFlowList.add(newSequenceFlow);
+//        flowNode.setOutgoingFlows(newSequenceFlowList);
+//
+//        Authentication.setAuthenticatedUserId(userName);
+//        taskService.addComment(task.getId(), task.getProcessInstanceId(), "撤回");
+//
+//        Map<String,Object> currentVariables = new HashMap<String,Object>();
+//        currentVariables.put("sender", userName);
+//        currentVariables.put("checker", "mumu");
+//        //完成任务
+//        taskService.complete(task.getId(),currentVariables);
+        //taskService.deleteTask(task.getId());
+        //恢复原方向
+        //flowNode.setOutgoingFlows(oriSequenceFlows);
+        return ResultVoUtil.success();
     }
 
     private List<DeployTask> getMyAudit(String userName) {

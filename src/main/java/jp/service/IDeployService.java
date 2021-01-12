@@ -13,4 +13,5 @@ public interface IDeployService {
     ResultVo handleAudit(HttpServletRequest request);
     Layui getSendRecord(HttpServletRequest request);
     Layui getHandleRecord(HttpServletRequest request);
+    ResultVo recallDeploy(HttpServletRequest request);
 }
