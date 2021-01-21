@@ -98,4 +98,14 @@ public class PageRestController {
     public String infoHandlePage() {
         return "infoHandle";
     }
+
+    @RequestMapping(value = "/fileChange")
+    public String fileChangePage() {
+        return "fileChange";
+    }
+
+    @RequestMapping(value = "/fileCreate")
+    public String fileCreatePage() {
+        return "fileCreate";
+    }
 }

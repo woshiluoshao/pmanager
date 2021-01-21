@@ -7,3 +7,9 @@ spring:
     suffix: .html
     cache: false
     encoding: UTF-8
+
+#系统自带的tomcat默认传送的文件大小是1M,此处自定义上传文件大小，后期部署到tomcat要注释
+  servlet:
+    multipart:
+      max-file-size: 1204MB
+

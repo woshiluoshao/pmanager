@@ -7,7 +7,7 @@ import java.io.InputStream;
 /**
  * 文件处理工具类
  */
-public class FIleUtils {
+public class FileUtils {
 
     public static String createFolder(String path,String folderName) {
         File folder = new File(path+File.separator+folderName);
@@ -22,6 +22,26 @@ public class FIleUtils {
         if(!folder.exists()) {
             folder.mkdirs();
         }
+    }
+
+    /**
+     * 获取文件后缀
+     * @param fileName
+     * @return
+     */
+    public static String getFileSuffix(String fileName) {
+        int splitIndex = fileName.lastIndexOf(".");
+        return fileName.substring(splitIndex + 1);
+    }
+
+    public static String getFileNameNoEx(String filename) {
+        if ((filename != null) && (filename.length() > 0)) {
+            int dot = filename.lastIndexOf('.');
+            if ((dot >-1) && (dot < (filename.length()))) {
+                return filename.substring(0, dot);
+            }
+        }
+        return filename;
     }
 
     /**

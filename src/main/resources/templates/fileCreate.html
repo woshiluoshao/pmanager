@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <script type="text/javascript"  th:src="@{/jquery-3.4.0/jquery-3.4.0.min.js}"></script>
+    <link th:href="@{/bootstrap/bootstrap-3.3.7/css/bootstrap.min.css}" rel="stylesheet" type="text/css" >
+
+    <script type="text/javascript"  th:src="@{/bootstrap/bootstrap-3.3.7/js/bootstrap.min.js}"></script>
+    <link th:href="@{/layui/css/layui.css}" rel="stylesheet">
+
+    <style th:inline="text">
+        table{border-spacing: 10px 30px;}
+        tr {
+            display: block;
+            /*将tr设置为块体元素*/
+            margin: 3px 0;
+            /*设置tr间距为2px*/
+        }
+
+        td {
+            text-align: right;
+        }
+
+        .layui-tab-content {
+            height: 200vh;
+        }
+
+        .inp{background:none;border:none;border-bottom:1px solid #ddd;outline:none;}
+
+    </style>
+</head>
+<body>
+<div style="margin-top:3%;margin-left:1%;margin-right:2%;height: 250px;">
+    <center><h2>PDF 填充模板示例</h2></center>
+    <table>
+        <tr></tr>
+        <tr>
+            <td>姓名：</td>
+            <td style="margin-left: 10px"><input type="text" id="username" size="30" placeholder="请输入姓名" class="inp" value="西林大将罗少"></td>
+        </tr>
+        <tr>
+            <td>性别：</td>
+            <td style="margin-left: 10px"><input type="text" id="sex" size="30" placeholder="请输入性别" class="inp" value="男"></td>
+        </tr>
+        <tr>
+            <td>籍贯：</td>
+            <td style="margin-left: 10px"><input type="text" id="jiguan" size="30" placeholder="请输入籍贯" class="inp" value="福建"></td>
+        </tr>
+
+    </table>
+    <br>
+    <br>
+    <p style="float: right;margin-right: 5%">
+        时间：2021-01-18
+    </p>
+
+</div>
+<div style="margin-top: 1%;float: right;margin-right:2%;">
+    <input type="button" style="width: 100px" value="PDF填充" onclick="pdfFill()">
+</div>
+
+<script type="text/javascript"  th:src="@{/common/common.js}"></script>
+<script th:src="@{/layui/layui.js}"></script>
+<script>
+
+    const basePath = '[[${#httpServletRequest.getScheme() + "://" + #httpServletRequest.getServerName() + ":" + #httpServletRequest.getServerPort() + #httpServletRequest.getContextPath()}]]';
+
+    $(function () {
+    });
+
+    function pdfFill(filePath, fileName) {
+
+        const username = $("#username").val();
+        const sex = $("#sex").val();
+        const jiguan = $("#jiguan").val();
+        location.href=basePath + "/fileTempFill.json?username=" + username +
+                                                   "&sex=" + sex +
+                                                   "&jiguan=" + jiguan
+        ;
+    }
+
+
+</script>
+</body>
+</html>

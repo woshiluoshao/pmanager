@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <script type="text/javascript"  th:src="@{/jquery-3.4.0/jquery-3.4.0.min.js}"></script>
+    <link th:href="@{/bootstrap/bootstrap-3.3.7/css/bootstrap.min.css}" rel="stylesheet" type="text/css" >
+
+    <script type="text/javascript"  th:src="@{/bootstrap/bootstrap-3.3.7/js/bootstrap.min.js}"></script>
+    <link th:href="@{/layui/css/layui.css}" rel="stylesheet">
+
+    <style th:inline="text">
+        table{border-spacing: 10px 30px;}
+        tr {
+            display: block;
+            /*将tr设置为块体元素*/
+            margin: 3px 0;
+            /*设置tr间距为2px*/
+        }
+
+        td {
+            text-align: right;
+        }
+
+        .layui-tab-content {
+            height: 200vh;
+        }
+
+    </style>
+</head>
+<body>
+<div style="margin-top:3%;margin-left:1%;margin-right:2%;height: 250px;">
+    <div style="width: 33%; float: left">
+        <div class="layui-form-item" >
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                <legend>文件转PDF</legend>
+            </fieldset>
+
+            <div class="layui-upload-drag" id="test10">
+                <i class="layui-icon"></i>
+                <p>点击上传，或将文件拖拽到此处</p>
+                <p>(功能:文件转PDF)</p>
+                <div class="layui-hide" id="uploadDemoView">
+                    <hr>
+                    <img src="" alt="上传成功后渲染" style="max-width: 196px">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="width: 65%; float: left">
+        <div class="layui-form-item" style="width: 33%;float: left">
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                <legend>PDF填充</legend>
+            </fieldset>
+
+            <div class="layui-upload-drag" id="test11">
+                <i class="layui-icon"></i>
+                <p>点击上传，或将文件拖拽到此处</p>
+                <p>(功能:PDF填充)</p>
+                <div class="layui-hide" id="uploadDemoView2">
+                    <hr>
+                    <img src="" alt="上传成功后渲染" style="max-width: 196px">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<script type="text/javascript"  th:src="@{/common/common.js}"></script>
+<script th:src="@{/layui/layui.js}"></script>
+<script>
+
+    const basePath = '[[${#httpServletRequest.getScheme() + "://" + #httpServletRequest.getServerName() + ":" + #httpServletRequest.getServerPort() + #httpServletRequest.getContextPath()}]]';
+
+    $(function () {
+    });
+
+
+    layui.use('upload',function(){
+        const $ = layui.jquery
+            , upload = layui.upload;
+        //拖拽上传
+        upload.render({
+            elem: '#test10'
+            ,url: basePath +'/fileChange.json' //改成您自己的上传接口
+            ,accept: "file"
+            //,size: 1048576
+            ,progress: function (e, percent) {
+                console.log(JSON.stringify(e));
+                console.log("进度：" + e + '%');
+            }
+            ,done: function(res){
+
+                const code = res.code;
+                const msg = res.msg;
+                if(code === "0000") {
+                    layer.msg('文件转PDF成功');
+                } else {
+                    layer.msg(msg);
+                }
+
+                //layui.$('#uploadDemoView').removeClass('layui-hide').find('img').attr('src', res.files.file);
+                console.log(res)
+            }
+        });
+
+        upload.render({
+            elem: '#test11'
+            ,url: basePath +'/fileUpload.json' //改成您自己的上传接口
+            ,accept: "file"
+            //,size: 1048576
+            ,progress: function (e, percent) {
+                console.log(JSON.stringify(e));
+                console.log("进度：" + e + '%');
+            }
+            ,done: function(res){
+
+                const code = res.code;
+                const msg = res.msg;
+                const data = res.data;
+                if(code === "0000") {
+                    //layer.msg('文件上传成功,转');
+                    const fileName = JSON.parse(res.data).fileName;
+                    const filePath = JSON.parse(res.data).filePath;
+                    //这里提示文件上传，成功后进行文件的转换
+                    getFillPdf(filePath, fileName);
+                } else {
+                    layer.msg(msg);
+                }
+
+                //layui.$('#uploadDemoView').removeClass('layui-hide').find('img').attr('src', res.files.file);
+                console.log(res)
+            }
+        });
+
+    });
+
+    function getFillPdf(filePath, fileName) {
+
+        location.href=basePath + "/fileFill.json?filePath=" + filePath + "&fileName=" + fileName;
+    }
+
+
+</script>
+</body>
+</html>

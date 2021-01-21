@@ -31,6 +31,6 @@ mybatis:
 
 #文件暂时存放
 manager:
-  save-path: /root/deploy/
+  save-path: D:/root/deploy/
 
 

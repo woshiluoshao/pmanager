@@ -83,8 +83,8 @@ public class DeployServiceImpl implements IDeployService {
             multiFile.getContentType();
             InputStream inputStream = multiFile.getInputStream();
             String totalPath = fileSavePath + fileName;
-            FIleUtils.createFolder(fileSavePath);
-            boolean result = FIleUtils.saveFileByStream(inputStream, totalPath);
+            FileUtils.createFolder(fileSavePath);
+            boolean result = FileUtils.saveFileByStream(inputStream, totalPath);
             if(result) startDeploy(sender, receiver, environment, readme);
 
             return ResultVoUtil.success();
