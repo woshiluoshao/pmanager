@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>聊天</title>
+
+    <script type="text/javascript"  th:src="@{/jquery-3.4.0/jquery-3.4.0.min.js}"></script>
+    <link th:href="@{/bootstrap/bootstrap-3.3.7/css/bootstrap.min.css}" rel="stylesheet" type="text/css" >
+    <script type="text/javascript"  th:src="@{/bootstrap/bootstrap-3.3.7/js/bootstrap.min.js}"></script>
+    <style>
+        /*img{*/
+        /*    position:absolute;*/
+        /*}*/
+    </style>
+</head>
+<body class="container" style="width: 80%">
+    <div style="margin-top: 2%"></div>
+    <div class="form-group" style="float: left; width: 80%;">
+
+        <div id="myMessage" style="width: 8%; height: 500px; overflow-y: auto; position: relative; float: left; background: #26282B" readonly="readonly">
+            <h5 id="user_name" th:text="${#session.getAttribute('userId')}" style="width: 80%; color: white; margin-left: 3%"></h5>
+            <img th:src="@{'/photo/headLog.png'}" class="layui-nav-img" style="width: 70%; height: auto; margin-top: 9px; margin-left: 15%">
+
+            <img th:src="@{'/photo/chatlog.png'}" class="layui-nav-img" style="width: 50%; height: auto; margin-top: 6px; margin-left: 25%">
+        </div>
+        <div id="message_user" style="width: 25%; height: 500px; overflow-y: auto; position: relative; float: left; background-color: #E5E5E6" readonly="readonly">
+            <div>
+                <br>
+            </div>
+            <div style="margin-left: 2%; color: #3ebaff; border-bottom:1px solid ">
+                总人数:<span id="online_count"></span><br/>
+            </div>
+            <div id="online_user_list" style="margin-left: 2%; margin-right: 2%">
+            </div>
+
+        </div>
+        <div id="whoChat" style="font-size: 16px; width: 67%; height: 40px; overflow-y: auto; position: relative; float: left; background-color: #F5F5F5; border-bottom:1px solid #E7E7E7 "  readonly="readonly">
+            <div style="margin-top: 2%; margin-left: 3%;">
+                <span id="with_who"></span><span style="display: none" id="with_who_account"></span><br/>
+            </div>
+        </div>
+        <div id="message_chat" style="font-size: 13px; width: 67%; height: 310px; overflow-y: auto; position: relative; float: left; background-color: #F5F5F5" readonly="readonly">
+        </div>
+        <div style="width: 67%; float: right;">
+            <div style="width: 100%; height: 115px;">
+                <textarea style="height: 100%; border-bottom: #ffffff solid 0px;" id="chat_msg" value="" class="form-control"></textarea>
+            </div>
+            <div style="width: 100%; float: right; border-bottom: #808080 solid 1px;">
+                <button style="float: right;" id="send" class="btn btn-info">发送消息</button>
+                <!--<button style="float: right;" id="send_all" class="btn btn-info">群发消息</button>-->
+                <!--<button style="float: right;" id="user_exit" class="btn btn-warning">退出</button>-->
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript"  th:src="@{/common/common.js}"></script>
+    <script th:src="@{/layui/layui.js}"></script>
+<script type="text/javascript">
+
+    const basePath = '[[${#httpServletRequest.getScheme() + "://" + #httpServletRequest.getServerName() + ":" + #httpServletRequest.getServerPort() + #httpServletRequest.getContextPath()}]]';
+    const ipPort = '[[${#httpServletRequest.getServerName() + ":" + #httpServletRequest.getServerPort() + #httpServletRequest.getContextPath()}]]';
+    //let urlPrefix = 'ws://localhost:8080/net/websocket/';
+    let urlPrefix = 'ws://' + ipPort + '/net/websocket/';
+
+    $(document).ready(function() {
+
+        initUserList();
+
+        let ws = null;
+        let username = $('#user_name').text();
+        ws = initMsg(urlPrefix, username);
+        // 客户端发送对某一个客户的消息到服务器
+        $('#send').click(function() {
+
+            //获取当前选中行的人员;
+            const userList = document.getElementById("with_who_account").innerText;
+            //let userList = $("#user_list option:selected").val();
+            if (!userList) {
+                alert("请选择一个用户！");
+                return;
+            }
+            let msg = $('#chat_msg').val();
+            if (!msg) {
+                alert("请输入聊天内容！");
+                return;
+            }
+
+            msg = msg + "[" + userList + "]" + "----------" + username;
+
+            //记录缓存
+            let chatData = sessionStorage.getItem(userList);
+            let storeData = "";
+            if(chatData != null) {
+                storeData = chatData + msg;
+            }
+
+            sessionStorage.setItem(userList, storeData);
+            //记录缓存结束
+
+            if (ws) {
+                ws.send(msg);
+                //向服务端发送消息
+                $('#message_chat').append('<div style="width: 100%; float: right;"><span style="float: right;">' + username + '&nbsp;&nbsp;</span><br/>');
+                $('#message_chat').append('<span style="float: right; font-size: 12px; font-weight: bolder; background-color: #9EEA6A">' + msg.substring(0, msg.indexOf('[')) + '</span></div>');
+                $("#chat_msg").val('');
+                $("#error_select_msg").empty();
+            }
+        });
+        // 客户端群发消息到服务器
+        $('#send_all').click(function() {
+            let msg = $('#chat_msg').val();
+            if (!msg) {
+                alert("请输入聊天内容！");
+                return;
+            }
+            msg = msg + "[allUsers]" + "----------" + username;
+            if (ws) {
+                ws.send(msg);
+                //服务端发送的消息
+                $('#message_chat').append('<div style="width: 100%; float: right;"><span style="float: right;">' + username + ' 的群发消息&nbsp;&nbsp;</span><br/>');
+                $('#message_chat').append('<span style="float: right; font-size: 18px; font-weight: bolder;">' + msg.replace('[allUsers]----------' + username, '') + '</span></div>');
+                $("#chat_msg").val('');
+                $("#error_select_msg").empty();
+            }
+        });
+        // 退出聊天室
+        $('#user_exit').click(function() {
+            if (ws) {
+                ws.close();
+            }
+            parent.tabDel("21");
+        });
+        // 用户下拉列表点击事件
+        $("#user_list").on("change", function() {
+            $("#error_select_msg").empty();
+        });
+    });
+
+    /**
+     * 初始化用户列表
+     */
+    function initUserList() {
+        let userId = $('#user_name').text();
+        $.ajax({
+            url:  basePath + "/selectOnline.json",
+            type: "POST",
+            data: {'userId': userId},
+            success: function(result) {
+                let dataList = JSON.parse(result.data);
+
+                let onlineUserList = "";
+                for (let i = 0; i < dataList.length; i++) {
+                    const username =  dataList[i].username;
+                    const account = dataList[i].account;
+                    onlineUserList += "<div id='\""+account+"\"' onmouseover = 'over()' onmouseup='out(this)' style='height: 30px; margin-top: 2%; background-color: #E7E6E6; border-bottom:1px solid #C5C4C5' onclick='changeCharUser(\""+account+"\", \""+username+"\", this)'> " + username+ "</div>";
+                    //onlineUserList += "<li class='rel-item'><a onclick='changeCharUser("+dataList[i].account+")'> " + dataList[i].username + dataList[i].account + "</li></a>";
+                }
+
+                $("#online_count").text(dataList.length);
+                $("#online_user_list").append(onlineUserList);
+
+            }
+        });
+    }
+
+    /**
+     * 初始化消息
+     *
+     * @param urlPrefix
+     * @param username
+     * @returns {WebSocket}
+     */
+    function initMsg(urlPrefix, username) {
+        let url = urlPrefix + username;
+        const ws = new WebSocket(url);
+        ws.onopen = function () {
+            console.log("建立 websocket 连接...");
+        };
+        ws.onmessage = function(event) {
+
+            //设置缓存
+            const account = document.getElementById("with_who_account").innerText;
+            const chatData = sessionStorage.getItem(account);
+
+            let storeData = "";
+            if(chatData != null) {
+                storeData = chatData + event.data + '\n';
+            }
+
+            sessionStorage.setItem(account, storeData);
+            //设置缓存结束
+
+            //此处做一个判断（判断后端回来的发送者是否和本次聊天的一致）
+            //服务端发送的消息
+            $('#message_chat').append(event.data + '\n');
+        };
+        ws.onclose = function() {
+            $('#message_chat').append('<div style="width: 100%; float: left; ">用户[' + username + '] 已经离开聊天室!' + '</div>');
+            console.log("用户：[" + username + "]已关闭 websocket 连接...");
+        }
+        return ws;
+    }
+
+    /**
+     * 切换聊天对象
+     * @param account
+     * @param username
+     */
+    function changeCharUser(account, username, thisID) {
+        $(thisID).css("backgroundColor","#C4C4C5");
+        //情况聊天界面
+        $("#message_chat").html("");
+        //var x = document.getElementById(account).style.backgroundColor="#C4C4C5";
+        $("#with_who").html("");
+        $("#with_who_account").html("");
+        $("#with_who").append("<Strong>"+username+"</Strong>");
+        $("#with_who_account").append(account);
+        //聊天界面实现与他聊天的内容
+        const chatData = sessionStorage.getItem(account);
+        if(chatData != null) $("#message_chat").html(chatData);
+
+    }
+
+    function over(){
+        //var x = document.getElementById("sss").innerHTML="鼠标在上面的样子";
+        //var x = document.getElementById("online_user_list").style.color="pink";
+        //var x = document.getElementById("online_user_list").style.backgroundColor="#C4C4C5";
+    }
+    function out(thisID) {
+        $(thisID).css("backgroundColor","#E7E6E6");
+    }
+
+
+
+</script>
+</body>
+</html>

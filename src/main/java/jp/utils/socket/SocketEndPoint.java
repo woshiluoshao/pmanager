@@ -52,7 +52,7 @@ public class SocketEndPoint {
     public void onMessage(String message) {
         if (message.contains("[allUsers]")) {
             String userInfo = message.substring(message.indexOf("[allUsers]")).replace("[allUsers]----------", "");
-            SocketHandler.sendMessageAll( "<div style='width: 100%; float: left;'>&nbsp;&nbsp;" + userInfo + "群发消息</div><div style='width: 100%; font-size: 18px; font-weight: bolder; float: right;'>" + message.substring(0, message.indexOf("[")) + "</div>", userInfo);
+            SocketHandler.sendMessageAll( "<div style='width: 100%; float: left;'>&nbsp;&nbsp;" + userInfo + "群发消息</div><div style='width: 100%; font-size: 12px; font-weight: bolder; float: right;'>" + message.substring(0, message.indexOf("[")) + "</div>", userInfo);
         } else {
             String acceptUser = message.substring(message.indexOf("[") + 1, message.lastIndexOf("]"));
             String sendUser = message.substring(message.lastIndexOf("-") + 1, message.length());
@@ -61,7 +61,7 @@ public class SocketEndPoint {
                 if (item.getKey().equals(acceptUser)) {
                     userSession = item.getValue();
                     String userInfo = message.substring(0, message.indexOf("["));
-                    SocketHandler.sendMessage(userSession, "<div style='width: 100%; float: left;'>&nbsp;&nbsp;" + sendUser + "</div><div style='width: 100%; font-size: 18px; font-weight: bolder; float: right;'>" + userInfo + "</div>");
+                    SocketHandler.sendMessage(userSession, "<div style='width: 100%; float: left;'>&nbsp;&nbsp;" + sendUser + "</div><div style='width: 100%; font-size: 12px; font-weight: bolder; float: right;'>" + userInfo + "</div>");
                 }
             }
         }

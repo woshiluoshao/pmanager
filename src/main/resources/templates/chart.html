@@ -116,11 +116,11 @@
                 let dataList = JSON.parse(result.data);
                 let html = "<option value=''>---请选择---</option>";
                 for (let i = 0; i < dataList.length; i++) {
-                    html += "<option value='" + dataList[i].userId + "'>" + dataList[i].userId + "</option>";
+                    html += "<option value='" + dataList[i].account + "'>" + dataList[i].account + "</option>";
                 }
                 let userList = "";
                 for (let i = 0; i < dataList.length; i++) {
-                    userList += "<div class='select_user'>" + dataList[i].userId + "</div>";
+                    userList += "<div class='select_user'>" + dataList[i].account + "</div>";
                 }
                 $("#user_list").html(html);
                 $("#message_user_count").text(dataList.length + "人");

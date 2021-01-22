@@ -63,6 +63,11 @@ public class PageRestController {
         return "chart";
     }
 
+    @RequestMapping(value = "/charts")
+    public String chatsPage() {
+        return "charts";
+    }
+
     @RequestMapping(value = "/infoInter")
     public String infoInterPage(Model model) {
 
