@@ -30,7 +30,11 @@
             <div style="margin-left: 2%; color: #3ebaff; border-bottom:1px solid ">
                 总人数:<span id="online_count"></span><br/>
             </div>
-            <div id="online_user_list" style="margin-left: 2%; margin-right: 2%">
+            <div id="online_user_list" style="margin-left: 2%; margin-right: 2%; height: 61%; border-bottom:1px solid #C5C4C5 ">
+            </div>
+            <div id="system_msg_id" style="margin-left: 2%; margin-right: 2%; border-bottom:1px solid #C5C4C5">
+                <div>系统消息</div>
+                <div id="system_msg"></div>
             </div>
 
         </div>
@@ -195,7 +199,7 @@
             $('#message_chat').append(event.data + '\n');
         };
         ws.onclose = function() {
-            $('#message_chat').append('<div style="width: 100%; float: left; ">用户[' + username + '] 已经离开聊天室!' + '</div>');
+            $('#system_msg').append('<div style="width: 100%; float: left; ">用户[' + username + '] 已经离开聊天室!' + '</div>');
             console.log("用户：[" + username + "]已关闭 websocket 连接...");
         }
         return ws;
