@@ -47,7 +47,7 @@ public class UserServiceImpl implements IUserService {
 
         //将账号计入缓存中
         HttpSession session = request.getSession();
-        session.setAttribute("userId", loginDto.getAccount());
+        session.setAttribute("account", loginDto.getAccount());
 
         redisUtil.set("userInfo", JSON.toJSON(loginDto), 1800);
 

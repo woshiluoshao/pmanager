@@ -36,14 +36,27 @@
 <div class="login">
     <div>
         <div>
-            <table>
+            <table style="border-collapse:separate;border-spacing:9px;">
                 <tr>
                     <td style="float: right;color: #aedcdd">账号:</td>
-                    <td style="color: #aedcdd"><input type="text" id="account" size="30" placeholder="请输入账号" class="inp" value="miaolg"></td>
+                    <td style="color: #aedcdd"><input type="text" id="account" size="30" placeholder="请输入账号" class="inp" value="root"></td>
                 </tr>
                 <tr >
                     <td style="float: right;color: #aedcdd ">密码:</td>
-                    <td style="color: #aedcdd"><input type="password" id="password" size="30" placeholder="请输入密码" class="inp" value="123456"></td>
+                    <td style="color: #aedcdd"><input type="password" id="password" size="30" placeholder="请输入密码" class="inp" value="root"></td>
+                </tr>
+                <tr>
+                    <td style="float: right;color: #aedcdd ">权限:</td>
+                    <td style="color: #aedcdd">
+                        <select id="level" value="0" style="width:250px;">
+                            <option value="0">root</option>
+                            <option value="1">经理</option>
+                            <option value="2">研发</option>
+                            <option value="3">运维</option>
+                            <option value="4">游客</option>
+                        </select>
+
+                    </td>
                 </tr>
             </table>
         </div>
@@ -52,7 +65,7 @@
             <input type="button" style="width: 100%" value="登录" onclick="loginFun()">
         </div>
         <div>
-            <a th:href="@{'/register'}">没有账号？点击注册！</a>
+            <!--<a th:href="@{'/register'}">没有账号？点击注册！</a>-->
         </div>
 
     </div>
@@ -73,6 +86,8 @@
 
         const account= $("#account").val();
         const password = $("#password").val();
+        const level = $("#level").find("option:selected").val();
+
         if(!account){
             $.shotTotal("请输入账号！", "error");
             return false;
@@ -81,16 +96,21 @@
             $.shotTotal("请输入密码！", "error");
             return false;
         }
+        if(!level){
+            $.shotTotal("请选择权限！", "error");
+            return false;
+        }
 
         $.showProgressBar("登录中...");
 
         $.ajax({
-            url     : basePath + "/login.json",
+            url     : basePath + "/accountLog.json",
             dataType:"json",
             type    :"post",
             data    : {
                 'account':account,
-                'password':password
+                'password':password,
+                'level': level
             },
             success:function (result) {
                 $.closeProgressBar();
@@ -98,6 +118,7 @@
                 const msg = result.msg;
 
                 if(code == "0000") {
+                    //$.showProgressBar("登陆成功,页面跳转中");
                     $.shotTotal("登陆成功,页面跳转中", "success");
                     setTimeout(function () {
                         location.href = basePath + "/main";

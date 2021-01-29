@@ -1,6 +1,7 @@
 package jp.controller.page;
 
 import jp.db.dao.IDynamicParamDB;
+import jp.db.mybatis.model.UserAccountInfo;
 import jp.entity.DynamicParamEntity;
 import jp.utils.CommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,10 +44,10 @@ public class PageRestController {
     @RequestMapping(value = "/main")
     public ModelAndView mainPage(HttpServletRequest request, HttpServletResponse response) {
 
-        String sessionUserId = CommonUtils.objectToStr(request.getSession().getAttribute("userId"));
+        UserAccountInfo sessionAccountInfo = (UserAccountInfo)request.getSession().getAttribute("accountInfo");
 
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("sessionUserId", sessionUserId);
+        modelAndView.addObject("accountInfo", sessionAccountInfo);
         modelAndView.setViewName("main");
 
         return modelAndView;
@@ -66,6 +67,16 @@ public class PageRestController {
     @RequestMapping(value = "/charts")
     public String chatsPage() {
         return "charts";
+    }
+
+    @RequestMapping(value = "/assign")
+    public String assignPage(Model model) {
+
+        Map<String, Object> param = new HashMap<String, Object>();
+        param.put("paramKey", "level");
+        List<DynamicParamEntity> developmentLanguageList = dynamicParamDB.getDynamicParamList(param);
+        model.addAttribute("levelEnum", developmentLanguageList);
+        return "assign";
     }
 
     @RequestMapping(value = "/infoInter")

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <script type="text/javascript"  th:src="@{/jquery-3.4.0/jquery-3.4.0.min.js}"></script>
+    <link th:href="@{/bootstrap/bootstrap-3.3.7/css/bootstrap.min.css}" rel="stylesheet" type="text/css" >
+
+    <script type="text/javascript"  th:src="@{/bootstrap/bootstrap-3.3.7/js/bootstrap.min.js}"></script>
+    <link th:href="@{/layui/css/layui.css}" rel="stylesheet">
+
+    <style th:inline="text">
+        table{border-spacing: 10px 30px;}
+        tr {
+            display: block;
+            /*将tr设置为块体元素*/
+            margin: 3px 0;
+            /*设置tr间距为2px*/
+        }
+
+        td {
+            text-align: right;
+        }
+
+        .layui-tab-content {
+            height: 200vh;
+        }
+
+    </style>
+</head>
+<body>
+<div style="margin-top:3%;margin-left:1%;margin-right:2%;height: 250px;">
+    <table class="layui-hide" id="test" lay-filter="table"></table>
+</div>
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="addAssign">分配账号</button>
+    </div>
+</script>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<div id="delModel" style="display: none;margin-top: 10px; margin-left: 10px">
+    <span id="delMsg"></span><br>
+</div>
+<div id="addModel" style="display: none;">
+    <div style="margin-left: 2%; margin-top: 1%">
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="width: 100px">账号</label>
+            <div class="layui-input-block">
+                <input type="text" name="account" id="account" style="width:500px;" lay-verify="title" autocomplete="off" placeholder="账号一般用姓名缩小, 例如: xiaom" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="width: 100px">密码</label>
+            <div class="layui-input-block">
+                <input type="text" size="60" name="password" id="password" style="width:500px;" lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="width: 100px">用户名</label>
+            <div class="layui-input-block">
+                <input type="text" size="60" name="username" id="username" style="width:500px;" lay-verify="required" placeholder="请输入用户名,例如:小米" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="width: 100px">授权者</label>
+            <div class="layui-input-block">
+                <input type="text" size="60" readonly="readonly" name="author" id="author" style="width:500px;" lay-verify="required" th:value="${session.accountInfo.account}" autocomplete="off" class="layui-input">
+
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="width: 100px">权限级别</label>
+            <div class="layui-input-block">
+                <select style="width:200px;height:30px;" name="levelStatus" id="levelStatus" value="0">
+                    <option th:each="levelEnum:${levelEnum}" th:value="${levelEnum.paramType}" th:text="${levelEnum.paramValue}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <h4 style="color: red; margin-left: 25px;">备注：密码为随机生成，可手动修改！</h4>
+        </div>
+
+    </div>
+</div>
+
+<script type="text/javascript"  th:src="@{/common/common.js}"></script>
+<script th:src="@{/layui/layui.js}"></script>
+<script>
+
+    const basePath = '[[${#httpServletRequest.getScheme() + "://" + #httpServletRequest.getServerName() + ":" + #httpServletRequest.getServerPort() + #httpServletRequest.getContextPath()}]]';
+
+    $(function () {
+
+        search();
+        initPwd();
+    });
+
+
+    function initPwd() {
+        const password = randomStr(8);
+        $("#password").val(password);
+    }
+
+    function search() {
+
+        layui.use('table', function(){
+            const table = layui.table;
+
+            table.render({
+                elem: '#test'
+                ,url: basePath +'/accountList.json'
+                ,toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+                ,cols: [
+                    [
+                        {field:'account', title: '账号', align: 'center'}
+                        ,{field:'password', title: '密码', align: 'center', }
+                        ,{field:'username', title: '用户名', align: 'center'}
+                        ,{field:'author', title: '授权人', align: 'center', }
+                        ,{field:'level', title: '权限级别', align: 'center', }
+                        ,{field:'createTime', title: '创建时间', align: 'center', }
+                        ,{fixed: 'right', title:'操作', align: 'center', toolbar: '#barDemo'}
+                    ]
+                ]
+                ,page: false   //开启分页
+                ,limit:10   //默认十条数据一页
+                ,limits:[10]  //数据分页条
+            });
+            table.on('tool(table)', function(obj){
+                const data = obj.data;
+                if(obj.event === 'del'){
+                    //赋值
+                    openDelModel(data);
+                }
+            });
+            //头工具栏事件
+            table.on('toolbar(table)', function(obj){
+                const checkStatus = table.checkStatus(obj.config.id);
+                if(obj.event === "addAssign") {
+                    openAddModel();
+                }
+            });
+        });
+    }
+
+    //弹出模态库
+    function openAddModel(data) {
+
+        layer.open({
+            type: 1,
+            title: '分配账号',
+            area: ['730px', '430px'],
+            shadeClose: false, //点击遮罩关闭
+            content: $('#addModel'),
+            offset: '20px',
+            btn: ['确定', '取消'],
+            yes: function(index, layero) {
+                addAccount(index);
+            },
+            cancel: function () {
+                return;
+            },
+            end: function () {
+                $('#addModel').css("display", "none");
+                location.reload();
+            }
+        });
+    }
+
+    function addAccount(index) {
+
+        const account = $("#account").val();
+        const username = $("#username").val();
+        const password = $("#password").val();
+        const author = $("#author").val();
+        const level = $("#levelStatus").val();
+
+        if(!account) {
+            layer.msg("账号不能为空！", { time :1000});
+            return;
+        }
+
+        if(!password) {
+            layer.msg("密码不能为空！", { time :1000});
+            return;
+        }
+
+        if(!username) {
+            layer.msg("用户名不能为空！", { time :1000});
+            return;
+        }
+
+        if(!author) {
+            layer.msg("授权者不能为空！", { time :1000});
+            return;
+        }
+
+        if(!level) {
+            layer.msg("权限级别不能为空！", { time :1000});
+            return;
+        }
+
+        const param = {
+            'account':account,
+            'username':username,
+            'password':password,
+            'author':author,
+            'level':level
+        }
+
+        $.ajax({
+            url     : basePath + "/accountAssign.json",
+            dataType:"json",
+            type    :"post",
+            async   : false,
+            data    : param,
+            success:function (result) {
+                const code = result.code;
+                const msg = result.msg;
+                layer.msg(msg, { time :2000});
+                if(code === "0000") {
+                    setTimeout(function() {
+                        //成功之后将模态库去除，然后刷新界面
+                        layer.close(index);
+                    }, 1000);
+                }
+            },
+            error:function (result) {
+                $.shotTotal(result, "error");
+            }
+        })
+    }
+
+    //删除账号
+    function openDelModel(data) {
+
+        if(data.account === "root") {
+            layer.msg("警告:root账号为最高权限账号,你无权删除！",{ time :2000});
+            return;
+        }
+
+        const param = {
+            'account' : data.account
+        };
+        $("#delMsg").html("");
+        $("#delMsg").html("确认删除账号:" + data.account + " 吗？");
+
+        layer.open({
+            type: 1,
+            title: '删除确认',
+            area: ['300px', '150px'],
+            shadeClose: false, //点击遮罩关闭
+            content: $('#delModel'),
+            offset: '100px',
+            btn: ['确定', '取消'],
+            yes: function(index, layero) {
+                delAjaxFun(index, param);
+            },
+            cancel: function () {
+            },
+            end: function () {
+                location.reload();
+            }
+        });
+    }
+
+    function delAjaxFun(index, param) {
+
+        $.ajax({
+            url     : basePath + "/accountDel.json",
+            dataType:"json",
+            type    :"post",
+            async   : false,
+            data    : param,
+            success:function (result) {
+
+                const code = result.code;
+                const msg = result.msg;
+
+                if(code === "0000") {
+                    layer.msg("删除成功", { time :2000});
+                    setTimeout(function() {
+                        layer.close(index);
+                    }, 1000);
+
+                } else {
+                    layer.msg(msg, { time :2000});
+                }
+            },
+            error:function (result) {
+                $.shotTotal(result, "error");
+            }
+        })
+    }
+
+
+</script>
+</body>
+</html>

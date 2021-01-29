@@ -133,6 +133,7 @@
           <element id="library" level="project" name="Maven: org.hamcrest:hamcrest-core:2.2" />
           <element id="library" level="project" name="Maven: com.itextpdf:itextpdf:5.5.5" />
           <element id="library" level="project" name="Maven: com.itextpdf:itext-asian:5.2.0" />
+          <element id="library" level="project" name="Maven: commons-codec:commons-codec:1.11" />
         </element>
       </element>
       <element id="directory" name="META-INF">

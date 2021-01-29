@@ -1,8 +1,10 @@
 package jp.utils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  * 文件处理工具类
@@ -80,6 +82,33 @@ public class FileUtils {
         }
 
         return result;
+    }
+
+    public static String getFileHash(String path) {
+
+        String hash = "";
+        try {
+            //String path = "D:/test.pdf";
+            File file = new File(path);
+            String fileName = file.getName();
+            Long length = file.length();
+            InputStream inputStream2 = new FileInputStream(path);
+            hash = DigestUtils.sha256Hex(inputStream2).toUpperCase();
+
+            System.out.println("文件名:" + fileName);
+            System.out.println("文件长度:" + length);
+            System.out.println("文件hash:" + hash);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return hash;
+
+    }
+
+    public static void main(String[] args) {
+        String path = "D:/test.pdf";
+        getFileHash(path);
     }
 
 }

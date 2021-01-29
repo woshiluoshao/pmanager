@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.db.mybatis.dao.UserAccountInfoMapper">
+  <resultMap id="BaseResultMap" type="jp.db.mybatis.model.UserAccountInfo">
+    <id column="account" jdbcType="VARCHAR" property="account" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="createTime" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="author" jdbcType="VARCHAR" property="author" />
+    <result column="level" jdbcType="VARCHAR" property="level" />
+    <result column="updateAuthor" jdbcType="VARCHAR" property="updateAuthor" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="jp.db.mybatis.model.UserAccountInfo">
+    <result column="picture" jdbcType="LONGVARCHAR" property="picture" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    account, username, password, createTime, author, level, updateAuthor
+  </sql>
+  <sql id="Blob_Column_List">
+    picture
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from user_account_info
+    where account = #{account,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from user_account_info
+    where account = #{account,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="jp.db.mybatis.model.UserAccountInfo">
+    insert into user_account_info (account, username, password, 
+      createTime, author, level, 
+      updateAuthor, picture)
+    values (#{account,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{author,jdbcType=VARCHAR}, #{level,jdbcType=VARCHAR}, 
+      #{updateAuthor,jdbcType=VARCHAR}, #{picture,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="jp.db.mybatis.model.UserAccountInfo">
+    insert into user_account_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="account != null">
+        account,
+      </if>
+      <if test="username != null">
+        username,
+      </if>
+      <if test="password != null">
+        password,
+      </if>
+      <if test="createTime != null">
+        createTime,
+      </if>
+      <if test="author != null">
+        author,
+      </if>
+      <if test="level != null">
+        level,
+      </if>
+      <if test="updateAuthor != null">
+        updateAuthor,
+      </if>
+      <if test="picture != null">
+        picture,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="account != null">
+        #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null">
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="author != null">
+        #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="level != null">
+        #{level,jdbcType=VARCHAR},
+      </if>
+      <if test="updateAuthor != null">
+        #{updateAuthor,jdbcType=VARCHAR},
+      </if>
+      <if test="picture != null">
+        #{picture,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="jp.db.mybatis.model.UserAccountInfo">
+    update user_account_info
+    <set>
+      <if test="username != null">
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="author != null">
+        author = #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="level != null">
+        level = #{level,jdbcType=VARCHAR},
+      </if>
+      <if test="updateAuthor != null">
+        updateAuthor = #{updateAuthor,jdbcType=VARCHAR},
+      </if>
+      <if test="picture != null">
+        picture = #{picture,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where account = #{account,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="jp.db.mybatis.model.UserAccountInfo">
+    update user_account_info
+    set username = #{username,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      author = #{author,jdbcType=VARCHAR},
+      level = #{level,jdbcType=VARCHAR},
+      updateAuthor = #{updateAuthor,jdbcType=VARCHAR},
+      picture = #{picture,jdbcType=LONGVARCHAR}
+    where account = #{account,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="jp.db.mybatis.model.UserAccountInfo">
+    update user_account_info
+    set username = #{username,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      author = #{author,jdbcType=VARCHAR},
+      level = #{level,jdbcType=VARCHAR},
+      updateAuthor = #{updateAuthor,jdbcType=VARCHAR}
+    where account = #{account,jdbcType=VARCHAR}
+  </update>
+  <select id="selectAccountList" parameterType="java.util.HashMap" resultMap="ResultMapWithBLOBs">
+    select *
+     from user_account_info
+    order by createTime desc
+    <if test="start != null and len != null">
+      limit #{start}, #{len}
+    </if>
+  </select>
+  <select id="countAccountList" resultType="java.lang.Integer">
+    select count(1)
+      from user_account_info
+  </select>
+  <select id="selectOnlineAccountList" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select *
+     from user_account_info
+    where account != #{account,jdbcType=VARCHAR}
+    order by username
+  </select>
+</mapper>

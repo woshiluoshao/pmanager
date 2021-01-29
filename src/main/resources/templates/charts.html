@@ -6,22 +6,25 @@
 
     <script type="text/javascript"  th:src="@{/jquery-3.4.0/jquery-3.4.0.min.js}"></script>
     <link th:href="@{/bootstrap/bootstrap-3.3.7/css/bootstrap.min.css}" rel="stylesheet" type="text/css" >
+
     <script type="text/javascript"  th:src="@{/bootstrap/bootstrap-3.3.7/js/bootstrap.min.js}"></script>
+<!--    <link th:href="@{/layui/css/layui.css}" rel="stylesheet">-->
+    <script th:src="@{/layui/layui.all.js}"></script>
     <style>
-        /*img{*/
-        /*    position:absolute;*/
-        /*}*/
     </style>
 </head>
 <body class="container" style="width: 80%">
+
     <div style="margin-top: 2%"></div>
     <div class="form-group" style="float: left; width: 80%;">
 
         <div id="myMessage" style="width: 8%; height: 500px; overflow-y: auto; position: relative; float: left; background: #26282B" readonly="readonly">
-            <h5 id="user_name" th:text="${#session.getAttribute('userId')}" style="width: 80%; color: white; margin-left: 3%"></h5>
-            <img th:src="@{'/photo/headLog.png'}" class="layui-nav-img" style="width: 70%; height: auto; margin-top: 9px; margin-left: 15%">
+            <h5 id="account" th:text="${session.accountInfo.account}" style="width: 80%; color: white; margin-left: 3%; display: none"></h5>
+            <img th:src="@{'/photo/touLog.jpg'}" class="layui-nav-img" style="width: 70%; height: auto; margin-top: 9px; margin-left: 15%; " onclick="headFun()">
 
-            <img th:src="@{'/photo/chatlog.png'}" class="layui-nav-img" style="width: 50%; height: auto; margin-top: 6px; margin-left: 25%">
+            <img th:src="@{'/photo/chatShow.png'}" class="layui-nav-img" style="width: 50%; height: auto; margin-top: 20px; margin-left: 25%">
+
+            <img th:src="@{'/photo/addressBook.png'}" class="layui-nav-img" style="width: 50%; height: auto; margin-top: 20px; margin-left: 25%">
         </div>
         <div id="message_user" style="width: 25%; height: 500px; overflow-y: auto; position: relative; float: left; background-color: #E5E5E6" readonly="readonly">
             <div>
@@ -32,87 +35,74 @@
             </div>
             <div id="online_user_list" style="margin-left: 2%; margin-right: 2%; height: 61%; border-bottom:1px solid #C5C4C5 ">
             </div>
-            <div id="system_msg_id" style="margin-left: 2%; margin-right: 2%; border-bottom:1px solid #C5C4C5">
-                <div>系统消息</div>
-                <div id="system_msg"></div>
+            <div id="system_msg_id" style="margin-left: 2%; margin-right: 2%; ">
+                <div><strong>系统消息</strong></div>
+                <div id="system_msg" style="overflow-y: auto;height: 110px"></div>
             </div>
-
         </div>
         <div id="whoChat" style="font-size: 16px; width: 67%; height: 40px; overflow-y: auto; position: relative; float: left; background-color: #F5F5F5; border-bottom:1px solid #E7E7E7 "  readonly="readonly">
             <div style="margin-top: 2%; margin-left: 3%;">
                 <span id="with_who"></span><span style="display: none" id="with_who_account"></span><br/>
             </div>
         </div>
-        <div id="message_chat" style="font-size: 13px; width: 67%; height: 310px; overflow-y: auto; position: relative; float: left; background-color: #F5F5F5" readonly="readonly">
-        </div>
-        <div style="width: 67%; float: right;">
-            <div style="width: 100%; height: 115px;">
-                <textarea style="height: 100%; border-bottom: #ffffff solid 0px;" id="chat_msg" value="" class="form-control"></textarea>
+        <div id="message_chat_content_id">
+            <div id="message_chat" style="font-size: 13px; width: 67%; height: 310px; overflow-y: auto; position: relative; float: left; background-color: #F5F5F5" readonly="readonly">
             </div>
-            <div style="width: 100%; float: right; border-bottom: #808080 solid 1px;">
-                <button style="float: right;" id="send" class="btn btn-info">发送消息</button>
-                <!--<button style="float: right;" id="send_all" class="btn btn-info">群发消息</button>-->
-                <!--<button style="float: right;" id="user_exit" class="btn btn-warning">退出</button>-->
+    <!--        <div id="msg_end" style="height:0px; overflow:hidden"></div>-->
+            <div style="width: 67%; float: right;">
+                <div style="width: 100%; height: 115px;">
+                    <textarea style="height: 100%; border-bottom: #ffffff solid 0px;" id="message_content" value="" class="form-control"></textarea>
+                </div>
+                <div style="width: 100%; float: right; border-bottom: #808080 solid 1px;">
+                    <button style="float: right;" id="send" onclick="messageSendSingleFun()" class="btn btn-info">发送消息</button>
+                    <!--<button style="float: right;" id="send_all" class="btn btn-info">群发消息</button>-->
+                    <!--<button style="float: right;" id="user_exit" class="btn btn-warning">退出</button>-->
+                </div>
             </div>
         </div>
     </div>
 
+    <div id="picModel" style="background-color: #F5F5F5; display: none;">
+        <div style="border-bottom: 2px #F4F4F4 solid;">
+            <div style="margin-top: 2%; margin-left: 3%; width: 65%; float: left">
+                <div>
+                    <strong><label th:text="${session.accountInfo.username}"></label></strong>
+                </div>
+                <div style="margin-top: 10px"><label style="color: #CEAB99">account：</label><label style="color: #CEAB99" th:text="${session.accountInfo.account}" ></label></div>
+            </div>
+            <div style="float: left; width: 32%">
+                <img th:src="@{'/photo/touLog.jpg'}" class="layui-nav-img" style="width: 60%; height: auto; margin-top: 9px; margin-left: 15%; " >
+            </div>
+        </div>
+        <div style="float: left">
+            <div style="float: left;">
+                地区:福建 福州
+            </div>
+        </div>
+
+    </div>
+
     <script type="text/javascript"  th:src="@{/common/common.js}"></script>
-    <script th:src="@{/layui/layui.js}"></script>
-<script type="text/javascript">
+
+<script>
 
     const basePath = '[[${#httpServletRequest.getScheme() + "://" + #httpServletRequest.getServerName() + ":" + #httpServletRequest.getServerPort() + #httpServletRequest.getContextPath()}]]';
     const ipPort = '[[${#httpServletRequest.getServerName() + ":" + #httpServletRequest.getServerPort() + #httpServletRequest.getContextPath()}]]';
     //let urlPrefix = 'ws://localhost:8080/net/websocket/';
     let urlPrefix = 'ws://' + ipPort + '/net/websocket/';
 
+    let fromName = $('#account').text();
+    let ws = null;
+
     $(document).ready(function() {
 
-        initUserList();
+        selectOnlineAccount();
 
-        let ws = null;
-        let username = $('#user_name').text();
-        ws = initMsg(urlPrefix, username);
-        // 客户端发送对某一个客户的消息到服务器
-        $('#send').click(function() {
+        ws = initMsg(urlPrefix, fromName);
 
-            //获取当前选中行的人员;
-            const userList = document.getElementById("with_who_account").innerText;
-            //let userList = $("#user_list option:selected").val();
-            if (!userList) {
-                alert("请选择一个用户！");
-                return;
-            }
-            let msg = $('#chat_msg').val();
-            if (!msg) {
-                alert("请输入聊天内容！");
-                return;
-            }
-
-            msg = msg + "[" + userList + "]" + "----------" + username;
-
-            //记录缓存
-            let chatData = sessionStorage.getItem(userList);
-            let storeData = "";
-            if(chatData != null) {
-                storeData = chatData + msg;
-            }
-
-            sessionStorage.setItem(userList, storeData);
-            //记录缓存结束
-
-            if (ws) {
-                ws.send(msg);
-                //向服务端发送消息
-                $('#message_chat').append('<div style="width: 100%; float: right;"><span style="float: right;">' + username + '&nbsp;&nbsp;</span><br/>');
-                $('#message_chat').append('<span style="float: right; font-size: 12px; font-weight: bolder; background-color: #9EEA6A">' + msg.substring(0, msg.indexOf('[')) + '</span></div>');
-                $("#chat_msg").val('');
-                $("#error_select_msg").empty();
-            }
-        });
         // 客户端群发消息到服务器
         $('#send_all').click(function() {
-            let msg = $('#chat_msg').val();
+            let msg = $('#message_content').val();
             if (!msg) {
                 alert("请输入聊天内容！");
                 return;
@@ -123,8 +113,7 @@
                 //服务端发送的消息
                 $('#message_chat').append('<div style="width: 100%; float: right;"><span style="float: right;">' + username + ' 的群发消息&nbsp;&nbsp;</span><br/>');
                 $('#message_chat').append('<span style="float: right; font-size: 18px; font-weight: bolder;">' + msg.replace('[allUsers]----------' + username, '') + '</span></div>');
-                $("#chat_msg").val('');
-                $("#error_select_msg").empty();
+                $("#message_content").val('');
             }
         });
         // 退出聊天室
@@ -134,35 +123,54 @@
             }
             parent.tabDel("21");
         });
-        // 用户下拉列表点击事件
-        $("#user_list").on("change", function() {
-            $("#error_select_msg").empty();
-        });
     });
 
+
+    function headFun() {
+        //显示人员信息
+        layer.open({
+            type: 1,
+            title: '',
+            area: ['324.8px', '188.6px'],
+            closeBtn :0,
+            shadeClose: true, //点击遮罩关闭
+            content: $('#picModel'),
+            //offset: 'lt',
+            offset: ['30px', '170px']
+        });
+    }
+
     /**
-     * 初始化用户列表
+     * 获取所有用户(除自身外)
      */
-    function initUserList() {
-        let userId = $('#user_name').text();
+    function selectOnlineAccount() {
+
+        let account = $('#account').text();
+
         $.ajax({
-            url:  basePath + "/selectOnline.json",
+            url:  basePath + "/accountOnline.json",
             type: "POST",
-            data: {'userId': userId},
+            data: {'account': account},
             success: function(result) {
-                let dataList = JSON.parse(result.data);
 
-                let onlineUserList = "";
-                for (let i = 0; i < dataList.length; i++) {
-                    const username =  dataList[i].username;
-                    const account = dataList[i].account;
-                    onlineUserList += "<div id='\""+account+"\"' onmouseover = 'over()' onmouseup='out(this)' style='height: 30px; margin-top: 2%; background-color: #E7E6E6; border-bottom:1px solid #C5C4C5' onclick='changeCharUser(\""+account+"\", \""+username+"\", this)'> " + username+ "</div>";
-                    //onlineUserList += "<li class='rel-item'><a onclick='changeCharUser("+dataList[i].account+")'> " + dataList[i].username + dataList[i].account + "</li></a>";
+                const code = result.code;
+                if(code === "0000") {
+                    let dataList = JSON.parse(result.data);
+
+                    let onlineUserList = "";
+                    for (let i = 0; i < dataList.length; i++) {
+                        const username =  dataList[i].username;
+                        const account = dataList[i].account;
+                        onlineUserList += "<div id='\""+account+"\"' onmouseover = 'over()' onmouseup='out(this)' style='height: 30px; margin-top: 2%; background-color: #E7E6E6; border-bottom:1px solid #C5C4C5' onclick='changeCharUser(\""+account+"\", \""+username+"\", this)'> " + username+ "</div>";
+                        //onlineUserList += "<li class='rel-item'><a onclick='changeCharUser("+dataList[i].account+")'> " + dataList[i].username + dataList[i].account + "</li></a>";
+                    }
+
+                    $("#online_count").text(dataList.length);
+                    $("#online_user_list").append(onlineUserList);
+                } else {
+                    $("#online_count").text("0");
+                    $("#online_user_list").append("暂无人员");
                 }
-
-                $("#online_count").text(dataList.length);
-                $("#online_user_list").append(onlineUserList);
-
             }
         });
     }
@@ -182,13 +190,26 @@
         };
         ws.onmessage = function(event) {
 
+            const chatJson = JSON.parse(event.data);
+            let isSystem = chatJson.isSystem;
+            const message = chatJson.message;
+            if(isSystem === "true") {
+                $('#system_msg').prepend(message + '\n');
+                return;
+            }
+
+            var toName = chatJson.toName;
+            var fromName = chatJson.fromName;
+
+            isSystem = chatJson.isSystem;
+
             //设置缓存
             const account = document.getElementById("with_who_account").innerText;
             const chatData = sessionStorage.getItem(account);
 
             let storeData = "";
             if(chatData != null) {
-                storeData = chatData + event.data + '\n';
+                storeData = chatData + message + '\n';
             }
 
             sessionStorage.setItem(account, storeData);
@@ -196,10 +217,16 @@
 
             //此处做一个判断（判断后端回来的发送者是否和本次聊天的一致）
             //服务端发送的消息
-            $('#message_chat').append(event.data + '\n');
+            if(toName === username) {
+                $('#message_chat').append(message + '\n');
+                $('#msg_end').scrollIntoView();
+            }
         };
-        ws.onclose = function() {
-            $('#system_msg').append('<div style="width: 100%; float: left; ">用户[' + username + '] 已经离开聊天室!' + '</div>');
+        ws.onclose = function(event) {
+            const chatJson = JSON.parse(event.data);
+            let isSystem = chatJson.isSystem;
+            const message = chatJson.message;
+            $('#system_msg').prepend(message);
             console.log("用户：[" + username + "]已关闭 websocket 连接...");
         }
         return ws;
@@ -225,11 +252,62 @@
 
     }
 
+    /**
+     * 单个发送消息
+     */
+    function messageSendSingleFun() {
+
+        //获取当前选中行的人员;
+        const toName = document.getElementById("with_who_account").innerText;
+        
+        if (!toName) {
+            alert("请选择一个用户！");
+            return;
+        }
+        
+        let messageContent = $('#message_content').val();
+        if (!messageContent) {
+            alert("请输入聊天内容！");
+            return;
+        }
+
+        //记录缓存
+        let chatData = sessionStorage.getItem(toName);
+        let storeData = "";
+        if(chatData != null) {
+            storeData = chatData + messageContent;
+        }
+
+        sessionStorage.setItem(toName, storeData);
+        //记录缓存结束
+
+        if (ws) {
+
+            const sendMessageContentJson = {
+                'isSystem': "false",
+                'fromName': fromName,
+                'toName': toName,
+                'message': messageContent
+            };
+
+            //向服务端发送消息
+            ws.send(JSON.stringify(sendMessageContentJson));
+
+            //本消息展示到聊天区
+            $('#message_chat').append('<div style="width: 100%; float: right;"><span style="float: right;">' + fromName + '&nbsp;&nbsp;</span><br/>');
+            $('#message_chat').append('<span style="float: right; font-size: 12px; font-weight: bolder; background-color: #9EEA6A">' + messageContent + '</span></div>');
+            $("#message_content").val('');
+            $('#msg_end').scrollIntoView();
+
+        }
+    }
+
     function over(){
         //var x = document.getElementById("sss").innerHTML="鼠标在上面的样子";
         //var x = document.getElementById("online_user_list").style.color="pink";
         //var x = document.getElementById("online_user_list").style.backgroundColor="#C4C4C5";
     }
+
     function out(thisID) {
         $(thisID).css("backgroundColor","#E7E6E6");
     }

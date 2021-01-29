@@ -20,7 +20,7 @@ public class SocketPool {
      * @param key 设置主键
      * @param session 设置session
      */
-    public static void add(String key, Session session) {
+    public static void addPool(String key, Session session) {
         if (!key.isEmpty() && session != null){
             ONLINE_USER_SESSIONS.put(key, session);
         }
@@ -30,7 +30,7 @@ public class SocketPool {
      * 根据Key删除连接
      * @param key 主键
      */
-    public static void remove(String key) {
+    public static void removePool(String key) {
         if (!key.isEmpty()){
             ONLINE_USER_SESSIONS.remove(key);
         }
