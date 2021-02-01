@@ -20,7 +20,7 @@
 
         <div id="myMessage" style="width: 8%; height: 500px; overflow-y: auto; position: relative; float: left; background: #26282B" readonly="readonly">
             <h5 id="account" th:text="${session.accountInfo.account}" style="width: 80%; color: white; margin-left: 3%; display: none"></h5>
-            <img th:src="@{'/photo/touLog.jpg'}" class="layui-nav-img" style="width: 70%; height: auto; margin-top: 9px; margin-left: 15%; " onclick="headFun()">
+            <img th:src="@{'/photo/touLog.jpg'}" class="layui-nav-img" style="width: 70%; height: auto; margin-top: 9px; margin-left: 15%; " onclick="clickHeadPic()">
 
             <img th:src="@{'/photo/chatShow.png'}" class="layui-nav-img" style="width: 50%; height: auto; margin-top: 20px; margin-left: 25%">
 
@@ -74,9 +74,9 @@
                 <img th:src="@{'/photo/touLog.jpg'}" class="layui-nav-img" style="width: 60%; height: auto; margin-top: 9px; margin-left: 15%; " >
             </div>
         </div>
-        <div style="float: left">
+        <div style="margin-top: 2%; margin-left: 3%; width: 65%; float: left">
             <div style="float: left;">
-                地区:福建 福州
+                address <strong><label th:text="${session.accountInfo.address}"></label></strong>
             </div>
         </div>
 
@@ -125,14 +125,17 @@
         });
     });
 
-
-    function headFun() {
+    /**
+     * 点击头像时操作
+     */
+    function clickHeadPic() {
         //显示人员信息
         layer.open({
             type: 1,
             title: '',
             area: ['324.8px', '188.6px'],
             closeBtn :0,
+            shade:[0.1, '#FFFFFF'],
             shadeClose: true, //点击遮罩关闭
             content: $('#picModel'),
             //offset: 'lt',
@@ -238,10 +241,10 @@
      * @param username
      */
     function changeCharUser(account, username, thisID) {
-        $(thisID).css("backgroundColor","#C4C4C5");
+        //$(thisID).css("backgroundColor","#C4C4C5");
         //情况聊天界面
         $("#message_chat").html("");
-        //var x = document.getElementById(account).style.backgroundColor="#C4C4C5";
+
         $("#with_who").html("");
         $("#with_who_account").html("");
         $("#with_who").append("<Strong>"+username+"</Strong>");
@@ -249,7 +252,6 @@
         //聊天界面实现与他聊天的内容
         const chatData = sessionStorage.getItem(account);
         if(chatData != null) $("#message_chat").html(chatData);
-
     }
 
     /**
@@ -309,7 +311,7 @@
     }
 
     function out(thisID) {
-        $(thisID).css("backgroundColor","#E7E6E6");
+        //$(thisID).css("backgroundColor","#E7E6E6");
     }
 
 

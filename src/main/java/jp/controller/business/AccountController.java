@@ -77,4 +77,18 @@ public class AccountController {
     public ResultVo accountOnlineMethod(HttpServletRequest request) {
         return accountService.accountOnline(request);
     }
+
+    /**修改账户信息
+     * @param accountInfo
+     * @return
+     */
+    @RequestMapping(value = "/accountUpdate.json", produces = "application/json;charset=UTF-8", method = RequestMethod.POST)
+    @ResponseBody
+    public ResultVo accountUpdateMethod(UserAccountInfo accountInfo, HttpServletRequest request) {
+        return accountService.accountUpdate(accountInfo, request);
+    }
+
+
+
+
 }

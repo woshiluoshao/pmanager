@@ -116,10 +116,11 @@
                 ,cols: [
                     [
                         {field:'account', title: '账号', align: 'center'}
-                        ,{field:'password', title: '密码', align: 'center', }
+                        ,{field:'password', title: '密码', hide:true, align: 'center', }
                         ,{field:'username', title: '用户名', align: 'center'}
                         ,{field:'author', title: '授权人', align: 'center', }
                         ,{field:'level', title: '权限级别', align: 'center', }
+                        ,{field:'address', title: '注册地', align: 'center', }
                         ,{field:'createTime', title: '创建时间', align: 'center', }
                         ,{fixed: 'right', title:'操作', align: 'center', toolbar: '#barDemo'}
                     ]
@@ -238,6 +239,13 @@
 
         if(data.account === "root") {
             layer.msg("警告:root账号为最高权限账号,你无权删除！",{ time :2000});
+            return;
+        }
+
+        const author = $("#author").val();
+
+        if(author !== "root") {
+            layer.msg("警告:您的权限过低,无权删除！",{ time :2000});
             return;
         }
 

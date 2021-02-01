@@ -20,6 +20,8 @@ public class UserAccountInfo {
 
     private String updateAuthor;
 
+    private String address;
+
     private String picture;
 
     public String getAccount() {
@@ -76,6 +78,14 @@ public class UserAccountInfo {
 
     public void setUpdateAuthor(String updateAuthor) {
         this.updateAuthor = updateAuthor == null ? null : updateAuthor.trim();
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address == null ? null : address.trim();
     }
 
     public String getPicture() {

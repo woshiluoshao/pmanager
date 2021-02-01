@@ -3,7 +3,6 @@ package jp.controller.page;
 import jp.db.dao.IDynamicParamDB;
 import jp.db.mybatis.model.UserAccountInfo;
 import jp.entity.DynamicParamEntity;
-import jp.utils.CommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -64,19 +63,24 @@ public class PageRestController {
         return "chart";
     }
 
-    @RequestMapping(value = "/charts")
-    public String chatsPage() {
-        return "charts";
+    @RequestMapping(value = "/accountChat")
+    public String accountChatPage() {
+        return "accountChat";
     }
 
-    @RequestMapping(value = "/assign")
-    public String assignPage(Model model) {
+    @RequestMapping(value = "/accountAssign")
+    public String accountAssignPage(Model model) {
 
         Map<String, Object> param = new HashMap<String, Object>();
         param.put("paramKey", "level");
         List<DynamicParamEntity> developmentLanguageList = dynamicParamDB.getDynamicParamList(param);
         model.addAttribute("levelEnum", developmentLanguageList);
-        return "assign";
+        return "accountAssign";
+    }
+
+    @RequestMapping(value = "/accountDetails")
+    public String accountDetailsPage() {
+        return "accountDetails";
     }
 
     @RequestMapping(value = "/infoInter")

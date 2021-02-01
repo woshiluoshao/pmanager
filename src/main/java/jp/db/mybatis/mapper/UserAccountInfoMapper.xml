@@ -9,12 +9,13 @@
     <result column="author" jdbcType="VARCHAR" property="author" />
     <result column="level" jdbcType="VARCHAR" property="level" />
     <result column="updateAuthor" jdbcType="VARCHAR" property="updateAuthor" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="jp.db.mybatis.model.UserAccountInfo">
     <result column="picture" jdbcType="LONGVARCHAR" property="picture" />
   </resultMap>
   <sql id="Base_Column_List">
-    account, username, password, createTime, author, level, updateAuthor
+    account, username, password, createTime, author, level, updateAuthor, address
   </sql>
   <sql id="Blob_Column_List">
     picture
@@ -34,10 +35,12 @@
   <insert id="insert" parameterType="jp.db.mybatis.model.UserAccountInfo">
     insert into user_account_info (account, username, password, 
       createTime, author, level, 
-      updateAuthor, picture)
+      updateAuthor, address, picture
+      )
     values (#{account,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{author,jdbcType=VARCHAR}, #{level,jdbcType=VARCHAR}, 
-      #{updateAuthor,jdbcType=VARCHAR}, #{picture,jdbcType=LONGVARCHAR})
+      #{updateAuthor,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{picture,jdbcType=LONGVARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="jp.db.mybatis.model.UserAccountInfo">
     insert into user_account_info
@@ -62,6 +65,9 @@
       </if>
       <if test="updateAuthor != null">
         updateAuthor,
+      </if>
+      <if test="address != null">
+        address,
       </if>
       <if test="picture != null">
         picture,
@@ -89,6 +95,9 @@
       <if test="updateAuthor != null">
         #{updateAuthor,jdbcType=VARCHAR},
       </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
       <if test="picture != null">
         #{picture,jdbcType=LONGVARCHAR},
       </if>
@@ -115,6 +124,9 @@
       <if test="updateAuthor != null">
         updateAuthor = #{updateAuthor,jdbcType=VARCHAR},
       </if>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
       <if test="picture != null">
         picture = #{picture,jdbcType=LONGVARCHAR},
       </if>
@@ -129,6 +141,7 @@
       author = #{author,jdbcType=VARCHAR},
       level = #{level,jdbcType=VARCHAR},
       updateAuthor = #{updateAuthor,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
       picture = #{picture,jdbcType=LONGVARCHAR}
     where account = #{account,jdbcType=VARCHAR}
   </update>
@@ -139,12 +152,13 @@
       createTime = #{createTime,jdbcType=TIMESTAMP},
       author = #{author,jdbcType=VARCHAR},
       level = #{level,jdbcType=VARCHAR},
-      updateAuthor = #{updateAuthor,jdbcType=VARCHAR}
+      updateAuthor = #{updateAuthor,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR}
     where account = #{account,jdbcType=VARCHAR}
   </update>
   <select id="selectAccountList" parameterType="java.util.HashMap" resultMap="ResultMapWithBLOBs">
     select *
-     from user_account_info
+    from user_account_info
     order by createTime desc
     <if test="start != null and len != null">
       limit #{start}, #{len}

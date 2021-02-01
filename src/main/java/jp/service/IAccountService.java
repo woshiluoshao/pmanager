@@ -14,4 +14,5 @@ public interface IAccountService {
     ResultVo accountDel(UserAccountInfo accountInfo);
     Layui accountList(HttpServletRequest request);
     ResultVo accountOnline(HttpServletRequest request);
+    ResultVo accountUpdate(UserAccountInfo accountInfo, HttpServletRequest request);
 }

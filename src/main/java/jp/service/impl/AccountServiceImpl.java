@@ -6,10 +6,7 @@ import jp.db.mybatis.model.UserAccountInfo;
 import jp.dto.LoginDto;
 import jp.enums.MessageEnum;
 import jp.service.IAccountService;
-import jp.utils.DateUtils;
-import jp.utils.Layui;
-import jp.utils.PageUtils;
-import jp.utils.ResultVoUtil;
+import jp.utils.*;
 import jp.vo.ResultVo;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -75,6 +72,7 @@ public class AccountServiceImpl implements IAccountService {
 
         accountInfo.setCreateTime(DateUtils.getCurrentTime());
         accountInfo.setUpdateAuthor(accountInfo.getAuthor());
+        accountInfo.setAddress(AddressUtils.getCity(""));
         int assignCnt = accountInfoMapper.insertSelective(accountInfo);
 
         if(assignCnt > 0) return ResultVoUtil.success("账号分配成功");
@@ -143,5 +141,44 @@ public class AccountServiceImpl implements IAccountService {
         if(onlineList != null && onlineList.size() > 0) return ResultVoUtil.success("查询成功", JSON.toJSONString(onlineList));
 
         return ResultVoUtil.error(MessageEnum.W001);
+    }
+
+    /**
+     * 修改账户信息
+     * @param accountInfo
+     * @param request
+     * @return
+     */
+    @Override
+    public ResultVo accountUpdate(UserAccountInfo accountInfo, HttpServletRequest request) {
+
+        try {
+            int upCnt = accountInfoMapper.updateByPrimaryKeySelective(accountInfo);
+            if(upCnt > 0) {
+                //成功，此时更新缓存
+                updateAccountSession(accountInfo.getAccount(), request);
+                return ResultVoUtil.success();
+            } else {
+                return ResultVoUtil.error(MessageEnum.E017, null, "更新失败");
+            }
+        } catch (Exception e) {
+            return ResultVoUtil.error(MessageEnum.E017, null, "更新异常");
+        }
+    }
+
+    private void updateAccountSession(String account, HttpServletRequest request) {
+
+
+        UserAccountInfo accountInfo = null;
+        try {
+            accountInfo = accountInfoMapper.selectByPrimaryKey(account);
+            if(accountInfo != null) {
+                //更新缓存
+                HttpSession session = request.getSession();
+                session.removeAttribute("accountInfo");
+                session.setAttribute("accountInfo", accountInfo);
+            }
+        } catch (Exception e) {
+        }
     }
 }
