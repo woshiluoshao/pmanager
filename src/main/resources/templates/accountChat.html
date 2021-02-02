@@ -20,7 +20,7 @@
 
         <div id="myMessage" style="width: 8%; height: 500px; overflow-y: auto; position: relative; float: left; background: #26282B" readonly="readonly">
             <h5 id="account" th:text="${session.accountInfo.account}" style="width: 80%; color: white; margin-left: 3%; display: none"></h5>
-            <img th:src="@{'/photo/touLog.jpg'}" class="layui-nav-img" style="width: 70%; height: auto; margin-top: 9px; margin-left: 15%; " onclick="clickHeadPic()">
+            <img id="chatHeadPic" th:src="@{'/photo/touLog.jpg'}" class="layui-nav-img" style="width: 70%; height: auto; margin-top: 9px; margin-left: 15%; " onclick="clickHeadPic()">
 
             <img th:src="@{'/photo/chatShow.png'}" class="layui-nav-img" style="width: 50%; height: auto; margin-top: 20px; margin-left: 25%">
 
@@ -71,7 +71,7 @@
                 <div style="margin-top: 10px"><label style="color: #CEAB99">account：</label><label style="color: #CEAB99" th:text="${session.accountInfo.account}" ></label></div>
             </div>
             <div style="float: left; width: 32%">
-                <img th:src="@{'/photo/touLog.jpg'}" class="layui-nav-img" style="width: 60%; height: auto; margin-top: 9px; margin-left: 15%; " >
+                <img id="showChatPic" th:src="@{'/photo/touLog.jpg'}" class="layui-nav-img" style="width: 60%; height: auto; margin-top: 9px; margin-left: 15%; " >
             </div>
         </div>
         <div style="margin-top: 2%; margin-left: 3%; width: 65%; float: left">
@@ -79,7 +79,12 @@
                 address <strong><label th:text="${session.accountInfo.address}"></label></strong>
             </div>
         </div>
-
+        <div class="layui-form-item" style="display: none">
+            <label class="layui-form-label" style="width: 100px">头像</label>
+            <div class="layui-input-block">
+                <input type="text" id="picture" readonly="readonly" style="width:500px;" lay-verify="title" autocomplete="off" th:value="${session.accountInfo.picture}" class="inp">
+            </div>
+        </div>
     </div>
 
     <script type="text/javascript"  th:src="@{/common/common.js}"></script>
@@ -96,6 +101,7 @@
 
     $(document).ready(function() {
 
+        initHeadPic();
         selectOnlineAccount();
 
         ws = initMsg(urlPrefix, fromName);
@@ -124,6 +130,18 @@
             parent.tabDel("21");
         });
     });
+
+    function initHeadPic() {
+        const picture = $("#picture").val();
+        if(picture !== null || picture !== "") {
+            $("#showChatPic").attr('src', picture);
+            $("#chatHeadPic").attr('src', picture);
+        } else {
+            $("#showChatPic").attr('src', "photo/touLog.png");
+            $("#chatHeadPic").attr('src', "photo/touLog.png");
+        }
+
+    }
 
     /**
      * 点击头像时操作

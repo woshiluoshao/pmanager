@@ -118,11 +118,11 @@
 </div>
 
 <div id="addModel" style="display: none;">
-    <div style="margin-left: 2%; margin-top: 1%;margin-right: 2%">
+    <div style="margin-left: 1%; margin-top: 1%;margin-right: 2%">
         <div class="layui-upload">
             <button type="button"  class="layui-btn" id="test1">选择图片</button>
         </div>
-        <div style="margin-top: 4%"><p id="demoText"></p></div>
+        <div style="margin-top: 1%"><p id="demoText"></p></div>
         <div>
             <div>
                 <div style="float: left; width: 33%; ">原图预览</div>
@@ -169,16 +169,16 @@
 
     function initPic() {
         base64Pic = "";
-       const picture = $("#picture").val();
+        const picture = $("#picture").val();
         const account = $("#account").val();
-       if(picture === null || picture === undefined || picture === "") {
-           let accountPicLabel = "<img id='accountPic' src='photo/headlog.png' style='width: 84px; height: 84px' class='layui-nav-img' alt='点击更换头像' title='点击更换头像' onclick='changePic(\""+account+"\")' />"
-           $("#initAccountPic").append(accountPicLabel);
-       } else {
-           let accountPicLabel = "<img id='accountPic' src='' style='width: 84px; height: 84px' class='layui-nav-img' alt='点击更换头像' title='点击更换头像' onclick='changePic(\""+account+"\")' />"
-           $("#initAccountPic").append(accountPicLabel);
-           $('#accountPic').attr('src', picture);
-       }
+        if (picture === null || picture === undefined || picture === "") {
+            let accountPicLabel = "<img id='accountPic' onmouseout='restorePic(this)' onmousemove='showPic(this)' src='photo/headlog.png' style='width: 84px; height: 84px; border: 1px solid #E7E7EB' class='layui-nav-img' alt='点击更换头像' title='点击更换头像' onclick='changePic(\"" + account + "\")' />"
+            $("#initAccountPic").append(accountPicLabel);
+        } else {
+            let accountPicLabel = "<img id='accountPic' onmouseout='restorePic(this)' onmousemove='showPic(this)' src='' style='width: 84px; height: 84px; border: 1px solid #E7E7EB' class='layui-nav-img' alt='点击更换头像' title='点击更换头像' onclick='changePic(\"" + account + "\")' />"
+            $("#initAccountPic").append(accountPicLabel);
+            $('#accountPic').attr('src', picture);
+        }
     }
 
     function changePic(account) {
@@ -195,7 +195,7 @@
         layer.open({
             type: 1,
             title: '修改头像',
-            area: ['730px', '500px'],
+            area: ['730px', '480px'],
             shadeClose: false, //点击遮罩关闭
             content: $('#addModel'),
             offset: '20px',
@@ -286,7 +286,20 @@
                 $.shotTotal(result, "error");
             }
         })
+    }
 
+    function showPic(thisId) {
+        $(thisId).attr('src', "photo/cameraLog.png");
+
+    }
+
+    function restorePic(thisId) {
+        const picture = $("#picture").val();
+        if(picture !== null || picture !== "") {
+            $(thisId).attr('src', picture);
+        } else {
+            $(thisId).attr('src', "photo/headlog.png");
+        }
 
     }
 </script>
