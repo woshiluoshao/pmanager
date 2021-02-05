@@ -182,7 +182,7 @@
                     for (let i = 0; i < dataList.length; i++) {
                         const username =  dataList[i].username;
                         const account = dataList[i].account;
-                        onlineUserList += "<div id='\""+account+"\"' onmouseover = 'over()' onmouseup='out(this)' style='height: 30px; margin-top: 2%; background-color: #E7E6E6; border-bottom:1px solid #C5C4C5' onclick='changeCharUser(\""+account+"\", \""+username+"\", this)'> " + username+ "</div>";
+                        onlineUserList += "<div id='\""+account+"\"' onmousemove = 'over()' onmouseout='out(this)' style='height: 30px; margin-top: 2%; background-color: #E7E6E6; border-bottom:1px solid #C5C4C5' onclick='changeCharUser(\""+account+"\", \""+username+"\", this)'> " + username+ "</div>";
                         //onlineUserList += "<li class='rel-item'><a onclick='changeCharUser("+dataList[i].account+")'> " + dataList[i].username + dataList[i].account + "</li></a>";
                     }
 
@@ -259,7 +259,7 @@
      * @param username
      */
     function changeCharUser(account, username, thisID) {
-        //$(thisID).css("backgroundColor","#C4C4C5");
+        $(thisID).css("backgroundColor","#C4C4C5");
         //情况聊天界面
         $("#message_chat").html("");
 
@@ -322,14 +322,12 @@
         }
     }
 
-    function over(){
-        //var x = document.getElementById("sss").innerHTML="鼠标在上面的样子";
-        //var x = document.getElementById("online_user_list").style.color="pink";
-        //var x = document.getElementById("online_user_list").style.backgroundColor="#C4C4C5";
+    function over(thisID){
+        //$(thisID).css("background-color","#9EEA6A");
     }
 
     function out(thisID) {
-        //$(thisID).css("backgroundColor","#E7E6E6");
+        $(thisID).css("background-color","#E7E6E6");
     }
 
 
